@@ -1,6 +1,7 @@
 
 let c_note_id = 0;
 let notes = [];
+let notes_archived = [];
 
 function Note(title){
     this.id = get_first_free_id();
@@ -44,9 +45,12 @@ function go_back_note() {
 }
 function go_for_note() {
     console.log("Going forward");
+    c_note_id = (c_note_id+1) % notes.length;
 }
 
 var ex_note = new Note('First note');
-
+create_note("Eyo");
+create_note("Hayo");
+create_note("Buyo");
 notes.push(ex_note); 
 console.log(ex_note.describe());
