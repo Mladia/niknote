@@ -5,29 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie-edge">
     <title>NIKNOTE</title>
-    <link rel="stylesheet" href="styles.css">
-<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/app.js"></script>
 <body>
 
-    <script src="app.js"></script>
-    <h1 align="center">NIKNOTE</h1> 
+<header>
+    <div class="container">
+    <nav>
+        <ul>
+            <li> <a href="#active">Active</li>
+            <li><a href="#snoozed">Snoozed</a></li>
+            <li><a href="#archived">Archived</a></li>
+            <li><a href="#search">Search</a></li>
+        </ul>
+    </nav>
+        <div id="branding">
+            <h1 align="center">NIKNOTE</h1> 
+        </div>
+    </div>
+</header>
 
-    <main></main>
     
-   <!--Menu bar -->
-    <ul>
-    <li><a class="active" href="#all">All</a></li>
-    <li><a href="#snoozed">Snoozed</a></li>
-    <li><a href="#archived">Archived</a></li>
-    <li><a href="#search">Search</a></li>
-    </ul>
 
 
 <div class="bigContainer">
 
+
+    <div id="go_back_note">
+        <a > ← </a>
+    </div>
+    <div id="go_for_note">
+        <a onclick="go_for_note()"> → </a>
+    </div>
+
+
     <!-- Current note --> 
     <div class="currentNoteBox">
-
+    
         <div class="currentNoteTitle">
             Example current note
         </div>
@@ -37,10 +51,14 @@
             </p>
 
             <div class="currentNoteOptions">
-                Snooze Done
+                <button>Snooze</button>
+                <button onclick="c_note_done()">Done</button>
             </div>
     </div>
+
     
+
+
     <br>
 
 
@@ -63,6 +81,6 @@
 <!--/Big Container-->
 </div>
 
-
+</head>
 </body>
 </html>
