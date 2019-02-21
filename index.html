@@ -9,29 +9,29 @@
 <body>
 
 <header>
-    <div class="container">
-    <nav>
-        <ul>
-            <li> <a href="#active">Active</li>
-            <li><a href="#snoozed">Snoozed</a></li>
-            <li><a href="#archived">Archived</a></li>
-            <li><a href="#search">Search</a></li>
-        </ul>
-    </nav>
+    <div id="container">
+        <nav>
+            <ul>
+                <li> <a href="#active">Active</li>
+                <li><a href="#snoozed">Snoozed</a></li>
+                <li><a href="#archived">Archived</a></li>
+                <li><a href="#search">Search</a></li>
+            </ul>
+        </nav>
+    
+
         <div id="branding">
             <!--<h1 align="center">NIKNOTE</h1> -->
             NIKNOTE
         </div>
 
         <div id="newNoteButton">
-            +
+            <a onclick="show_new_note_modal()" > + </a>
         </div>
     </div>
 </header>
 
-
 <div class="bigContainer" id="bigContainer">
-
 
     <div id="go_back_note">
         <a onclick="go_back_note()" > ← </a>
@@ -40,16 +40,13 @@
         <a onclick="go_for_note()"> → </a>
     </div>
 
-
     <!-- Current note --> 
-    <div id='currentNoteBox'> 
-    <!--<div id='currentNoteBox' class="currentNoteBox"> -->
-    
-        <div id="currentNoteTitle" class="currentNoteTitle" >
+    <div id='currentNoteBox' class="currentNoteBox">
+        <div class="currentNoteTitle" id="currentNoteTitle">
         <!--Note title -->
         </div>
         
-        <div id="currentNoteTags">
+        <div class="currentNoteTags" id="currentNoteTags">
         <!--tags-->
         </div>
 
@@ -66,8 +63,6 @@
 
     <br>
 
-
-
     <!-- Notes --> 
     <!--<div class="noteContainer" id="note1">-->
         <!--Example note -->
@@ -76,11 +71,34 @@
         <!--</div>-->
     <!--</div>-->
 
+    <!--/Big Container-->
+    </div>
 
-<!--/Big Container-->
-</div>
 
-</head>
+    <div id="newNoteModal" class="newNoteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="closeBtn">&times;</span>
+                 New note 
+            </div>
+            <div class="modal-body">
+                    
+                <div id='newNoteBox' class="currentNoteBox">
+                    <!-- <div class="currentNoteTitle"> -->
+                        <input type="text"  placeholder="Note title">
+                        <!-- <input type="text" id="tags" placeholder="tag1, tag2, tag3">  -->
+                        <!-- <textarea name="text" placeholder="Text"></textarea> -->
+                        
+                        <button onclick="save_new_note()">Save</button>
+                    <div class="currentNoteOptions">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
 </body>

@@ -35,14 +35,11 @@ function c_note_done(){
     print_notes();
 }
 
-function create_note(title) {
-    var new_note = new Note(title); 
-    insert_new_note(new_note);
-}
 function insert_new_note(new_note) {
+    // console.log("Inserting new note");
+    // console.log(new_note);
     notes.push(new_note);
 }
-
 
 function go_back_note() {
     c_note_id = mod(c_note_id-1, notes.length);
@@ -81,24 +78,24 @@ function print_notes() {
       notes_html[i].remove();
     }
     
-    var rows = ( (max_rows > notes.length) ? notes.length : max_rows);
-    var show_id = c_note_id;
+    let rows = ( (max_rows > notes.length) ? notes.length : max_rows);
+    let show_id = c_note_id;
     for (i = 0; i < rows; i++){
         if (show_id == c_note_id){
             show_id = (show_id + 1 + i) % notes.length;
             continue;
         }
 
-        var new_div = document.createElement('div');
+        let new_div = document.createElement('div');
         notes_html.push(new_div);
         new_div.className = "noteContainer";
         new_div.innerText = notes[show_id].title;
 
-        var new_div_inner = document.createElement('div');
+        let new_div_inner = document.createElement('div');
         new_div_inner.className = "noteContainerTags";
         new_div_inner.innerText = notes[show_id].tags;
         
-        var big_container = document.getElementById('bigContainer');
+        let big_container = document.getElementById('bigContainer');
         big_container.appendChild(new_div);
         new_div.appendChild(new_div_inner);
         
@@ -107,6 +104,48 @@ function print_notes() {
     }
 }
 
+var newNoteModal = document.getElementById("newNoteModal");
+var closeBtn = document.getElementsByClassName("closeBtn")[0];
+
+function show_new_note_modal() {
+    newNoteModal.style.display = 'block';
+}
+
+closeBtn.addEventListener("click", close_new_note_model);
+function close_new_note_model() {
+    newNoteModal.style.display = 'none';
+    print_notes();
+}
+
+window.addEventListener('click', call_outside);
+function call_outside(e){
+    if(e.target == newNoteModal){
+        close_new_note_model();
+    }
+}
+
+function save_new_note(){
+    console.log("Save new note button");
+    var new_note_title = "";
+    let new_note_tags = [];
+    let new_note_text = ""; 
+
+    // new_note_title = document.getElementById('newNoteTitle').innerText;
+    console.log("Title is " . new_note_title);
+    // alert('sd');
+    if (new_note_title == "") {
+        // return false;
+    }
+    // var new_note = new Note(new_note_title);
+    
+    // new_note_text = document.getElementById("newNoteText");
+    // new_note.text = new_note_text;
+    // insert_new_note(new_note);
+    // c_note_id = new_note.id;
+    
+    document.getElementById('newNoteTitle').reset();
+    // close_new_note_model();
+}
 
 function mod(n, m) {
   return ((n % m) + m) % m;

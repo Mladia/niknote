@@ -1,13 +1,10 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-weight: 300;
-  margin: 8px;
+  margin-left:0px;
+  /*margin: 2px;*/
 }
 
-h1 {
-  text-transform: uppercase;
-  font-weight: 300;
-}
 
 header {
     display: flex;
@@ -15,17 +12,17 @@ header {
     align-items: center;
     flex-wrap: wrap;
     padding-top:1%;
-    min-height;10px;
+    min-height: 10px;
 }
-.container{
-    width:80%;
-    margin:auto;
-    overflow:hidden;
+#container{
+    width:100%;
+    /*margin:auto;*/
+    /*overflow:hidden;*/
 }
 header a{
     text-decoration:none;
     text-transform:uppercase;
-    font-size:0.9em;
+    font-size:0.7em;
 }
 header ul{
     /*margin:0;*/
@@ -37,8 +34,9 @@ header ul{
 
 header nav{
     margin-top:2px;
+    margin-left: 1px;
 }
-div.container a{
+div#container a{
     color: #005;
 }
 
@@ -63,14 +61,16 @@ main {
 
 #branding {
    float: left; 
-   font-size: 3.5em;
+   font-size: 2em;
    margin-bottom: 5px;
-   margin-left: 11%;
+   margin-left: 7%;
 }
 #newNoteButton {
     float: right;
     font-size: 3.5em;
     color: #1C6EA4;
+    margin-bottom: 5px;
+    margin-right: 5%;
 }
 
 
@@ -87,20 +87,20 @@ main {
 #go_back_note {
     float: left;
     font-size: 3.5em;
-    margin-left: 5%;
+    margin-left: 0%;
 }
 
 #go_for_note {
     float:right;
     font-size: 3.5em;
-    margin-right: 5%;
+    /*margin-right: 5%;*/
 }
 #go_back_note:hover, #go_for_note:hover {
      background-color: lightblue; 
 }
 
-#currentNoteBox{
-    width:70%;
+.currentNoteBox{
+    width:80%;
     margin: auto;
     padding: 2px 2px 4px 4px;
     border-width: 2px;
@@ -113,7 +113,7 @@ main {
     text-decoration: underline; 
 }
 
-#currentNoteTags {
+.currentNoteTags {
     float: right;
 }
 
@@ -138,4 +138,63 @@ main {
 }
 .noteContainerTags{
    float: right;
+}
+
+
+
+/*model*/
+#newNoteButton:hover {
+    background-color: lightblue; 
+}
+.newNoteModal {
+    /* display: none; */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height : 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.25);
+}
+
+.modal-content {
+    background-color:#f4f4f4;
+    margin: 5% auto;
+    width: 70%;
+    height: 300px;
+    box-shadow: 0 5px 8px 0 rgba(0,0,0,0.25),0 7px 20px 0 rgb(0,0,0,17);
+    animation-name: modalopen;
+    animation-duration: 0.5s;
+}
+
+.modal-header {
+    background: #1C6EA4;
+    padding:15px;
+    text-transform:uppercase;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1.3em;
+}
+
+.modal-body {
+    margin-top: 10px;
+}
+
+.closeBtn {
+    color: #fff;
+    float: right;
+    font-size: 30px;
+}
+
+.closeBtn:hover, closeBtn:focus {
+    color:#000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+@keyframes modalopen{
+    from{opacity:0}
+    to {opacity: 1}
 }
