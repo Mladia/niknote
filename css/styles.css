@@ -115,6 +115,7 @@ main {
 
 .currentNoteTags {
     float: right;
+    margin: 4px;
 }
 
 .currentNoteOptions {
@@ -146,8 +147,9 @@ main {
 #newNoteButton:hover {
     background-color: lightblue; 
 }
+
 .newNoteModal {
-    /* display: none; */
+    display: none;
     position: fixed;
     z-index: 1;
     left: 0;
@@ -179,7 +181,12 @@ main {
 
 .modal-body {
     margin-top: 10px;
+
 }
+.modal-body .currentNoteTitle, .currentNoteText, .currentNoteTags {
+    margin-top: 5px;
+}
+
 
 .closeBtn {
     color: #fff;
@@ -197,4 +204,9 @@ main {
 @keyframes modalopen{
     from{opacity:0}
     to {opacity: 1}
+}
+
+#newNoteText {
+    width: 70%;
+    height: 120px;
 }
