@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie-edge">
     <title>NIKNOTE</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="js/app.js"></script>
 <body>
 
 <header>
@@ -20,19 +19,22 @@
         </ul>
     </nav>
         <div id="branding">
-            <h1 align="center">NIKNOTE</h1> 
+            <!--<h1 align="center">NIKNOTE</h1> -->
+            NIKNOTE
+        </div>
+
+        <div id="newNoteButton">
+            +
         </div>
     </div>
 </header>
 
-    
 
-
-<div class="bigContainer">
+<div class="bigContainer" id="bigContainer">
 
 
     <div id="go_back_note">
-        <a > ← </a>
+        <a onclick="go_back_note()" > ← </a>
     </div>
     <div id="go_for_note">
         <a onclick="go_for_note()"> → </a>
@@ -40,47 +42,46 @@
 
 
     <!-- Current note --> 
-    <div class="currentNoteBox">
+    <div id='currentNoteBox'> 
+    <!--<div id='currentNoteBox' class="currentNoteBox"> -->
     
-        <div class="currentNoteTitle">
-            Example current note
+        <div id="currentNoteTitle" class="currentNoteTitle" >
+        <!--Note title -->
+        </div>
+        
+        <div id="currentNoteTags">
+        <!--tags-->
         </div>
 
-            <p>
-            Lorem ipsum
-            </p>
+        <p>
+        <!--Lorem ipsum-->
+        </p>
 
-            <div class="currentNoteOptions">
-                <button>Snooze</button>
-                <button onclick="c_note_done()">Done</button>
-            </div>
+        <div class="currentNoteOptions">
+            <button>Change</button>
+            <button>Snooze</button>
+            <button onclick="c_note_done()">Done</button>
+        </div>
     </div>
-
-    
-
 
     <br>
 
 
-    <!-- Notes --> 
-    <div class="noteContainer">
-        Example note 
-        <div class="noteContainerTags">
-        tag1 tag2 tag3
-        </div>
-    </div>
 
     <!-- Notes --> 
-    <div class="noteContainer">
-        Example note 
-        <div class="noteContainerTags">
-        tag1 tag2 tag3
-        </div>
-    </div>
+    <!--<div class="noteContainer" id="note1">-->
+        <!--Example note -->
+        <!--<div class="noteContainerTags">-->
+        <!--tag1 tag2 tag3-->
+        <!--</div>-->
+    <!--</div>-->
+
 
 <!--/Big Container-->
 </div>
 
 </head>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
 </body>
 </html>

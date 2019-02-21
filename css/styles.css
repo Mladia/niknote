@@ -39,7 +39,7 @@ header nav{
     margin-top:2px;
 }
 div.container a{
-color: #005;
+    color: #005;
 }
 
 header li{
@@ -61,69 +61,65 @@ main {
   grid-auto-flow: row dense;
 }
 
-.article h2 {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+#branding {
+   float: left; 
+   font-size: 3.5em;
+   margin-bottom: 5px;
+   margin-left: 11%;
+}
+#newNoteButton {
+    float: right;
+    font-size: 3.5em;
+    color: #1C6EA4;
 }
 
-.article a,
-.article a:visited {
-  text-decoration: none;
-  color: inherit;
-}
 
-.article img {
-  width: 100%;
-}
-
-.title-h:{
-    margin: auto;
-}
 
 .bigContainer {
-    /*margin-left:5%;*/
+    margin-left:5%;
     padding:1px 16px;
     /*height:1000px;*/
 }
 
 
-
 /* notes */
 
-#go_back_note{
+#go_back_note {
     float: left;
-    /*text-align: left;*/
     font-size: 3.5em;
-    margin-left: 15%;
+    margin-left: 5%;
 }
-#go_back_note:hover, #go_for_note:hover{
+
+#go_for_note {
+    float:right;
+    font-size: 3.5em;
+    margin-right: 5%;
+}
+#go_back_note:hover, #go_for_note:hover {
      background-color: lightblue; 
 }
 
-#go_for_note{
-    float:right;
-    /*text-align: right;*/
-    font-size: 3.5em;
-    margin-right: 15%;
-}
-
-.currentNoteBox {
-    width:50%;
+#currentNoteBox{
+    width:70%;
     margin: auto;
-
     padding: 2px 2px 4px 4px;
     border-width: 2px;
     border-style: solid;
     border-color: #1C6EA4;
     border-radius: 2px;
 }
-
 .currentNoteTitle {
     font-weight: 400; 
     text-decoration: underline; 
 }
 
+#currentNoteTags {
+    float: right;
+}
+
 .currentNoteOptions {
-   text-align: right;
+    font-size:0.3em;
+    text-align: right;
 }
 
 .noteContainer {
