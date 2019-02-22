@@ -55,10 +55,7 @@
         </p>
 
         <div class="currentNoteOptions">
-            <button onclick="c_note_delete()">Delete</button>
-            <button onclick="c_note_change()">Change</button>
-            <button>Snooze</button>
-            <button onclick="c_note_done()">Done</button>
+            <button onclick="c_arch_del()">Delete</button>
         </div>
     </div>
 
@@ -76,47 +73,7 @@
     </div>
 
 
-    <div id="newNoteModal" class="newNoteModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="closeBtnNew" class="closeBtn">&times;</span>
-                New note
-            </div>
-            <div class="modal-body">
-                    
-                <div id='newNoteBox' class="currentNoteBox">
-                    <!-- <div class="currentNoteTitle"> -->
-                        <input type="text" id="newNoteTitle" class="currentNoteTitle" placeholder="Note title"> 
-                        <input type="text" id="newNoteTags" class="currentNoteTags" placeholder="tag1, tag2, tag3"> 
-                        <textarea name="text" id="newNoteText" class="currentNoteText" placeholder="Text"></textarea>
-                        
-                        <button onclick="save_new_note()">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div id="changeNoteModal" class="newNoteModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="closeBtnChange" class="closeBtn">&times;</span>
-                Change note
-            </div>
-            <div class="modal-body">
-                    
-                <div id='newNoteBox' class="currentNoteBox">
-                    <!-- <div class="currentNoteTitle"> -->
-                        <input type="text" id="changeNoteTitle" class="currentNoteTitle" placeholder="Note title"> 
-                        <input type="text" id="changeNoteTags" class="currentNoteTags" placeholder="tag1, tag2, tag3"> 
-                        <textarea name="text" id="changeNoteText" class="currentNoteText" placeholder="Text"></textarea>
-                        
-                        <button onclick="save_changed_note()">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/archived.js"></script>
 </body>
 </html>

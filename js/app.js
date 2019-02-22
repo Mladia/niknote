@@ -1,7 +1,7 @@
 let max_rows = 15;
 let c_note_id = 0;
-let notes = [];
-let notes_archived = [];
+var notes = [];
+var notes_archived = [];
 let notes_html = [];
 
 function Note(title){
@@ -63,6 +63,12 @@ function go_for_note() {
     print_notes();
 }
 
+function change_current(id){
+    console.log("Changing with " + id);
+    c_note_id = id;
+    print_notes();
+}
+
 var ex_note = new Note('First note');
 ex_note.text="Korem";
 notes.push(ex_note); 
@@ -90,7 +96,7 @@ function print_notes() {
     for (i in notes_html){
       notes_html[i].remove();
     }
-    
+   
     let rows = ( (max_rows > notes.length) ? notes.length : max_rows);
     let show_id = c_note_id;
     for (i = 0; i < rows; i++){
@@ -98,6 +104,9 @@ function print_notes() {
             show_id = (show_id + 1 + i) % notes.length;
             continue;
         }
+
+        let new_a = document.createElement('a');
+        new_a.setAttribute('onclick','change_current(' + show_id + ')' );
 
         let new_div = document.createElement('div');
         notes_html.push(new_div);
@@ -109,7 +118,9 @@ function print_notes() {
         new_div_inner.innerText = notes[show_id].tags;
         
         let big_container = document.getElementById('bigContainer');
-        big_container.appendChild(new_div);
+        big_container.appendChild(new_a);
+        new_a.appendChild(new_div);
+        //big_container.appendChild(new_div);
         new_div.appendChild(new_div_inner);
         
         //show_id = mod(i+1, notes.length);
