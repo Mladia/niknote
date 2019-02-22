@@ -33,7 +33,7 @@ function mod(n, m) {
   return ((n % m) + m) % m;
 }
 function get_first_free_id(){
-    return notes.length
+    return notes.length;
 }
 
 function c_note_done(){
@@ -43,14 +43,12 @@ function c_note_done(){
 }
 
 function c_note_delete(){
-    console.log('Deleting curret note');
+    console.log("Deleting " + c_note_id);
     notes[c_note_id].delete();
     print_notes();
 }
 
 function insert_new_note(new_note) {
-    // console.log("Inserting new note");
-    // console.log(new_note);
     notes.push(new_note);
 }
 
@@ -69,12 +67,18 @@ function change_current(id){
     print_notes();
 }
 
-var ex_note = new Note('First note');
+var ex_note = new Note('0 note');
 ex_note.text="Korem";
 notes.push(ex_note); 
-var ex_note = new Note('Second note');
+var ex_note = new Note('1 note');
 notes.push(ex_note); 
-var ex_note = new Note('Third note');
+var ex_note = new Note('2 note');
+notes.push(ex_note); 
+var ex_note = new Note('3 note');
+notes.push(ex_note); 
+var ex_note = new Note('4 note');
+notes.push(ex_note); 
+var ex_note = new Note('5 note');
 notes.push(ex_note); 
 print_notes();
 
@@ -83,14 +87,12 @@ print_notes();
 
 function print_notes() {
     //set current note
-    if (notes[0] != null){
-        $('#currentNoteTitle').text(notes[c_note_id].title);
-        $('#currentNoteBox').find('p').text(notes[c_note_id].text);
-        $('#currentNoteTags').text(notes[c_note_id].tags);
-    } else {
+    if (notes[0] == null){
         $('#currentNoteTitle').text("  ");
         $('#currentNoteBox').find('p').text("  No notes saved. Your new note will appear here..");
         $('#currentNoteTags').text("");
+
+        return;
     }
 
     //remove old notes
@@ -98,34 +100,43 @@ function print_notes() {
       notes_html[i].remove();
     }
    
+
+    $('#currentNoteTitle').text(notes[c_note_id].title);
+    $('#currentNoteBox').find('p').text(notes[c_note_id].text);
+    $('#currentNoteTags').text(notes[c_note_id].tags);
+
     let rows = ( (max_rows > notes.length) ? notes.length : max_rows);
-    let show_id = c_note_id;
-    for (i = 0; i < rows; i++){
+    let limit_before = 2;
+    let show_id = 0;
+    show_id = mod( (c_note_id - limit_before) , notes.length);
+    for (i = 1; i <= rows; i++){
+
         if (show_id == c_note_id){
-            show_id = (show_id + 1 + i) % notes.length;
+            show_id = mod( (show_id + 1), notes.length );
             continue;
         }
 
-        let new_a = document.createElement('a');
-        new_a.setAttribute('onclick','change_current(' + show_id + ')' );
-
         let new_div = document.createElement('div');
-        notes_html.push(new_div);
+        new_div.setAttribute('onclick','change_current(' + show_id + ')' );
         new_div.className = "noteContainer";
         new_div.innerText = notes[show_id].title;
+        notes_html.push(new_div);
 
         let new_div_inner = document.createElement('div');
         new_div_inner.className = "noteContainerTags";
         new_div_inner.innerText = notes[show_id].tags;
         
-        let big_container = document.getElementById('bigContainer');
-        big_container.appendChild(new_a);
-        new_a.appendChild(new_div);
-        //big_container.appendChild(new_div);
+        if (i <= limit_before){
+            let c_note_before = document.getElementById('notesBefore');
+            c_note_before.appendChild(new_div);
+        } else {
+            let big_container = document.getElementById('bigContainer');
+            big_container.appendChild(new_div);
+        }
+
         new_div.appendChild(new_div_inner);
         
-        //show_id = mod(i+1, notes.length);
-        show_id = (show_id + i) % notes.length;
+        show_id =  mod( (show_id + 1),  notes.length ) ;
     }
 }
 
@@ -197,4 +208,30 @@ function c_note_change(){
     note_text_field.value = notes[c_note_id].text;
 
     
+}
+
+function save_changed_note(){
+    console.log("Save change note button");
+    let new_note_title = "";
+    let tags = [];
+
+    let new_note_title_field = document.getElementById("changeNoteTitle");
+    let new_note_tags_field = document.getElementById("changeNoteTags");
+    let new_note_text_field = document.getElementById("changeNoteText");
+
+    new_note_title = new_note_title_field.value; 
+    if (new_note_title == "") {
+        // alert("Canno save a note with an empty title");
+        return;
+    }
+    let current_note = notes[c_note_id];
+    
+    current_note.title = new_note_title_field.value;
+    current_note.text = new_note_text_field.value; 
+    current_note.tags = new_note_tags_field.value;
+    
+    close_note_modal();
+    new_note_title_field.value = "";
+    new_note_tags_field.value = "";
+    new_note_text_field.text = "";
 }

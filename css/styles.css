@@ -60,21 +60,27 @@ main {
 }
 
 #branding {
-   float: left; 
-   font-size: 2em;
-   margin-bottom: 5px;
-   margin-left: 7%;
+    float: center;
+    font-size: 2em;
+    margin-bottom: 5px;
+    margin-left: 7%; 
 }
 #newNoteButton {
+    position: absolute; 
+    /* top: 20px;
+    right: 40px; */
+    max-height: 70px;
+    bottom: 49%;
+    right: 1px;
     float: right;
     font-size: 3.5em;
-    color: #1C6EA4;
+    color: black;
     margin-bottom: 5px;
     margin-right: 5%;
 }
 
 button {
-    background-color: #1C6EA4; /* Green */
+    background-color: #1C6EA4; 
     border: none;
     color: white;
     /* padding: 15px 32px; */
@@ -84,16 +90,16 @@ button {
     /* font-size: 11px; */
   }
 
-  .currentNoteOptions button {
-
+.currentNoteOptions button {
     min-height: 2.1em;
     min-width: 1.5em;
-    width: 16%;
+    width: 17%;
     height: 7%;
-    /* margin-left: 5px; */
-    margin-right: 5px;
+    margin-left: 8px;
+    margin-right: 8px;
     font-size: 3.3em;
     padding: 2px 3px; 
+    border-radius: 2px
   }
 
 
@@ -108,17 +114,29 @@ button {
 
 #go_back_note {
     float: left;
-    font-size: 3.5em;
-    margin-left: 0%;
+    left: 3%;
+    /* max-width: 5px left; */
+    /* margin-left: 5px; */
+    /* margin-left: 5px; */
 }
 
 #go_for_note {
     float:right;
-    font-size: 3.5em;
+    right: 1%;
     /*margin-right: 5%;*/
 }
-#go_back_note:hover, #go_for_note:hover {
-     background-color: lightblue; 
+#go_for_note, #go_back_note {
+    position: absolute;
+    font-size: 3.5em;
+    font-weight: 650;
+    max-height: 90px;
+    bottom: 60%;
+}
+#go_back_note:hover, #go_for_note:hover, #newNoteButton:hover{
+    color: lightblue; 
+}
+#go_back_note:active, #go_for_note:active, #newNoteButton:active { 
+     color: #1C6EA4;
 }
 
 .currentNoteBox{
@@ -135,6 +153,9 @@ button {
     text-decoration: underline; 
 }
 
+.currentNoteBox p {
+    word-wrap: break-word;
+}
 .currentNoteTags {
     float: right;
     margin: 4px;
@@ -166,10 +187,6 @@ button {
 
 
 /*model*/
-#newNoteButton:hover {
-    background-color: lightblue; 
-}
-
 .newNoteModal {
     display: none;
     position: fixed;
@@ -184,8 +201,12 @@ button {
 
 .modal-content {
     background-color:#f4f4f4;
-    margin: 5% auto;
-    width: 70%;
+    /* margin: 45% auto; */
+    margin-top: 15%;
+    margin-bottom: 42%;
+    margin-right: auto;
+    margin-left: auto;
+    width: 70%; 
     height: 300px;
     box-shadow: 0 5px 8px 0 rgba(0,0,0,0.25),0 7px 20px 0 rgb(0,0,0,17);
     animation-name: modalopen;
@@ -222,13 +243,36 @@ button {
     cursor: pointer;
 }
 
+.saveButton {
+    width: 20%;
+    height: 10%;
+    min-width: 95px;
+    min-height:25px;
+    padding: 3px 3px;
+}
+
+.titleModal {
+    font-weight: 400; 
+    text-decoration: underline; 
+    font-size: 1.1em;
+}
+
+.currentNoteBox input{
+    /* font-size: 17em; */
+    width:80%;
+}
+.textModal {
+    /* font-size: 1.7em; */
+}
 
 @keyframes modalopen{
     from{opacity:0}
     to {opacity: 1}
 }
 
-#newNoteText {
+
+#newNoteText, #changeNoteText {
     width: 70%;
+    /* min-width: 20px; */
     height: 120px;
 }

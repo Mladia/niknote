@@ -26,7 +26,7 @@
         </div>
 
         <div id="newNoteButton">
-            <a onclick="show_new_note_modal()" > + </a>
+            <a onclick="show_new_note_modal()" > &oplus; </a>
         </div>
     </div>
 </header>
@@ -40,7 +40,11 @@
         <a onclick="go_for_note()"> &#8618; </a>
     </div>
 
+    <!-- Notes before -->
+    <div id="notesBefore"></div>
+
     <!-- Current note --> 
+    <!-- <br> -->
     <div id='currentNoteBox' class="currentNoteBox">
         <div class="currentNoteTitle" id="currentNoteTitle">
         <!--Note title -->
@@ -61,9 +65,10 @@
             <button onclick="c_note_done()">&#10004;</button>
         </div>
     </div>
+    <!-- <br> -->
 
-    <br>
-
+    <!-- Notes after -->
+    
     <!-- Notes --> 
     <!--<div class="noteContainer" id="note1">-->
         <!--Example note -->
@@ -86,11 +91,10 @@
                     
                 <div id='newNoteBox' class="currentNoteBox">
                     <!-- <div class="currentNoteTitle"> -->
-                        <input type="text" id="newNoteTitle" class="currentNoteTitle" placeholder="Note title"> 
-                        <input type="text" id="newNoteTags" class="currentNoteTags" placeholder="tag1, tag2, tag3"> 
-                        <textarea name="text" id="newNoteText" class="currentNoteText" placeholder="Text"></textarea>
-                        
-                        <button onclick="save_new_note()">Save</button>
+                        <input type="text" id="newNoteTitle" class="titleModal" placeholder="Note title"> 
+                        <input type="text" id="newNoteTags" class="tagsModal" placeholder="tag1, tag2, tag3">
+                        <textarea name="text" id="newNoteText" class="textModal" placeholder="Text"></textarea>
+                        <button class="saveButton" onclick="save_new_note()">Save</button>
                 </div>
             </div>
         </div>
@@ -107,11 +111,12 @@
                     
                 <div id='newNoteBox' class="currentNoteBox">
                     <!-- <div class="currentNoteTitle"> -->
-                        <input type="text" id="changeNoteTitle" class="currentNoteTitle" placeholder="Note title"> 
-                        <input type="text" id="changeNoteTags" class="currentNoteTags" placeholder="tag1, tag2, tag3"> 
-                        <textarea name="text" id="changeNoteText" class="currentNoteText" placeholder="Text"></textarea>
+                        <input type="text" id="changeNoteTitle" class="titleModal" placeholder="Note title"> 
+                        <input type="text" id="changeNoteTags" class="tagsModal" placeholder="tag1, tag2, tag3"> 
+                        <textarea name="text" id="changeNoteText" class="textModal" placeholder="Text"></textarea>
                         
-                        <button onclick="save_changed_note()">Save</button>
+                        <button class="saveButton" onclick="save_changed_note()">Save</button>
+
                 </div>
             </div>
         </div>
