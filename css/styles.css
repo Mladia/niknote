@@ -73,6 +73,28 @@ main {
     margin-right: 5%;
 }
 
+button {
+    background-color: #1C6EA4; /* Green */
+    border: none;
+    color: white;
+    /* padding: 15px 32px; */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    /* font-size: 11px; */
+  }
+
+  .currentNoteOptions button {
+
+    min-height: 2.1em;
+    min-width: 1.5em;
+    width: 16%;
+    height: 7%;
+    /* margin-left: 5px; */
+    margin-right: 5px;
+    font-size: 3.3em;
+    padding: 2px 3px; 
+  }
 
 
 .bigContainer {

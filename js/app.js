@@ -88,8 +88,9 @@ function print_notes() {
         $('#currentNoteBox').find('p').text(notes[c_note_id].text);
         $('#currentNoteTags').text(notes[c_note_id].tags);
     } else {
-        $('#currentNoteTitle').text("\n");
-        $('#currentNoteBox').find('p').text("\n");
+        $('#currentNoteTitle').text("  ");
+        $('#currentNoteBox').find('p').text("  No notes saved. Your new note will appear here..");
+        $('#currentNoteTags').text("");
     }
 
     //remove old notes
@@ -168,7 +169,7 @@ function save_new_note(){
 
     new_note_title = new_note_title_field.value; 
     if (new_note_title == "") {
-        console.log("Empty note title");
+        // alert("Canno save a note with an empty title");
         return;
     }
     var new_note = new Note(new_note_title);
@@ -178,7 +179,7 @@ function save_new_note(){
     insert_new_note(new_note);
     c_note_id = new_note.id;
     
-    close_new_note_model();
+    close_note_modal();
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
