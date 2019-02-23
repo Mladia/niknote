@@ -18,15 +18,43 @@ function Note(title){
             '-, text:' + this.text; 
     }
 
+    this.delete_note = function(){
+        let return_next = false;
+        notes.splice( notes.indexOf(this), 1 );
+        while (notes[c_note_id] == null) {
+            console.log("trying:" + c_note_id);
+            if (is_empty()){
+                return;
+            }
+            c_note_id = mod(c_note_id+1, notes.length);
+        }
+    }
     this.set_done = function(){
+        if (is_empty()){
+            return;
+        }
+
         this.done = true;
         notes_archived.push(this);
-        notes.splice( notes.indexOf(this), 1 );
+        this.delete_note();
+        // notes.splice( notes.indexOf(this), 1 );
+        //TODO:
     }
 
     this.delete = function(){
-        notes.splice( notes.indexOf(this), 1 );
+        if (is_empty()){
+            return;
+        }
+        // notes.splice( notes.indexOf(this), 1 );
+        //TODO:
+        console.log("Deleting " + c_note_id);
+        this.delete_note();
     }
+
+}
+
+function is_empty() {
+    return notes.length == 0;
 }
 
 function mod(n, m) {
@@ -45,7 +73,8 @@ function c_note_done(){
 function c_note_delete(){
     console.log("Deleting " + c_note_id);
     notes[c_note_id].delete();
-    print_notes();
+    go_back_note();
+    // print_notes();
 }
 
 function insert_new_note(new_note) {
@@ -86,12 +115,12 @@ print_notes();
 
 
 function print_notes() {
+    console.log("Current note is " + c_note_id + ",length:" + notes.length);
     //set current note
-    if (notes[0] == null){
+    if (notes[0] == null || notes.length == 0) {
         $('#currentNoteTitle').text("  ");
         $('#currentNoteBox').find('p').text("  No notes saved. Your new note will appear here..");
         $('#currentNoteTags').text("");
-
         return;
     }
 
@@ -100,6 +129,11 @@ function print_notes() {
       notes_html[i].remove();
     }
    
+    if (notes[c_note_id] == null){
+        console.log("current note is null");
+        c_note_id = mod(c_note_id+1, notes.length);
+        print_notes();
+    }
 
     $('#currentNoteTitle').text(notes[c_note_id].title);
     $('#currentNoteBox').find('p').text(notes[c_note_id].text);
@@ -150,6 +184,9 @@ function show_new_note_modal() {
 }
 
 function show_change_note_modal() {
+    if(notes.length == 0 ){
+        return;
+    }
     changeNoteModal.style.display = 'block';
 }
 
@@ -247,9 +284,8 @@ var beta = 0;
 var gamma = 0;
 
 var first_flip_gb = false;
-var second_flip_gb = false;
 var first_flip_gf = false;
-var second_flip_gf = false;
+var first_flip_d = false;
 var first = true;
 var flipped_degree = 80;
 var margin_error = 15;
@@ -268,7 +304,6 @@ function check_go_back() {
         output.innerHTML += "1first!\n";
     }
     if (first_flip_gb && met(gamma, in_gamma) && met(beta, in_beta ) ){
-        second_flip_gb = true;
         first_flip_gb = false;
         output.innerHTML += "1second!\n";
         go_back_note();
@@ -281,16 +316,27 @@ function check_go_for() {
         output.innerHTML += "2first!\n";
     }
     if (first_flip_gf && met(gamma, in_gamma) && met(beta, in_beta ) ){
-        second_flip_gf = true;
         first_flip_gf = false;
         output.innerHTML += "2second!\n";
         go_for_note();
     }
 }
 
+function check_done(){
+    if ( met(beta - in_beta, 80) && met(gamma, in_gamma) ){
+        first_flip_d = true;
+        output.innerHTML += "3first!\n";
+    }
+    if (first_flip_d && met(beta, in_beta) && met(gamma, in_gamma)) {
+        first_flip_d = false;
+        output.innerHTML += "3second!\n";
+        c_note_done();
+    }
+}
 function handle_gestures(){
     check_go_back();
     check_go_for();
+    check_done();
 
 }
 
