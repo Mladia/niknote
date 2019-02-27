@@ -31,7 +31,6 @@
     </div>
 </header>
 
-<pre class="output"></pre>
 
 <div class="bigContainer" id="bigContainer">
 
@@ -63,7 +62,7 @@
         <div class="currentNoteOptions">
             <button onclick="c_note_delete()">&times;</button>
             <button onclick="c_note_change()">&#9997;</button>
-            <button>&#128337;</button>
+            <button onclick="c_note_snooze()">&#128337;</button>
             <button onclick="c_note_done()">&#10004;</button>
         </div>
     </div>
@@ -103,6 +102,32 @@
     </div>
 
 
+
+    <div id="snoozeModal" class="snoozeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="closeBtnSnooze" class="closeBtn">&times;</span>
+                Snooze
+            </div>
+            <div class="modal-body">
+                    
+                <div id='snoozeContainer' class="snoozeContainer">
+                    <!-- <div class="currentNoteTitle"> -->
+                     <button onclick="snoozeMorn()">Morning 09:00</button>
+                     <button onclick="snoozeAft()">Afternoon 14:00</button>
+                     <button onclick="snoozeEve()">Evening 18:00</button>
+                    <div class="snoozeBox"></div>
+                     Custom:
+                    <br>
+                     <input type="time" id="snoozeTime" name="snoozeTime"
+                    min="9:00" max="18:00" required> 
+                    <button onclick="snoozeCustom()">Custom snooze</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div id="changeNoteModal" class="newNoteModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -125,5 +150,7 @@
     </div>
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
+
+<pre class="output"></pre>
 </body>
 </html>

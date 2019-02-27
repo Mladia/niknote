@@ -2,6 +2,7 @@ let max_rows = 15;
 let c_note_id = 0;
 var notes = [];
 var notes_archived = [];
+var notes_snoozed =  [];
 let notes_html = [];
 
 function Note(title){
@@ -9,7 +10,9 @@ function Note(title){
     this.title = title;
     this.text = 'Lorem ipsum te';
     this.tags = [ 'lo', 're'];
-    var done = false;
+    //TODO: problem?
+    let done = false;
+    let snoozed = false;
 
     this.describe = function(){
         return 'Note:' + this.id + ', title:' + 
@@ -50,6 +53,14 @@ function Note(title){
         console.log("Deleting " + c_note_id);
         this.delete_note();
     }
+
+    
+    this.snooze = function (time)  {
+        this.snoozed = true;
+        this.snoozed_time = time;
+        notes_snoozed.push(this) ;
+    }
+    
 
 }
 
@@ -117,11 +128,16 @@ print_notes();
 function print_notes() {
     console.log("Current note is " + c_note_id + ",length:" + notes.length);
     //set current note
+
     if (notes[0] == null || notes.length == 0) {
         $('#currentNoteTitle').text("  ");
         $('#currentNoteBox').find('p').text("  No notes saved. Your new note will appear here..");
         $('#currentNoteTags').text("");
         return;
+    }
+
+    if (notes[c_note_id].snoozed){
+        c_note_id = mod(c_note_id+1, notes.length);
     }
 
     //remove old notes
@@ -145,6 +161,11 @@ function print_notes() {
     show_id = mod( (c_note_id - limit_before) , notes.length);
     for (i = 1; i <= rows; i++){
 
+        if (notes[show_id].snoozed){
+            show_id = mod( (show_id + 1), notes.length );
+            continue;
+        }
+ 
         if (show_id == c_note_id){
             show_id = mod( (show_id + 1), notes.length );
             continue;
@@ -176,8 +197,10 @@ function print_notes() {
 
 var newNoteModal = document.getElementById("newNoteModal");
 var changeNoteModal = document.getElementById("changeNoteModal")
+var snoozeModal = document.getElementById("snoozeModal")
 var closeBtnNew = document.getElementById("closeBtnNew");
 var closeBtnChange = document.getElementById("closeBtnChange");
+var closeBtnSnooze = document.getElementById("closeBtnSnooze");
 
 function show_new_note_modal() {
     newNoteModal.style.display = 'block';
@@ -192,16 +215,19 @@ function show_change_note_modal() {
 
 closeBtnNew.addEventListener("click", close_note_modal);
 closeBtnChange.addEventListener("click", close_note_modal);
+closeBtnSnooze.addEventListener("click", close_note_modal);
 function close_note_modal() {
     newNoteModal.style.display = 'none';
     changeNoteModal.style.display = 'none';
+    snoozeModal.style.display = 'none';
     print_notes();
 }
 
 window.addEventListener('click', call_outside);
 function call_outside(e){
     if (e.target == newNoteModal || 
-        e.target == changeNoteModal){
+        e.target == changeNoteModal ||
+        e.target == snoozeModal){
         close_note_modal();
     }
 }
@@ -232,6 +258,15 @@ function save_new_note(){
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
 }
+
+function c_note_snooze() {
+    show_snooze_modal();
+}
+
+function show_snooze_modal() {
+    snoozeModal.style.display = 'block';
+}
+
 
 function c_note_change(){
     show_change_note_modal();
@@ -273,6 +308,37 @@ function save_changed_note(){
     new_note_text_field.text = "";
 }
 
+
+function snoozeMorn(){
+    console.log("Snoozing morning");
+    let timeControl = "09:00";
+    notes[c_note_id].snooze(timeControl);
+    close_note_modal();
+}
+function snoozeAft(){
+    console.log("Snoozing aft");
+    let timeControl = "14:00";
+    notes[c_note_id].snooze(timeControl);
+    close_note_modal();
+}
+function snoozeEve(){
+    console.log("Snoozing evening");
+    let timeControl = "18:00";
+    notes[c_note_id].snooze(timeControl);
+    close_note_modal();
+}
+function snoozeCustom(){
+    console.log("Snoozing custom");
+    let timeControl = document.getElementById("snoozeTime");
+    console.log("Snoozing for " + timeControl.value);
+    let is_valid = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(timeControl.value);
+    if (is_valid){
+        close_note_modal();
+        notes[c_note_id].snooze(timeControl);
+    }
+}
+
+//-----------------------------------------
 //Gyro
 window.addEventListener("deviceorientation", handleOrientation, true);
 var output = document.querySelector('.output');
@@ -298,7 +364,7 @@ function met(x, limit){
     }
 }
 
-function check_go_back() {
+function check_snooze() {
     if ( met(gamma, 85) && met(beta, 130) ) {
         first_flip_gb = true
         output.innerHTML += "1first!\n";
@@ -306,7 +372,7 @@ function check_go_back() {
     if (first_flip_gb && met(gamma, in_gamma) && met(beta, in_beta ) ){
         first_flip_gb = false;
         output.innerHTML += "1second!\n";
-        go_back_note();
+        show_snooze_modal();
     }
 }
 
@@ -334,7 +400,7 @@ function check_done(){
     }
 }
 function handle_gestures(){
-    check_go_back();
+    check_snooze();
     check_go_for();
     check_done();
 
