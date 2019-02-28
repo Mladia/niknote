@@ -55,13 +55,6 @@ function delet(id) {
     }
 }
 
-function snooze (id, time, date) {
-    notes[id].snoozed = true;
-    notes[id].snoozed_time = time;
-    notes[id].snoozed_date = date;
-    console.log("Snoozing for " + time + ", " + date );
-}
-
 function is_empty() {
     return notes.length == 0;
 }
@@ -73,11 +66,20 @@ function get_first_free_id(){
     return notes.length;
 }
 
+function snooze (id, time, date) {
+    notes[id].snoozed = true;
+    notes[id].snoozed_time = time;
+    notes[id].snoozed_date = date;
+    console.log("Snoozing for " + time + ", " + date );
+    push_notes();
+}
+
 function c_note_done(){
     console.log('Setting current note as done!');
     // notes[c_note_id].set_done();   
     set_done(c_note_id);
     print_notes();
+    push_notes();
 }
 
 function c_note_delete(){
@@ -85,11 +87,13 @@ function c_note_delete(){
     // notes[c_note_id].delete();
     delet(c_note_id); 
     go_back_note();
+    push_notes();
     // print_notes();
 }
 
 function insert_new_note(new_note) {
     notes.push(new_note);
+    push_notes();
 }
 
 function go_back_note() {
@@ -136,7 +140,6 @@ function pull_notes() {
         type: "POST",
         header: {'Access-Control-Allow-Origin': '*'},
         data: "cmd=get_notes",
-        // data: "{"cmd=get_notes",
         success: function (result) {
             console.log(result);
             console.log("YE!");
@@ -156,18 +159,19 @@ function pull_notes() {
 
 function push_notes() {
 
-    let data = {
+    let data = JSON.stringify({
         cmd : "push_notes",
         notes : notes 
-    };
-    console.log(JSON.stringify(data));
+    });
+    console.log(data);
     $.ajax({
         url: "server.php",
         async: false,
         type: "POST",
         header: {'Access-Control-Allow-Origin': '*'},
         dataType: "json",
-        data: JSON.stringify(data), 
+        // data: JSON.stringify(data), 
+        data: data, 
         contentType: 'application/json',
         success: function (result) {
             console.log("YE!");

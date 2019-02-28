@@ -18,7 +18,10 @@
         // echo $notes;
         file_put_contents('notes', json_encode($data->notes), LOCK_EX);
         // fwrite($filelink, json_encode($data->notes));
-        echo '{"status" : "WRITTEN"}';
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode($data->notes);
+        // echo '{"status" : "WRITTEN"}';
+        
     }
 
     // echo $data;
