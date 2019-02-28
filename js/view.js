@@ -153,8 +153,6 @@ function c_note_change(){
     note_title_field.value = notes[c_note_id].title;
     note_tags_field.value = notes[c_note_id].tags;
     note_text_field.value = notes[c_note_id].text;
-
-    
 }
 
 function save_changed_note(){
@@ -187,20 +185,25 @@ function save_changed_note(){
 function snoozeMorn(){
     console.log("Snoozing morning");
     let timeControl = "09:00";
-    let dateControl = $('#snoozeDate').value;
-    notes[c_note_id].snooze(timeControl, dateControl);
+    //TODO:
+    let dateControl = document.getElementById('#snoozeDate').value;
+    // let dateControl = $('#snoozeDate').value;
+    // new Date().toDateInputValue()
+    snooze(c_note_id, timeControl, dateControl);
     close_note_modal();
 }
 function snoozeAft(){
     console.log("Snoozing aft");
     let timeControl = "14:00";
-    notes[c_note_id].snooze(timeControl);
+    let dateControl = $('#snoozeDate').value;
+    snooze(c_note_id, timeControl, dateControl);
     close_note_modal();
 }
 function snoozeEve(){
     console.log("Snoozing evening");
     let timeControl = "18:00";
-    notes[c_note_id].snooze(timeControl);
+    let dateControl = $('#snoozeDate').value;
+    snooze(c_note_id, timeControl, dateControl);
     close_note_modal();
 }
 function snoozeCustom(){
@@ -210,6 +213,6 @@ function snoozeCustom(){
     let is_valid = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(timeControl.value);
     if (is_valid){
         close_note_modal();
-        notes[c_note_id].snooze(timeControl);
+        snooze(c_note_id, timeControl, dateControl);
     }
 }

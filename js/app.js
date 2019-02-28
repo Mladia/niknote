@@ -17,48 +17,49 @@ function Note(title){
 
     this.describe = function(){
         return 'Note:' + this.id + ', title:' + 
-            this.title + ', done:' + done +
+            this.title + ', done:' + this.done +
             ', tags: -' + this.tags +
             '-, text:' + this.text; 
     }
 
-    this.delete = function(){
-        let return_next = false;
-        console.log("Deleting " + c_note_id);
-        notes.splice(notes.indexOf(this), 1);
-        while (notes[c_note_id] == null) {
-            console.log("trying:" + c_note_id);
-            if (is_empty()){
-                return;
-            }
-            c_note_id = mod(c_note_id+1, notes.length);
-        }
-    }
+    
 
-    this.set_done = function(){
+}
+
+function set_done(id) {
+    if (is_empty()){
+        return;
+    }
+    notes[id].done = true;
+    delet(id);
+}
+
+function delete_note(id) {
+    if (is_empty()){
+        return;
+    }
+    // notes.splice( notes[id], 1 );
+    console.log("1Deleting " + c_note_id);
+}
+
+function delet(id) {
+    let return_next = false;
+    console.log("Deleting " + c_note_id);
+    notes.splice(id, 1);
+    while (notes[c_note_id] == null) {
+        console.log("trying:" + c_note_id);
         if (is_empty()){
             return;
         }
-        this.done = true;
-        this.delete();
+        c_note_id = mod(c_note_id+1, notes.length);
     }
+}
 
-    this.delete_note = function(){
-        if (is_empty()){
-            return;
-        }
-        // notes.splice( notes.indexOf(this), 1 );
-        console.log("1Deleting " + c_note_id);
-    }
-    
-    this.snooze = function (time, date)  {
-        this.snoozed = true;
-        this.snoozed_time = time;
-        this.snoozed_date = date;
-        console.log("Snoozing for " + time + ", " + date );
-    }
-    
-
+function snooze (id, time, date) {
+    notes[id].snoozed = true;
+    notes[id].snoozed_time = time;
+    notes[id].snoozed_date = date;
+    console.log("Snoozing for " + time + ", " + date );
 }
 
 function is_empty() {
@@ -74,13 +75,15 @@ function get_first_free_id(){
 
 function c_note_done(){
     console.log('Setting current note as done!');
-    notes[c_note_id].set_done();   
+    // notes[c_note_id].set_done();   
+    set_done(c_note_id);
     print_notes();
 }
 
 function c_note_delete(){
     console.log("Deleting " + c_note_id);
-    notes[c_note_id].delete();
+    // notes[c_note_id].delete();
+    delet(c_note_id); 
     go_back_note();
     // print_notes();
 }
@@ -119,61 +122,56 @@ Date.prototype.toDateInputValue = (function() {
 // notes.push(ex_note); 
 // var ex_note = new Note('3 note');
 // notes.push(ex_note); 
-var ex_note = new Note('4 note');
-notes.push(ex_note); 
-var ex_note = new Note('5 note');
-notes.push(ex_note); 
-// var stringObj = JSON.stringify(notes);
-// console.log(stringObj);
-// pull_notes();
-// loadDoc();
+// var ex_note = new Note('4 note');
+// notes.push(ex_note); 
+// var ex_note = new Note('5 note');
+// notes.push(ex_note); 
+// print_notes();
+pull_notes();
 
 function pull_notes() {
-
     $.ajax({
         url: "/server.php",
         async: false,
         type: "POST",
         header: {'Access-Control-Allow-Origin': '*'},
-        dataType: "json",
         data: "cmd=get_notes",
+        // data: "{"cmd=get_notes",
         success: function (result) {
             console.log(result);
             console.log("YE!");
-            $('#demo').innerHTML = "YE!";
-            notes = JSON.parse(result);
-            print_notes();
+            notes = result;
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log("NO!");
             console.log(xhr);
             console.log(thrownError);
-        }
+        },
+        contentType: 'application/x-www-form-urlencoded',
+        dataType: 'json',
         });    
-
 
     print_notes();
 }
 
 function push_notes() {
 
-    let stringObj = JSON.stringify(notes);
-    let data = '{"cmd":"push_notes","notes":' + stringObj + '}';
-    console.log(data);
+    let data = {
+        cmd : "push_notes",
+        notes : notes 
+    };
+    console.log(JSON.stringify(data));
     $.ajax({
-        url: "/server.php",
+        url: "server.php",
         async: false,
         type: "POST",
         header: {'Access-Control-Allow-Origin': '*'},
         dataType: "json",
-        contentType: "application/json",
-        data: data, 
+        data: JSON.stringify(data), 
         contentType: 'application/json',
         success: function (result) {
             console.log("YE!");
             console.log(result);
-            // notes = JSON.parse(result);
-            // print_notes();
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log(xhr);
