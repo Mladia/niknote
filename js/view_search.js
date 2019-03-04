@@ -1,7 +1,8 @@
+max_rows = 40;
 var new_image = false;
-max_rows = 15;
 var image_to_upload;
 
+var search_pattern;
 
 function print_notes() {
     console.log("Current note is " + c_note_id + ",length:" + notes.length);
@@ -14,11 +15,7 @@ function print_notes() {
         return;
     }
 
-    if (notes[c_note_id].snoozed
-        || notes[c_note_id].done) {
-        c_note_id = mod(c_note_id+1, notes.length);
-    }
-
+    let notes_searched = get_searched_notes();
 
     //remove old notes
     for (i in notes_html){
@@ -41,13 +38,6 @@ function print_notes() {
     show_id = mod( (c_note_id - limit_before) , notes.length);
     for (i = 1; i <= rows; i++){
 
-        if (notes[show_id].snoozed
-            || notes[show_id].done
-            || show_id == c_note_id){
-            show_id = mod( (show_id + 1), notes.length );
-            continue;
-        }
- 
         let new_div = document.createElement('div');
         new_div.setAttribute('onclick','change_current(' + show_id + ')' );
         new_div.className = "noteContainer";
@@ -58,13 +48,8 @@ function print_notes() {
         new_div_inner.className = "noteContainerTags";
         new_div_inner.innerText = notes[show_id].tags;
         
-        if (i <= limit_before){
-            let c_note_before = document.getElementById('notesBefore');
-            c_note_before.appendChild(new_div);
-        } else {
-            let big_container = document.getElementById('bigContainer');
-            big_container.appendChild(new_div);
-        }
+        let big_container = document.getElementById('bigContainer');
+        big_container.appendChild(new_div);
 
         new_div.appendChild(new_div_inner);
         
@@ -248,5 +233,13 @@ function snoozeCustom(){
     if (is_valid){
         close_note_modal();
         snooze(c_note_id, timeControl, dateControl);
+    }
+}
+
+
+function get_searched_notes(){
+    let alter_notes = [];
+    for (note in notes){
+
     }
 }

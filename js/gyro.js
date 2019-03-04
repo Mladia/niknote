@@ -93,16 +93,86 @@ function handleOrientation(event) {
 }
 
 
-// function loadDoc() {
-//   var xhttp = new XMLHttpRequest();
-//   xhttp.onreadystatechange = function() {
-//     if (this.readyState == 4 && this.status == 200) {
-//      document.getElementById("demo").innerHTML = this.responseText;
-//     }
-//   };
-//   //xhttp.open("GET", "localhost", "ajax_info.txt", true);
-//     xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
-//   xhttp.open("GET", "server.php?may=hi", false);
-//   xhttp.send();
-//   document.getElementById("demo").innerHTML = this.responseText;
-// }
+//checking file input
+if (window.File && window.FileReader && window.FormData) {
+	var $inputField = $('#photoNew');
+
+	$inputField.on('change', function (e) {
+		var file = e.target.files[0];
+
+		if (file) {
+			if (/^image\//i.test(file.type)) {
+				readFile(file);
+			} else {
+				alert('Not a valid image!');
+			}
+		}
+	});
+} else {
+	alert("File upload is not supported!");
+}
+
+function readFile(file) {
+    console.log("Reading file");
+	var reader = new FileReader();
+
+	reader.onloadend = function () {
+		processFile(reader.result, file.type);
+	}
+
+	reader.onerror = function () {
+		alert('There was an error reading the file!');
+	}
+
+	reader.readAsDataURL(file);
+}
+
+
+function processFile(dataURL, fileType) {
+
+	var image = new Image();
+	image.src = dataURL;
+
+	image.onload = function () {
+        new_image = true;
+        image_to_upload = dataURL;
+	};
+
+	image.onerror = function () {
+		alert('There was an error processing your file!');
+	};
+}
+
+
+
+function sendFile(id, fileData) {
+    console.log("Sending file");
+	var formData = new FormData();
+
+    formData.append('imageData', fileData);
+    
+    console.log(formData);
+    return;
+	$.ajax({
+		type: 'POST',
+		url: '/server.php',
+		data: { name : "image_" + id, image : formData } ,
+		contentType: false,
+		processData: false,
+		success: function (data) {
+            console.log(data);
+			if (data.success) {
+				alert('Your file was successfully uploaded!');
+			} else {
+				alert('There was an error uploading your file!');
+			}
+		},
+		error: function (data) {
+            console.log(data);
+			alert('There was an error uploading your file!');
+		}
+    });
+    
+    new_image = false;
+    image_to_upload = "";
+}

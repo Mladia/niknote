@@ -186,9 +186,8 @@ button {
 
 
 
-/*model*/
-.newNoteModal {
-    display: none;
+/*modal*/
+.noteModal {
     position: fixed;
     z-index: 1;
     left: 0;
@@ -199,18 +198,29 @@ button {
     background-color: rgba(0,0,0,0.25);
 }
 
+#changeNoteModal {
+    display: none;
+}
+
+#newNoteModal {
+    display: none;
+}
+
 .modal-content {
     background-color:#f4f4f4;
     /* margin: 45% auto; */
-    margin-top: 15%;
-    margin-bottom: 42%;
-    margin-right: auto;
-    margin-left: auto;
-    width: 70%; 
-    height: 300px;
+    margin-top: 7%;
+    /* margin-bottom: 42%; */
+    margin-right: 10%;
+    margin-left: 10%;
+    width: 80%; 
+   /* height: 50%; */
+    /* vertical-align: middle; */
     box-shadow: 0 5px 8px 0 rgba(0,0,0,0.25),0 7px 20px 0 rgb(0,0,0,17);
     animation-name: modalopen;
     animation-duration: 0.5s;
+    /* display: table-cell; */
+    height: 370px;
 }
 
 .modal-header {
@@ -222,12 +232,24 @@ button {
     font-size: 1.3em;
 }
 
+.modalNoteBox{
+    width:80%;
+    height: 470;
+    margin: auto;
+    padding: 2px 2px 4px 4px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #1C6EA4;
+    border-radius: 2px;
+}
+
 .modal-body {
     margin-top: 10px;
-
+    /* display: inline-block; */
 }
-.modal-body .currentNoteTitle, .currentNoteText, .currentNoteTags {
-    margin-top: 5px;
+
+.modal-body .newNoteTitle, .newNoteTags, .newNoteText{
+    margin-top: 9px;
 }
 
 
@@ -243,26 +265,92 @@ button {
     cursor: pointer;
 }
 
+.buttonsModal{
+    margin-top: 7px;
+    margin-left: 22px;
+    margin-right: 22px;
+}
 .saveButton {
     width: 20%;
     height: 10%;
-    min-width: 95px;
-    min-height:25px;
+    min-width: 90px;
+    min-height:70px;
     padding: 3px 3px;
+    margin: 5px 5px 5px 5px;
+}
+#takePhoto {
+    margin-left: 5%;
+    float: left;
+}
+#saveNew {
+    margin-right: 5%;
+    float: right;
 }
 
 .titleModal {
     font-weight: 400; 
     text-decoration: underline; 
     font-size: 1.1em;
+    width: 95%;
+    min-width: 100px;
+}
+.tagsModal {
+    width: 95%;
+    min-width: 100px;
 }
 
+.imageBlock {
+    min-width: 90px;
+    min-height:70px;
+    width: 30px;
+    height: 30px;
+    /* padding: 3px 3px; */
+    margin: 5px 5px 5px 5px; 
+    float:left;
+}
+#newImageNote {
+    display: none;
+}
+#changeImageNote {
+    display: none;
+}
+.imageBlock button {
+    /* float: right; */
+    position: relative;
+    /* right: 98px; */
+    left: 95px;
+    top: -75px;
+
+    width: 40px;
+    height: 40px;
+}
+.imageNote {
+    /* width: 20%; */
+    /* height: 10%; */
+    min-width: 90px;
+    min-height:70px;
+    width: 30px;
+    height: 30px;
+}
+
+.newNoteBox{
+    width:95%;
+    margin: auto;
+    padding: 2px 2px 4px 4px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #1C6EA4;
+    border-radius: 2px;
+}
 .currentNoteBox input{
     /* font-size: 17em; */
     width:80%;
+    /* height: 40%; */
 }
 .textModal {
     /* font-size: 1.7em; */
+    width: 99%;
+    min-width: 100px;
 }
 
 @keyframes modalopen{

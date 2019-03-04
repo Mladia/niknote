@@ -1,5 +1,5 @@
-let max_rows = 15;
 let c_note_id = 0;
+var max_rows;
 var notes = [];
 let notes_html = [];
 
@@ -14,6 +14,7 @@ function Note(title){
     this.snoozed_time = "";
     this.snoozed_date = "";
 
+    this.picture_name = "";
 
     this.describe = function(){
         return 'Note:' + this.id + ', title:' + 
@@ -21,8 +22,6 @@ function Note(title){
             ', tags: -' + this.tags +
             '-, text:' + this.text; 
     }
-
-    
 
 }
 
@@ -117,23 +116,25 @@ Date.prototype.toDateInputValue = (function() {
     return local.toJSON().slice(0,10);
 });
 
-// var ex_note = new Note('0 note');
-// ex_note.text="Korem";
-// notes.push(ex_note); 
-// var ex_note = new Note('1 note');
-// notes.push(ex_note); 
-// var ex_note = new Note('2 note');
-// notes.push(ex_note); 
-// var ex_note = new Note('3 note');
-// notes.push(ex_note); 
-// var ex_note = new Note('4 note');
-// notes.push(ex_note); 
-// var ex_note = new Note('5 note');
-// notes.push(ex_note); 
-// print_notes();
+var ex_note = new Note('0 note');
+ex_note.text="Korem";
+notes.push(ex_note); 
+var ex_note = new Note('1 note');
+notes.push(ex_note); 
+var ex_note = new Note('2 note');
+notes.push(ex_note); 
+var ex_note = new Note('3 note');
+notes.push(ex_note); 
+var ex_note = new Note('4 note');
+notes.push(ex_note); 
+var ex_note = new Note('5 note');
+notes.push(ex_note); 
 pull_notes();
+print_notes();
+
 
 function pull_notes() {
+    return;
     $.ajax({
         url: "/server.php",
         async: false,
@@ -158,6 +159,7 @@ function pull_notes() {
 }
 
 function push_notes() {
+    return;
 
     let data = JSON.stringify({
         cmd : "push_notes",

@@ -9,6 +9,7 @@
         parse_str($data, $data); // If not JSON, just do same as PHP default method
     }
 
+    print_r($_POST);
     // $filename = "notes";
     // echo $filename;
     // $filelink= fopen($filename, 'w+');
@@ -27,7 +28,7 @@
     // echo $data;
 
     if ($_POST["cmd"] == "get_notes") {
-        header('Content-Type: application/json; charset=UTF-8');
+        header('Access-Control-Allow-Origin: *; Content-Type: application/json; charset=UTF-8');
         $notes = file_get_contents('notes', LOCK_EX);
         // $notes = fread($filelink, filesize($filename));
         echo $notes;
