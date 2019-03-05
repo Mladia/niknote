@@ -1,73 +1,77 @@
 max_rows = 40;
 var new_image = false;
 var image_to_upload;
-
-var search_pattern;
+var search_term = ""
+var show_notes = [];
 
 function print_notes() {
-    console.log("Current note is " + c_note_id + ",length:" + notes.length);
     //set current note
-
-    if (notes[0] == null || notes.length == 0) {
-        $('#currentNoteTitle').text("  ");
-        $('#currentNoteBox').find('p').text("  No notes saved. Your new note will appear here..");
-        $('#currentNoteTags').text("");
-        return;
-    }
-
-    let notes_searched = get_searched_notes();
+    show_notes = [];
+    show_notes = get_searched_notes(search_term);
+    
+    console.log("Current note is " + c_note_id + ",length:" + show_notes.length);
 
     //remove old notes
     for (i in notes_html){
       notes_html[i].remove();
     }
+
+    if (show_notes[0] == null || show_notes.length == 0) {
+        $('#currentNoteTitle').text("  ");
+        $('#currentNoteBox').find('p').text("  No notes found.");
+        $('#currentNoteTags').text("");
+        return;
+    }
+
    
-    if (notes[c_note_id] == null){
+    if (show_notes[c_note_id] == null){
         console.log("current note is null");
         c_note_id = mod(c_note_id+1, notes.length);
         print_notes();
     }
 
-    $('#currentNoteTitle').text(notes[c_note_id].title);
-    $('#currentNoteBox').find('p').text(notes[c_note_id].text);
-    $('#currentNoteTags').text(notes[c_note_id].tags);
+    $('#currentNoteTitle').text(show_notes[c_note_id].title);
+    $('#currentNoteBox').find('p').text(show_notes[c_note_id].text);
+    $('#currentNoteTags').text(show_notes[c_note_id].tags);
 
-    let rows = ( (max_rows > notes.length) ? notes.length : max_rows);
-    let limit_before = 2;
+    let rows = ( (max_rows > show_notes.length) ? show_notes.length : max_rows);
     let show_id = 0;
-    show_id = mod( (c_note_id - limit_before) , notes.length);
     for (i = 1; i <= rows; i++){
+        if (show_id == c_note_id) {
+            show_id =  mod( (show_id + 1),  show_notes.length ) ;
+            continue;
+        }
 
         let new_div = document.createElement('div');
         new_div.setAttribute('onclick','change_current(' + show_id + ')' );
         new_div.className = "noteContainer";
-        new_div.innerText = notes[show_id].title;
+        new_div.innerText = show_notes[show_id].title;
         notes_html.push(new_div);
 
         let new_div_inner = document.createElement('div');
         new_div_inner.className = "noteContainerTags";
-        new_div_inner.innerText = notes[show_id].tags;
+        new_div_inner.innerText = show_notes[show_id].tags;
         
         let big_container = document.getElementById('bigContainer');
         big_container.appendChild(new_div);
 
         new_div.appendChild(new_div_inner);
         
-        show_id =  mod( (show_id + 1),  notes.length ) ;
+        show_id =  mod( (show_id + 1),  show_notes.length ) ;
     }
 }
 
 
-var newNoteModal = document.getElementById("newNoteModal");
-var changeNoteModal = document.getElementById("changeNoteModal")
-var snoozeModal = document.getElementById("snoozeModal")
-var closeBtnNew = document.getElementById("closeBtnNew");
-var closeBtnChange = document.getElementById("closeBtnChange");
-var closeBtnSnooze = document.getElementById("closeBtnSnooze");
+const newNoteModal = document.getElementById("newNoteModal");
+const changeNoteModal = document.getElementById("changeNoteModal")
+const snoozeModal = document.getElementById("snoozeModal")
+const closeBtnNew = document.getElementById("closeBtnNew");
+const closeBtnChange = document.getElementById("closeBtnChange");
+const closeBtnSnooze = document.getElementById("closeBtnSnooze");
 
-var takePhotoNew = $('#takePhotoNew');
-var imageBlockNew = $('#newImageNote');
-var deleteNewImage = $('deleteImageNew');
+const takePhotoNew = $('#takePhotoNew');
+const imageBlockNew = $('#newImageNote');
+const deleteNewImage = $('deleteImageNew');
 
 
 function take_photo_new (){
@@ -123,34 +127,6 @@ function call_outside(e){
     }
 }
 
-function save_new_note(){
-    console.log("Save new note button");
-    let new_note_title = "";
-    let tags = [];
-
-    let new_note_title_field = document.getElementById("newNoteTitle");
-    let new_note_tags_field = document.getElementById("newNoteTags");
-    let new_note_text_field = document.getElementById("newNoteText");
-
-    new_note_title = new_note_title_field.value; 
-    if (new_note_title == "") {
-        // alert("Cannot save a note with an empty title");
-        return;
-    }
-    var new_note = new Note(new_note_title);
-    
-    new_note.text = new_note_text_field.value; 
-    new_note.tags = new_note_tags_field.value;
-    insert_new_note(new_note);
-    c_note_id = new_note.id;
-    
-    close_note_modal();
-    new_note_title_field.value = "";
-    new_note_tags_field.value = "";
-    new_note_text_field.text = "";
-
-    sendFile(c_note_id, image_to_upload);
-}
 
 function c_note_snooze() {
     show_snooze_modal();
@@ -236,10 +212,35 @@ function snoozeCustom(){
     }
 }
 
+const searchBar = document.forms['searchBox'].querySelector('input');
+searchBar.addEventListener("keyup", function(e){
+    const term = e.target.value.toLowerCase();
+    search_term = term;
+    print_notes();
+})
 
-function get_searched_notes(){
+function get_searched_notes(term){
     let alter_notes = [];
-    for (note in notes){
+    notes.forEach(function(note, index, array) {
+        let added = false;
+        if (note.title.toLowerCase().includes(term)) {
+            added = true;
+        }
 
-    }
+        if (note.text.toLowerCase().includes(term)) {
+            added = true;
+        }
+
+        note.tags.forEach(function(tag, index1, array1) {
+            if (tag.toLowerCase().includes(term)) {
+                added = true;
+            }
+        });
+
+        if (added) {
+             console.log("Note is " + note.id);
+             alter_notes.push(note);
+        }
+    });
+    return alter_notes;
 }

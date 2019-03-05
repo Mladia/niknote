@@ -412,3 +412,18 @@ button {
     animation-name: modalopen;
     animation-duration: 0.5s;
 }
+
+
+/* Search box */
+.searchBox {
+    /* width: 100px; */
+    margin-left: 20%;
+    margin-right: 4%; 
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+#searchBoxText {
+    width: 80%;
+    justify-content: center;
+    padding: 2px;
+}

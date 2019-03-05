@@ -73,16 +73,16 @@ function print_notes() {
 }
 
 
-var newNoteModal = document.getElementById("newNoteModal");
-var changeNoteModal = document.getElementById("changeNoteModal")
-var snoozeModal = document.getElementById("snoozeModal")
-var closeBtnNew = document.getElementById("closeBtnNew");
-var closeBtnChange = document.getElementById("closeBtnChange");
-var closeBtnSnooze = document.getElementById("closeBtnSnooze");
+const newNoteModal = document.getElementById("newNoteModal");
+const changeNoteModal = document.getElementById("changeNoteModal")
+const snoozeModal = document.getElementById("snoozeModal")
+const closeBtnNew = document.getElementById("closeBtnNew");
+const closeBtnChange = document.getElementById("closeBtnChange");
+const closeBtnSnooze = document.getElementById("closeBtnSnooze");
 
-var takePhotoNew = $('#takePhotoNew');
-var imageBlockNew = $('#newImageNote');
-var deleteNewImage = $('deleteImageNew');
+const takePhotoNew = $('#takePhotoNew');
+const imageBlockNew = $('#newImageNote');
+const deleteNewImage = $('deleteImageNew');
 
 
 function take_photo_new (){

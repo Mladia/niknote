@@ -6,8 +6,8 @@ let notes_html = [];
 function Note(title){
     this.id = get_first_free_id();
     this.title = title;
-    this.text = 'Lorem ipsum te';
-    this.tags = [ 'lo', 're'];
+    this.text = '';
+    this.tags = [];
     this.done = false;
 
     this.snoozed = false;
@@ -122,10 +122,12 @@ notes.push(ex_note);
 var ex_note = new Note('1 note');
 notes.push(ex_note); 
 var ex_note = new Note('2 note');
+ex_note.tags = ['baby', 'person'];
 notes.push(ex_note); 
 var ex_note = new Note('3 note');
 notes.push(ex_note); 
 var ex_note = new Note('4 note');
+ex_note.tags = ['ba'];
 notes.push(ex_note); 
 var ex_note = new Note('5 note');
 notes.push(ex_note); 
