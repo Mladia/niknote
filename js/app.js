@@ -6,7 +6,7 @@ let notes_html = [];
 function Note(title){
     this.id = get_first_free_id();
     this.title = title;
-    this.text = '';
+    this.text = '\n';
     this.tags = [];
     this.done = false;
 
@@ -29,8 +29,9 @@ function set_done(id) {
     if (is_empty()){
         return;
     }
+    console.log("Setting " + id + " as node");
     notes[id].done = true;
-    delet(id);
+    notes[id].snoozed = false;
 }
 
 function delete_note(id) {
@@ -39,6 +40,7 @@ function delete_note(id) {
     }
     // notes.splice( notes[id], 1 );
     console.log("1Deleting " + c_note_id);
+    delet(id);
 }
 
 function delet(id) {
@@ -73,13 +75,6 @@ function snooze (id, time, date) {
     push_notes();
 }
 
-function c_note_done(){
-    console.log('Setting current note as done!');
-    // notes[c_note_id].set_done();   
-    set_done(c_note_id);
-    print_notes();
-    push_notes();
-}
 
 function c_note_delete(){
     console.log("Deleting " + c_note_id);
@@ -95,14 +90,6 @@ function insert_new_note(new_note) {
     push_notes();
 }
 
-function go_back_note() {
-    c_note_id = mod(c_note_id-1, notes.length);
-    print_notes();
-}
-function go_for_note() {
-    c_note_id = mod(c_note_id+1, notes.length);
-    print_notes();
-}
 
 function change_current(id){
     console.log("Changing with " + id);

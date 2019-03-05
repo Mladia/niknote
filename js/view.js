@@ -29,6 +29,7 @@ function print_notes() {
         console.log("current note is null");
         c_note_id = mod(c_note_id+1, notes.length);
         print_notes();
+        return;
     }
 
     $('#currentNoteTitle').text(notes[c_note_id].title);
@@ -73,6 +74,14 @@ function print_notes() {
 }
 
 
+function go_back_note() {
+    c_note_id = mod(c_note_id-1, notes.length);
+    print_notes();
+}
+function go_for_note() {
+    c_note_id = mod(c_note_id+1, notes.length);
+    print_notes();
+}
 const newNoteModal = document.getElementById("newNoteModal");
 const changeNoteModal = document.getElementById("changeNoteModal")
 const snoozeModal = document.getElementById("snoozeModal")
@@ -167,15 +176,6 @@ function save_new_note(){
     sendFile(c_note_id, image_to_upload);
 }
 
-function c_note_snooze() {
-    show_snooze_modal();
-}
-
-function show_snooze_modal() {
-    snoozeModal.style.display = 'block';
-    $('#snoozeDate').val(new Date().toDateInputValue());
-}
-
 
 function c_note_change(){
     show_change_note_modal();
@@ -216,37 +216,82 @@ function save_changed_note(){
 }
 
 
+function c_note_done(){
+    console.log('Setting current note as done!');
+    // notes[c_note_id].set_done();   
+    set_done(c_note_id);
+    print_notes();
+    push_notes();
+}
+
+
+
+
+var timeControl;
+var dateControl;
+
+function c_note_snooze() {
+    show_snooze_modal();
+}
+
+function show_snooze_modal() {
+    snoozeModal.style.display = 'block';
+    //set current date
+    let today = new Date();
+    let currentDate = today.toDateInputValue();
+    $('#snoozeDate').val(currentDate);
+
+}
+
+
 function snoozeMorn(){
     console.log("Snoozing morning");
-    let timeControl = "09:00";
-    //TODO:
-    let dateControl = document.getElementById('#snoozeDate').value;
-    // let dateControl = $('#snoozeDate').value;
-    // new Date().toDateInputValue()
-    snooze(c_note_id, timeControl, dateControl);
-    close_note_modal();
+    timeControl = "09:00";
+    dateControl = $('#snoozeDate').value;
+    finishSnooze();
 }
 function snoozeAft(){
     console.log("Snoozing aft");
-    let timeControl = "14:00";
-    let dateControl = $('#snoozeDate').value;
-    snooze(c_note_id, timeControl, dateControl);
-    close_note_modal();
+    timeControl = "14:00";
+    dateControl = $('#snoozeDate').value;
+    finishSnooze();
 }
 function snoozeEve(){
     console.log("Snoozing evening");
-    let timeControl = "18:00";
-    let dateControl = $('#snoozeDate').value;
-    snooze(c_note_id, timeControl, dateControl);
-    close_note_modal();
+    timeControl = "18:00";
+    dateControl = $('#snoozeDate').value;
+    finishSnooze();
 }
 function snoozeCustom(){
     console.log("Snoozing custom");
-    let timeControl = document.getElementById("snoozeTime");
-    console.log("Snoozing for " + timeControl.value);
-    let is_valid = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(timeControl.value);
-    if (is_valid){
-        close_note_modal();
-        snooze(c_note_id, timeControl, dateControl);
+    timeControl = document.getElementById("snoozeTime").value;
+    dateControl = $('#snoozeDate').value;
+    finishSnooze();
+}
+
+function finishSnooze() {
+    let today = new Date();
+    let currentDate = today.toDateInputValue();
+    let curretTime = today.getHours() + ":" + today.getMinutes();
+
+    //is date valid
+    if (dateControl < currentDate) {
+        alert("Date is not valid");
+        return;
     }
+    
+    if (dateControl == currentDate 
+        || timeControl < curretTime){
+            alert("Time traveler alert! Cannot set a reminder in the past!");
+            return;
+    }
+    let is_valid = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(timeControl);
+    if (! is_valid){
+        alert("Time not valid");
+        return;
+    }
+
+    close_note_modal();
+    snooze(c_note_id, timeControl, dateControl);
+    close_note_modal();
 }

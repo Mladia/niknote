@@ -16,9 +16,9 @@
         <nav>
             <ul>
                 <li> <a href="index.html">Active</li>
-                <li><a href="#snoozed">Snoozed</a></li>
-                <li><a href="archived.html">Archived</a></li>
-                <li><a href="#search">Search</a></li>
+                <!-- <li><a href="#snoozed">Snoozed</a></li> -->
+                <!-- <li><a href="archived.html">Archived</a></li> -->
+                <li><a href="">Search</a></li>
             </ul>
         </nav>
     
@@ -61,12 +61,13 @@
         <p>
         <!--Lorem ipsum-->
         </p>
+        <br>
 
         <div class="currentNoteOptions">
             <button onclick="c_note_delete()">&times;</button>
-            <button onclick="c_note_change()">&#9997;</button>
-            <button onclick="c_note_snooze()">&#128337;</button>
-            <button onclick="c_note_done()">&#10004;</button>
+            <button  id="c_change_button"   c_note_change()">&#9997;</button>
+            <button id="c_snooze_button"  onclick="c_note_snooze()">&#128337;</button>
+            <button id="c_done_button" onclick="c_note_done()">&#10004;</button>
         </div>
     </div>
     <!-- <br> -->
