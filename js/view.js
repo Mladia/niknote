@@ -36,6 +36,14 @@ function print_notes() {
     $('#currentNoteBox').find('p').text(notes[c_note_id].text);
     $('#currentNoteTags').text(notes[c_note_id].tags);
 
+    if (! notes[c_note_id].image) {
+        $('#currentNoteImageDiv').hide()
+    } else {
+        load_current_image();
+        console.log("Showing image also!");
+        $('#currentNoteImageDiv').show();
+    }
+
     let rows = ( (max_rows > notes.length) ? notes.length : max_rows);
     let limit_before = 2;
     let show_id = 0;
@@ -95,16 +103,16 @@ const deleteNewImage = $('deleteImageNew');
 
 
 function show_photo_new_dialog() {
-    console.log("OK;");
+    console.log("Showing current ima");
     imageBlockNew.css("display", "initial") ;
     $('#newPhotoLabel').hide();
 }
 
 
 function delete_new_image (){
-    imageBlockNew.css("display", "none") ;
-    $('#newPhotoLabel').show();
-    //delete image note
+    $("#changeImageNote").css("display", "none") ;
+    $('#changePhotoLabel').show();
+    delete_current_image();
 }
 
 function show_new_note_modal() {
@@ -112,21 +120,28 @@ function show_new_note_modal() {
     $('#newPhotoLabel').show();
 }
 
-function take_change_photo() {
 
+function show_photo_change_dialog (){
+    //load current
+    $('#changeImageNote').show();
+    $('#changePhotoLabel').hide();
+    $('#changeImageNote').css("display", "initial");
 }
 
 function show_change_note_modal() {
     if(is_empty()){
         return;
     }
-    if(notes[c_note_id].picture_name == ""){
-    //no photo, take picture
-        $('#takePhotoChange').show();
-        $('#changeImageNote').css("display", "none");
-    } else {
-        $('#takePhotoChange').hide();
+    if(notes[c_note_id].image){
+        console.log("image");
+        //no photo, take picture
+        // $('#newPhotoLabel').show();
+        $('#changePhotoLabel').hide();
         $('#changeImageNote').css("display", "initial");
+    } else {
+        console.log("no image");
+        $('#changePhotoLabel').show();
+        $('#changeImageNote').css("display", "none");
     }
     changeNoteModal.style.display = 'block';
 }
@@ -172,13 +187,17 @@ function save_new_note(){
     new_note.tags = new_note_tags_field.value.split(",");
     insert_new_note(new_note);
     c_note_id = new_note.id;
-    
+     if (image_to_upload != "") {
+        sendFile(c_note_id, image_to_upload);
+        notes[c_note_id].image = true;
+        image_to_upload = "";
+    }
     close_note_modal();
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
 
-    sendFile(c_note_id, image_to_upload);
+   
 }
 
 
@@ -219,6 +238,7 @@ function save_changed_note(){
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
+    sendFile(c_note_id, image_to_upload);
 }
 
 

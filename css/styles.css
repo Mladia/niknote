@@ -154,6 +154,15 @@ button {
     word-wrap: break-word;
 }
 
+.currentNoteImage {
+    margin: 5px 5px 5px 5px;
+    /* float: left;  */
+    min-width: 50px;
+    min-height:40px;
+    width: 10%;
+    height: 12%;
+}
+
 .currentNoteBox p {
     word-wrap: break-word;
 }

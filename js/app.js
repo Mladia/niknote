@@ -1,7 +1,8 @@
-let c_note_id = 0;
+var c_note_id = 0;
 var max_rows;
 var notes = [];
-let notes_html = [];
+var notes_html = [];
+var c_image;
 
 function Note(title){
     this.id = get_first_free_id();
@@ -14,7 +15,7 @@ function Note(title){
     this.snoozed_time = "";
     this.snoozed_date = "";
 
-    this.picture_name = "";
+    this.image = false;
 
     this.describe = function(){
         return 'Note:' + this.id + ', title:' + 
@@ -32,6 +33,7 @@ function set_done(id) {
     console.log("Setting " + id + " as node");
     notes[id].done = true;
     notes[id].snoozed = false;
+    notes[id].image = false;
 }
 
 function delete_note(id) {
@@ -97,6 +99,12 @@ function change_current(id){
     print_notes();
 }
 
+function get_image(){
+    if (notes[c_note_id].image) {
+        return pull_image(c_note_id);
+    }
+}
+
 Date.prototype.toDateInputValue = (function() {
     var local = new Date(this);
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
@@ -108,6 +116,8 @@ ex_note.text="Korem";
 // ex_note.tags="[Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?".split(",");
 notes.push(ex_note); 
 var ex_note = new Note('1 note');
+ex_note.image = true;
+ex_note.tags = ["ho", "ma"];
 notes.push(ex_note); 
 var ex_note = new Note('2 note');
 ex_note.tags = ['baby', 'person'];
@@ -175,4 +185,213 @@ function push_notes() {
             console.log(thrownError);
         }
         });    
+}
+
+//checking file input
+if (window.File && window.FileReader && window.FormData) {
+	var $inputField = $('#photoNew');
+	$inputField.on('change', function (e) {
+		var file = e.target.files[0];
+
+		if (file) {
+			if (/^image\//i.test(file.type)) {
+				readFile(file);
+			} else {
+				alert('Not a valid image!');
+            }
+            
+            if (file.size > 100*1000000) {
+                alert("File is too big!");
+            }
+        }
+        console.log("Size: " + file.size);
+	});
+} else {
+	alert("File upload is not supported!");
+}
+
+function readFile(file) {
+    console.log("Reading file");
+	var reader = new FileReader();
+
+	reader.onloadend = function () {
+		processFile(reader.result, file.type);
+	}
+
+	reader.onerror = function () {
+		alert('There was an error reading the file!');
+	}
+
+	reader.readAsDataURL(file);
+}
+
+
+
+
+function processFile(dataURL, fileType) {
+
+	var image = new Image();
+	image.src = dataURL;
+
+	image.onload = function () {
+        new_image = true;
+        image_to_upload = dataURL;
+        //show imageBlock
+        show_photo_new_dialog();
+	};
+
+	image.onerror = function () {
+		alert('There was an error processing your file!');
+	};
+}
+
+
+//checking file input CHANGE
+if (window.File && window.FileReader && window.FormData) {
+	var $inputField = $('#photoChange');
+	$inputField.on('change', function (e) {
+		var file = e.target.files[0];
+
+		if (file) {
+			if (/^image\//i.test(file.type)) {
+				readFileChange(file);
+			} else {
+				alert('Not a valid image!');
+            }
+            
+            if (file.size > 100*1000000) {
+                alert("File is too big!");
+            }
+        }
+        console.log("Size: " + file.size);
+	});
+} else {
+	alert("File upload is not supported!");
+}
+
+function readFileChange(file) {
+    console.log("Reading file");
+	var reader = new FileReader();
+
+	reader.onloadend = function () {
+		processFileChange(reader.result, file.type);
+	}
+
+	reader.onerror = function () {
+		alert('There was an error reading the file!');
+	}
+
+	reader.readAsDataURL(file);
+}
+
+
+function processFileChange(dataURL, fileType) {
+
+	var image = new Image();
+	image.src = dataURL;
+
+	image.onload = function () {
+        new_image = true;
+        image_to_upload = dataURL;
+        //show imageBlock
+        show_photo_change_dialog();
+	};
+
+	image.onerror = function () {
+		alert('There was an error processing your file!');
+	};
+}
+
+function sendFile(id, fileData) {
+    console.log("Sending file");
+	var formData = new FormData();
+
+    formData.append('push', "yes");
+    formData.append('id', id);
+    formData.append('imageData', fileData);
+    
+    // return;
+	$.ajax({
+		type: 'POST',
+		url: '/server.php',
+		data: formData, 
+		contentType: false,
+        processData: false,
+        dataType: "json",
+		success: function (data) {
+            console.log(data);
+			if (data.success) {
+				// alert('Your file was successfully uploaded!');
+			} else {
+				alert('There was an error uploading your file1!');
+			}
+		},
+		error: function (data) {
+            console.log(data);
+			alert('There was an error uploading your file2!');
+		}
+    });
+    
+    new_image = false;
+    image_to_upload = "";
+}
+
+
+function pull_image(note_id) {
+    //send request for the image with id
+    //TODO:
+}
+
+function delete_image_server(id) {
+   $.ajax({
+        url: "server.php",
+        async: true,
+        type: "POST",
+        header: {'Access-Control-Allow-Origin': '*'},
+        dataType: "json",
+        // data: JSON.stringify(data), 
+        data: '{"delete" : ' + id + '}', 
+        contentType: 'application/json',
+        success: function (result) {
+            console.log("YE!");
+            console.log(result);
+        },
+        error: function (data) {
+            console.log(data.responseText);
+            // console.log(xhr)
+            console.log("NO!");
+            // console.log(thrownError);
+        }
+        });     
+}
+
+function delete_current_image() {
+    notes[c_note_id].image = false;
+    delete_image_server(c_note_id);
+}
+
+function load_current_image() {
+    //TODO: pull image
+    //set image to current
+    return;
+    $.ajax({
+        url: "server.php",
+        async: true,
+        type: "POST",
+        header: {'Access-Control-Allow-Origin': '*'},
+        dataType: "json",
+        // data: JSON.stringify(data), 
+        data: '{"image" : ' + c_note_id + '}', 
+        contentType: 'application/json',
+        success: function (result) {
+            console.log("YE!");
+            console.log(result);
+        },
+        error: function (data) {
+            console.log(data.responseText);
+            // console.log(xhr)
+            console.log("NO!");
+            // console.log(thrownError);
+        }
+        });      
 }

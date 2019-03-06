@@ -1,6 +1,6 @@
 <?php
 
-    $images_folder = "notes_images/";
+    $images_folder = "notes_images";
 
     $contentType = explode(';', $_SERVER['CONTENT_TYPE']); // Check all available Content-Type
     $rawBody = file_get_contents("php://input"); // Read body
@@ -14,7 +14,9 @@
     // $filename = "notes";
     // echo $filename;
     // $filelink= fopen($filename, 'w+');
-    if ($_POST["id"] != "") {
+    if ($_POST['push'] == "yes") {
+        assert ($_POST["id"] != "");
+        assert ($_POST["imageData"] != "");
         //request to upload image
         $note_id = $_POST["id"];
         $data = $_POST["imageData"];
@@ -40,10 +42,25 @@
             // dir doesn't exist, make it
             mkdir($images_folder);
           }
-        file_put_contents("${images_folder}img_${note_id}.{$type}", $data);
-        echo '{"status" : "WRITTEN"}';
+        file_put_contents("${images_folder}/img_${note_id}.{$type}", $data);
+        // file_put_contents("${images_folder}/current", $data);
+
+        echo '{"success" : "true"}';
     }
 
+    if (is_numeric($data->delete) ) {
+        $note_id = $data->delete;
+        //TODO:
+        //file detele;
+        echo '{"success" : "true"}';
+    }
+
+    if ($_POST['pull'] == "yes") {
+        assert ($_POST["id"] != "");
+
+        $note_id = $_POST["id"];
+        // $image = fileread
+    }
 
     if($data->cmd == "push_notes"){
         // $data->notes = $notes;
