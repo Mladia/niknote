@@ -151,14 +151,21 @@ button {
 .currentNoteTitle {
     font-weight: 400; 
     text-decoration: underline; 
+    word-wrap: break-word;
 }
 
 .currentNoteBox p {
     word-wrap: break-word;
 }
 .currentNoteTags {
+    /*TODO: Tags overflow  */
     float: right;
     margin: 4px;
+    word-wrap: break-word;
+    width: 25%;
+    height: 2%;
+    overflow:hidden;
+    white-space: normal;
 }
 
 .currentNoteOptions {
@@ -277,11 +284,43 @@ button {
     min-height:70px;
     padding: 3px 3px;
     margin: 5px 5px 5px 5px;
+    cursor: pointer; 
 }
 #takePhoto {
     margin-left: 5%;
     float: left;
 }
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    /* padding: 6px 12px; */
+    cursor: pointer; 
+
+    width: 20%;
+    height: 6%;
+    min-width: 90px;
+    min-height:70px;
+    padding: 3px 3px;
+    margin: 5px 5px 5px 5px;
+    border-radius: 2px;
+
+    background-color: #1C6EA4; 
+    border: none;
+    color: white;
+    /* padding: 15px 32px; */
+    text-align: center;
+    text-decoration: none;
+    /* vertical-align: middle; */
+    display: inline-block;
+    font-size: 0.85em;
+    line-height: 150%;
+    font-weight: 350;
+}
+
 #saveNew {
     margin-right: 5%;
     float: right;
@@ -426,4 +465,5 @@ button {
     width: 80%;
     justify-content: center;
     padding: 2px;
+    font-size: 1.1em;
 }

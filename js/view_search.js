@@ -3,7 +3,6 @@ var new_image = false;
 var image_to_upload;
 var search_term = ""
 var show_notes = [];
-//TODO: SEARCH< EDIT CURRENT NOTE
 
 function print_notes() {
     //set current note
@@ -37,21 +36,28 @@ function print_notes() {
     $('#currentNoteTags').text(show_notes[c_note_id].tags);
     //colors for done/snoozed
     if (show_notes[c_note_id].done) {
-        console.log("This note is done");
+        $('#currentNoteTitle').css('text-decoration', 'line-through')
         $('#currentNoteTitle').css("color", "green");
         $('#c_done_button').hide();
         $('#c_snooze_button').hide();
         $('#c_change_button').hide();
     } else if (show_notes[c_note_id].snoozed) {
         $('#currentNoteTitle').css("color", "orange");
-        $('#c_done_button').hide();
-        $('#c_snooze_button').hide();
-        $('#c_change_button').hide();
+        $('#currentNoteTitle').css('text-decoration', 'none')
+        $('#c_done_button').show();
+        $('#c_snooze_button').show();
+        $('#c_change_button').show();
+        $('#currentNoteTitle').text(show_notes[c_note_id].title +
+            "; Snoozed untill " + 
+        // $('#currentNoteBox').find('p').text( "Snoozed for " + 
+            show_notes[c_note_id].snoozed_time + " on " +
+            show_notes[c_note_id].snoozed_date );
     } else {
         $('#c_done_button').show();
         $('#c_snooze_button').show();
         $('#c_change_button').show();
         $('#currentNoteTitle').css("color", "black");
+        $('#currentNoteTitle').css('text-decoration', 'none')
     }
 
     let rows = ( (max_rows > show_notes.length) ? show_notes.length : max_rows);
@@ -70,10 +76,13 @@ function print_notes() {
         notes_html.push(new_div);
         if (show_notes[show_id].done) {
             new_div.style.color = "green";
+            new_div.style.textDecoration = "line-through";
         } else if (show_notes[show_id].snoozed) {
             new_div.style.color = "orange";
+            new_div.style.textDecoration = "none";
         } else {
             new_div.style.color = "black";
+            new_div.style.textDecoration = "none";
         }
 
         let new_div_inner = document.createElement('div');
@@ -196,7 +205,7 @@ function save_changed_note(){
     
     current_note.title = new_note_title_field.value;
     current_note.text = new_note_text_field.value; 
-    current_note.tags = new_note_tags_field.value;
+    current_note.tags = new_note_tags_field.value.split(",");
     
     close_note_modal();
     new_note_title_field.value = "";
@@ -221,30 +230,29 @@ function show_snooze_modal() {
 
 }
 
-
-
 function snoozeMorn(){
     console.log("Snoozing morning");
     timeControl = "09:00";
-    dateControl = $('#snoozeDate').value;
+    dateControl = $('#snoozeDate').val();
     finishSnooze();
 }
 function snoozeAft(){
     console.log("Snoozing aft");
     timeControl = "14:00";
-    dateControl = $('#snoozeDate').value;
+    dateControl = $('#snoozeDate').val();
+    console.log("date: " + dateControl);
     finishSnooze();
 }
 function snoozeEve(){
     console.log("Snoozing evening");
     timeControl = "18:00";
-    dateControl = $('#snoozeDate').value;
+    dateControl = $('#snoozeDate').val();
     finishSnooze();
 }
 function snoozeCustom(){
     console.log("Snoozing custom");
-    timeControl = document.getElementById("snoozeTime").value;
-    dateControl = $('#snoozeDate').value;
+    timeControl = $("#snoozeTime").val();
+    dateControl = $('#snoozeDate').val();
     finishSnooze();
 }
 
@@ -252,7 +260,7 @@ function finishSnooze() {
     let today = new Date();
     let currentDate = today.toDateInputValue();
     let curretTime = today.getHours() + ":" + today.getMinutes();
-
+    console.log("Trying to snooze " + timeControl + ", and " + dateControl);
     //is date valid
     if (dateControl < currentDate) {
         alert("Date is not valid");
@@ -260,7 +268,7 @@ function finishSnooze() {
     }
     
     if (dateControl == currentDate 
-        || timeControl < curretTime){
+        && timeControl < curretTime){
             alert("Time traveler alert! Cannot set a reminder in the past!");
             return;
     }

@@ -37,12 +37,12 @@
 
 <div class="bigContainer" id="bigContainer">
 
-    <div id="go_back_note">
+    <!-- <div id="go_back_note">
         <a onclick="go_back_note()" > &#8617; </a>
     </div>
     <div id="go_for_note">
         <a onclick="go_for_note()"> &#8618; </a>
-    </div>
+    </div> -->
 
     <!-- Notes before -->
     <div id="notesBefore"></div>
@@ -65,7 +65,7 @@
 
         <div class="currentNoteOptions">
             <button onclick="c_note_delete()">&times;</button>
-            <button  id="c_change_button"   c_note_change()">&#9997;</button>
+            <button  id="c_change_button"   onclick="c_note_change()">&#9997;</button>
             <button id="c_snooze_button"  onclick="c_note_snooze()">&#128337;</button>
             <button id="c_done_button" onclick="c_note_done()">&#10004;</button>
         </div>
@@ -156,7 +156,7 @@
                         <button onclick="delete_new_image()" id="deleteImageNew">&times;</button> 
                         <!-- <div style="clear: both;"></div> -->
                     </div>
-                    <button class="saveButton" id="saveNew" onclick="save_new_note()">Save</button>
+                    <button class="saveButton" id="saveNew" onclick="save_changed_note()">Save</button>
                 </div>
         </div>
     </div>

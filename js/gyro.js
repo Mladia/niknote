@@ -96,7 +96,6 @@ function handleOrientation(event) {
 //checking file input
 if (window.File && window.FileReader && window.FormData) {
 	var $inputField = $('#photoNew');
-
 	$inputField.on('change', function (e) {
 		var file = e.target.files[0];
 
@@ -136,6 +135,9 @@ function processFile(dataURL, fileType) {
 	image.onload = function () {
         new_image = true;
         image_to_upload = dataURL;
+        sendFile(c_note_id, image_to_upload);
+        //show imageBlock
+        show_photo_new_dialog();
 	};
 
 	image.onerror = function () {
@@ -149,27 +151,28 @@ function sendFile(id, fileData) {
     console.log("Sending file");
 	var formData = new FormData();
 
+    formData.append('id', id);
     formData.append('imageData', fileData);
     
-    console.log(formData);
-    return;
+    // return;
 	$.ajax({
 		type: 'POST',
 		url: '/server.php',
-		data: { name : "image_" + id, image : formData } ,
+		data: formData, 
 		contentType: false,
-		processData: false,
+        processData: false,
+        dataType: "json",
 		success: function (data) {
             console.log(data);
 			if (data.success) {
 				alert('Your file was successfully uploaded!');
 			} else {
-				alert('There was an error uploading your file!');
+				alert('There was an error uploading your file1!');
 			}
 		},
 		error: function (data) {
             console.log(data);
-			alert('There was an error uploading your file!');
+			alert('There was an error uploading your file2!');
 		}
     });
     

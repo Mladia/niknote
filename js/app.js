@@ -6,7 +6,7 @@ let notes_html = [];
 function Note(title){
     this.id = get_first_free_id();
     this.title = title;
-    this.text = '\n';
+    this.text = '';
     this.tags = [];
     this.done = false;
 
@@ -105,6 +105,7 @@ Date.prototype.toDateInputValue = (function() {
 
 var ex_note = new Note('0 note');
 ex_note.text="Korem";
+// ex_note.tags="[Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?".split(",");
 notes.push(ex_note); 
 var ex_note = new Note('1 note');
 notes.push(ex_note); 
