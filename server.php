@@ -38,34 +38,31 @@
             throw new \Exception('did not match data URI with image data');
         }
 
+        //TODO:
+        // convert to jpeg
+
         if (!is_dir($images_folder)) {
             // dir doesn't exist, make it
             mkdir($images_folder);
-          }
+        }
         file_put_contents("${images_folder}/img_${note_id}.{$type}", $data);
         // file_put_contents("${images_folder}/current", $data);
 
         echo '{"success" : "true"}';
     }
 
-    if (is_numeric($data->delete) ) {
-        $note_id = $data->delete;
-        //TODO:
-        //file detele;
+    mkdir("images/");
+
+    if (is_numeric($data->update_current)) {
+        $note_id = $data->update_current;
+        copy("${images_folder}/img_${note_id}.jpeg", "images/current.jpeg");
         echo '{"success" : "true"}';
-    }
-
-    if ($_POST['pull'] == "yes") {
-        assert ($_POST["id"] != "");
-
-        $note_id = $_POST["id"];
-        // $image = fileread
     }
 
     if($data->cmd == "push_notes"){
         // $data->notes = $notes;
         // echo $notes;
-        file_put_contents('notes', json_encode($data->notes), LOCK_EX);
+        file_put_contents('rsc/notes', json_encode($data->notes), LOCK_EX);
         // fwrite($filelink, json_encode($data->notes));
         header('Content-Type: application/json; charset=UTF-8');
         echo json_encode($data->notes);
@@ -73,13 +70,12 @@
         
     }
 
-    // echo $data;
-
     if ($_POST["cmd"] == "get_notes") {
         header('Access-Control-Allow-Origin: *; Content-Type: application/json; charset=UTF-8');
-        $notes = file_get_contents('notes', LOCK_EX);
+        $notes = file_get_contents('rsc/notes', LOCK_EX);
         // $notes = fread($filelink, filesize($filename));
         echo $notes;
     }
+
     fclose($filelink);
 ?>

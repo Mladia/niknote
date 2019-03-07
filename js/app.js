@@ -99,11 +99,6 @@ function change_current(id){
     print_notes();
 }
 
-function get_image(){
-    if (notes[c_note_id].image) {
-        return pull_image(c_note_id);
-    }
-}
 
 Date.prototype.toDateInputValue = (function() {
     var local = new Date(this);
@@ -116,7 +111,7 @@ ex_note.text="Korem";
 // ex_note.tags="[Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?".split(",");
 notes.push(ex_note); 
 var ex_note = new Note('1 note');
-ex_note.image = true;
+// ex_note.image = true;
 ex_note.tags = ["ho", "ma"];
 notes.push(ex_note); 
 var ex_note = new Note('2 note');
@@ -126,15 +121,18 @@ var ex_note = new Note('3 note');
 notes.push(ex_note); 
 var ex_note = new Note('4 note');
 ex_note.tags = ['ba'];
+// ex_note.image = true;
 notes.push(ex_note); 
 var ex_note = new Note('5 note');
 notes.push(ex_note); 
+c_note_id = 1;
 pull_notes();
 print_notes();
 
 
 function pull_notes() {
-    return;
+    // return;
+    console.log("Pulling notes request");
     $.ajax({
         url: "/server.php",
         async: false,
@@ -142,12 +140,11 @@ function pull_notes() {
         header: {'Access-Control-Allow-Origin': '*'},
         data: "cmd=get_notes",
         success: function (result) {
-            console.log(result);
-            console.log("YE!");
+            console.log("Pulling notes completed!");
             notes = result;
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            console.log("NO!");
+            console.log("Pullung notes ERROR!");
             console.log(xhr);
             console.log(thrownError);
         },
@@ -159,16 +156,16 @@ function pull_notes() {
 }
 
 function push_notes() {
-    return;
+    // return;
 
     let data = JSON.stringify({
         cmd : "push_notes",
         notes : notes 
     });
-    console.log(data);
+    console.log("Pushing notes request")
     $.ajax({
         url: "server.php",
-        async: false,
+        async: true,
         type: "POST",
         header: {'Access-Control-Allow-Origin': '*'},
         dataType: "json",
@@ -176,12 +173,11 @@ function push_notes() {
         data: data, 
         contentType: 'application/json',
         success: function (result) {
-            console.log("YE!");
-            console.log(result);
+            console.log("Pushing notes completed!");
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log(xhr);
-            console.log("NO!");
+            console.log("Pushing notes ERROR!");
             console.log(thrownError);
         }
         });    
@@ -291,10 +287,8 @@ function processFileChange(dataURL, fileType) {
 	image.src = dataURL;
 
 	image.onload = function () {
-        new_image = true;
         image_to_upload = dataURL;
-        //show imageBlock
-        show_photo_change_dialog();
+        show_loaded_imageOK();
 	};
 
 	image.onerror = function () {
@@ -303,7 +297,7 @@ function processFileChange(dataURL, fileType) {
 }
 
 function sendFile(id, fileData) {
-    console.log("Sending file");
+    console.log("Sending file request");
 	var formData = new FormData();
 
     formData.append('push', "yes");
@@ -314,21 +308,24 @@ function sendFile(id, fileData) {
 	$.ajax({
 		type: 'POST',
 		url: '/server.php',
-		data: formData, 
+        data: formData, 
+        async: true,
 		contentType: false,
         processData: false,
         dataType: "json",
 		success: function (data) {
-            console.log(data);
 			if (data.success) {
-				// alert('Your file was successfully uploaded!');
+                // alert('Your file was successfully uploaded!');
+                console.log("Sending image request completed");
+                load_current_image();
 			} else {
-				alert('There was an error uploading your file1!');
+                console.log(data);
+				alert('There was an ERROR sending your image!');
 			}
 		},
 		error: function (data) {
             console.log(data);
-			alert('There was an error uploading your file2!');
+			alert('There was an error sending your image2!');
 		}
     });
     
@@ -337,61 +334,37 @@ function sendFile(id, fileData) {
 }
 
 
-function pull_image(note_id) {
-    //send request for the image with id
-    //TODO:
-}
-
-function delete_image_server(id) {
-   $.ajax({
-        url: "server.php",
-        async: true,
-        type: "POST",
-        header: {'Access-Control-Allow-Origin': '*'},
-        dataType: "json",
-        // data: JSON.stringify(data), 
-        data: '{"delete" : ' + id + '}', 
-        contentType: 'application/json',
-        success: function (result) {
-            console.log("YE!");
-            console.log(result);
-        },
-        error: function (data) {
-            console.log(data.responseText);
-            // console.log(xhr)
-            console.log("NO!");
-            // console.log(thrownError);
-        }
-        });     
-}
-
-function delete_current_image() {
-    notes[c_note_id].image = false;
-    delete_image_server(c_note_id);
-}
-
 function load_current_image() {
-    //TODO: pull image
     //set image to current
-    return;
+    console.log("Loading current image request");
+    let s_data = JSON.stringify( 
+        {update_current : c_note_id}
+    );
+    
     $.ajax({
         url: "server.php",
         async: true,
         type: "POST",
         header: {'Access-Control-Allow-Origin': '*'},
         dataType: "json",
-        // data: JSON.stringify(data), 
-        data: '{"image" : ' + c_note_id + '}', 
-        contentType: 'application/json',
+        contentType: 'application/json',	
+        data: s_data, 
         success: function (result) {
-            console.log("YE!");
-            console.log(result);
+            if (result.success) {
+                console.log("Loading current image success!");
+                if (notes[c_note_id].image){
+                    let url = "images/current.jpeg?rnd="+Math.random();
+                    $('#currentNoteImage').attr("src", url);
+                }
+            } else {
+                console.log("result");
+                console.log("Loading current image ERROR1!");
+            }
         },
-        error: function (data) {
-            console.log(data.responseText);
-            // console.log(xhr)
-            console.log("NO!");
-            // console.log(thrownError);
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr);
+            console.log("Loading current image ERROR2!");
+            console.log(thrownError);
         }
         });      
 }

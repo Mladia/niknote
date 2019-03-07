@@ -4,7 +4,6 @@ var image_to_upload;
 
 
 function print_notes() {
-    console.log("Current note is " + c_note_id + ",length:" + notes.length);
     //set current note
 
     if (notes[0] == null || notes.length == 0) {
@@ -112,7 +111,7 @@ function show_photo_new_dialog() {
 function delete_new_image (){
     $("#changeImageNote").css("display", "none") ;
     $('#changePhotoLabel').show();
-    delete_current_image();
+    image_to_upload = ""
 }
 
 function show_new_note_modal() {
@@ -123,21 +122,35 @@ function show_new_note_modal() {
 
 function show_photo_change_dialog (){
     //load current
-    $('#changeImageNote').show();
+    $('#changeImageNote').hide();
     $('#changePhotoLabel').hide();
-    $('#changeImageNote').css("display", "initial");
+    $('#changeImageNote').css("display", "none");
+    $('#changeOK').show();
+}
+
+function show_loaded_imageOK () {
+    //TODO:
+    $('#changePhotoLabel').hide();
+    $('#imageChangeIMG').hide();
+    $('#deleteImageNew').hide();
+    $('#changeOK').show();
+    // $('#changeImageNote').css("display", "initial");
 }
 
 function show_change_note_modal() {
     if(is_empty()){
         return;
     }
+    $('#changeOK').hide();
     if(notes[c_note_id].image){
         console.log("image");
         //no photo, take picture
         // $('#newPhotoLabel').show();
         $('#changePhotoLabel').hide();
+        $('imageChangeIMG').show();
         $('#changeImageNote').css("display", "initial");
+        let url = "images/current.jpeg?rnd="+Math.random();
+        $('#imageChangeIMG').attr("src", url);
     } else {
         console.log("no image");
         $('#changePhotoLabel').show();
@@ -187,7 +200,7 @@ function save_new_note(){
     new_note.tags = new_note_tags_field.value.split(",");
     insert_new_note(new_note);
     c_note_id = new_note.id;
-     if (image_to_upload != "") {
+    if (image_to_upload != "") {
         sendFile(c_note_id, image_to_upload);
         notes[c_note_id].image = true;
         image_to_upload = "";
@@ -238,7 +251,13 @@ function save_changed_note(){
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
-    sendFile(c_note_id, image_to_upload);
+    if (image_to_upload != "") {
+        sendFile(c_note_id, image_to_upload);
+        notes[c_note_id].image = true;
+        image_to_upload = "";
+    } else {
+        notes[c_note_id].image = false;
+    }
 }
 
 
@@ -266,7 +285,6 @@ function show_snooze_modal() {
     let currentDate = today.toDateInputValue();
     $('#snoozeDate').val(currentDate);
     c_note_id = find_orig_note();
-
 }
 
 function snoozeMorn(){
