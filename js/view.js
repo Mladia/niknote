@@ -96,20 +96,16 @@ const closeBtnNew = document.getElementById("closeBtnNew");
 const closeBtnChange = document.getElementById("closeBtnChange");
 const closeBtnSnooze = document.getElementById("closeBtnSnooze");
 
-const takePhotoNew = $('#takePhotoNew');
-const imageBlockNew = $('#newImageNote');
-const deleteNewImage = $('deleteImageNew');
-
 
 function show_photo_new_dialog() {
+    //TODO: open, load image, close, repoen
     console.log("Showing current ima");
-    imageBlockNew.css("display", "initial") ;
+    $('#newImageNote').css("display", "initial") ;
     $('#newPhotoLabel').hide();
 }
 
-
 function delete_new_image (){
-    $("#changeImageNote").css("display", "none") ;
+    $("#changeImageBlock").hide();
     $('#changePhotoLabel').show();
     image_to_upload = ""
 }
@@ -119,24 +115,7 @@ function show_new_note_modal() {
     $('#newPhotoLabel').show();
 }
 
-
-function show_photo_change_dialog (){
-    //load current
-    $('#changeImageNote').hide();
-    $('#changePhotoLabel').hide();
-    $('#changeImageNote').css("display", "none");
-    $('#changeOK').show();
-}
-
-function show_loaded_imageOK () {
-    //TODO:
-    $('#changePhotoLabel').hide();
-    $('#imageChangeIMG').hide();
-    $('#deleteImageNew').hide();
-    $('#changeOK').show();
-    // $('#changeImageNote').css("display", "initial");
-}
-
+//#########
 function show_change_note_modal() {
     if(is_empty()){
         return;
@@ -145,18 +124,33 @@ function show_change_note_modal() {
     if(notes[c_note_id].image){
         console.log("image");
         //no photo, take picture
-        // $('#newPhotoLabel').show();
+        reload_current();
+        $("#changeImageBlock").show();
         $('#changePhotoLabel').hide();
-        $('imageChangeIMG').show();
-        $('#changeImageNote').css("display", "initial");
-        let url = "images/current.jpeg?rnd="+Math.random();
-        $('#imageChangeIMG').attr("src", url);
+        $('#imageChangeIMG').show();
+        $('#deleteImageNew').show();
     } else {
-        console.log("no image");
-        $('#changePhotoLabel').show();
-        $('#changeImageNote').css("display", "none");
+        $('#changeImageBlock').hide();
     }
     changeNoteModal.style.display = 'block';
+}
+
+function show_photo_change_dialog (){
+    //load current
+    $('#changePhotoLabel').hide();
+    // $('#changeImageBlock').css("display", "none");
+    $('#changeImageBlock').show();
+    $('#imageChangeIMG').show();
+    $('#deleteImageNew').show();
+}
+
+function show_loaded_imageOK () {
+    $('#changeImageBlock').show();
+    $('#changeOK').show();
+    $('#imageChangeIMG').hide();
+    $('#deleteImageNew').hide();
+    $('#changePhotoLabel').hide();
+    // $('#changeImageBlock').css("display", "initial");
 }
 
 closeBtnNew.addEventListener("click", close_note_modal);
@@ -166,8 +160,10 @@ function close_note_modal() {
     newNoteModal.style.display = 'none';
     changeNoteModal.style.display = 'none';
     snoozeModal.style.display = 'none';
-    takePhotoNew.show();
-    imageBlockNew.css("display", "none") ;
+    $("#takePhotoNew").show();
+    $("#imageBlockNew").css("display", "none") ;
+    $('#changeImageBlock').hide();
+    $('#changePhotoLabel').show();
     print_notes();
 }
 
@@ -209,8 +205,7 @@ function save_new_note(){
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
-
-   
+    reload_current();
 }
 
 

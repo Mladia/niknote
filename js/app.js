@@ -152,7 +152,7 @@ function pull_notes() {
         dataType: 'json',
         });    
 
-    print_notes();
+    // print_notes();
 }
 
 function push_notes() {
@@ -282,7 +282,7 @@ function readFileChange(file) {
 
 
 function processFileChange(dataURL, fileType) {
-
+    console.log("Processing file change");
 	var image = new Image();
 	image.src = dataURL;
 
@@ -352,10 +352,7 @@ function load_current_image() {
         success: function (result) {
             if (result.success) {
                 console.log("Loading current image success!");
-                if (notes[c_note_id].image){
-                    let url = "images/current.jpeg?rnd="+Math.random();
-                    $('#currentNoteImage').attr("src", url);
-                }
+                reload_current();
             } else {
                 console.log("result");
                 console.log("Loading current image ERROR1!");
@@ -367,4 +364,12 @@ function load_current_image() {
             console.log(thrownError);
         }
         });      
+}
+
+function reload_current(){
+    if (notes[c_note_id].image){
+        let url = "images/current.jpeg?rnd="+Math.random();
+        $('#currentNoteImage').attr("src", url);
+        $('#imageChangeIMG').attr("src", url);
+    }
 }

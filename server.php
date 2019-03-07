@@ -25,29 +25,34 @@
             $data = substr($data, strpos($data, ',') + 1);
             $type = strtolower($type[1]); // jpg, png, gif
         
-            if (!in_array($type, [ 'jpg', 'jpeg', 'gif', 'png' ])) {
-                throw new \Exception('invalid image type');
-            }
+            // if (!in_array($type, [ 'jpg', 'jpeg', 'gif', 'png' ])) {
+            //     throw new \Exception('invalid image type');
+            // }
         
+            if (!in_array($type, [ 'jpg', 'jpeg'])) {
+                // throw new \Exception('invalid image type');
+                die('invalid image type ' . $type);
+            }
             $data = base64_decode($data);
         
             if ($data === false) {
-                throw new \Exception('base64_decode failed');
+                // throw new \Exception('base64_decode failed');
+                die('base64_decode failed');
             }
         } else {
-            throw new \Exception('did not match data URI with image data');
+            // throw new \Exception('did not match data URI with image data');
+            die('did not match data URI with image data');
         }
 
         //TODO:
-        // convert to jpeg
+        // convert to jpg
 
         if (!is_dir($images_folder)) {
             // dir doesn't exist, make it
             mkdir($images_folder);
         }
-        file_put_contents("${images_folder}/img_${note_id}.{$type}", $data);
-        // file_put_contents("${images_folder}/current", $data);
-
+        file_put_contents("${images_folder}/img_${note_id}.${type}", $data);
+        // file_put_contents("${images_folder}/img_${note_id}.jpeg", $img);
         echo '{"success" : "true"}';
     }
 

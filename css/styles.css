@@ -359,9 +359,7 @@ input[type="file"] {
 #newImageNote {
     display: none;
 }
-#changeImageNote {
-    display: none;
-}
+
 .imageBlock button {
     /* float: right; */
     position: relative;

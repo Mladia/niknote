@@ -53,15 +53,19 @@
         <div class="currentNoteTitle" id="currentNoteTitle">
         <!--Note title -->
         </div>
-        
+
         <div class="currentNoteTags" id="currentNoteTags">
         <!--tags-->
         </div>
-
+        <br>
+        <div class="currentNoteImageDiv" id="currentNoteImageDiv">
+            <img  class="currentNoteImage" id="currentNoteImage"src="images/current.jpeg" alt="Current note photo">
+        </div>
         <p>
         <!--Lorem ipsum-->
         </p>
-        <br>
+
+        <br>  
 
         <div class="currentNoteOptions">
             <button onclick="c_note_delete()">&times;</button>
@@ -110,6 +114,7 @@
         </div>
     </div>
 
+   
     <div id="newNoteModal" class="noteModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -123,11 +128,18 @@
                         <textarea name="text" id="newNoteText" class="textModal" placeholder="Text"></textarea>
                 </div>
                 <div class="buttonsModal">
-                    <button class="saveButton" id="takePhotoNew" onclick="take_photo_new()">Take picture</button>
+                    <!-- <button class="saveButton" id="takePhotoNew" onclick="take_photo_new()">Take picture</button> -->
+                    <!-- <input id="photoNew" type="file" accept="image/*"> -->
+                    <label for="photoNew" id="newPhotoLabel" class="custom-file-upload">
+                            <br>
+                            Upload 
+                    </label>
                     <input id="photoNew" type="file" accept="image/*">
                     <div class="imageBlock" id="newImageNote">
-                        <img  class="imageNote" src="images/default.jpg" alt="default.jpg">
-                        <button onclick="delete_new_image()" id="deleteImageNew">&times;</button> 
+                        <div class="imageNote">
+                            OK!
+                        </div>
+                        <!-- <button onclick="delete_new_image()" id="deleteImageNew">&times;</button>  -->
                         <!-- <div style="clear: both;"></div> -->
                     </div>
                     <button class="saveButton" id="saveNew" onclick="save_new_note()">Save</button>
@@ -135,6 +147,7 @@
         </div>
         </div>
     </div>
+
 
 
     <div id="changeNoteModal" class="noteModal" >
@@ -150,9 +163,16 @@
                         <textarea name="text" id="changeNoteText" class="textModal" placeholder="Text"></textarea>
                 </div>
                 <div class="buttonsModal">
-                    <button class="saveButton" id="takePhotoChange" onclick="take_change_photo()">Take picture</button>
-                    <div class="imageBlock" id="changeImageNote">
-                        <img  class="imageNote" src="images/default.jpg" alt="default.jpg">
+                    <label for="photoChange" id="changePhotoLabel" class="custom-file-upload">
+                            <br>
+                            Upload 
+                    </label>
+                    <input id="photoChange" type="file" accept="image/*">
+                    <div class="imageBlock" id="changeImageBlock">
+                        <div id="changeOK">
+                            OK!
+                        </div>
+                        <img  class="imageNote" id="imageChangeIMG" src="images/current.jpeg" alt="default.jpeg">
                         <button onclick="delete_new_image()" id="deleteImageNew">&times;</button> 
                         <!-- <div style="clear: both;"></div> -->
                     </div>
@@ -161,6 +181,7 @@
         </div>
     </div>
 </div>
+
 
 
 <div id="demo">
