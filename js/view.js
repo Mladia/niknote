@@ -1,7 +1,5 @@
 var new_image = false;
 max_rows = 15;
-var image_to_upload;
-
 
 function print_notes() {
     //set current note
@@ -12,7 +10,7 @@ function print_notes() {
         $('#currentNoteTags').text("");
         return;
     }
-
+    
     if (notes[c_note_id].snoozed
         || notes[c_note_id].done) {
         c_note_id = mod(c_note_id+1, notes.length);
@@ -24,6 +22,7 @@ function print_notes() {
       notes_html[i].remove();
     }
    
+    image_to_upload = "";
     if (notes[c_note_id] == null){
         console.log("current note is null");
         c_note_id = mod(c_note_id+1, notes.length);
@@ -227,13 +226,6 @@ function c_note_change(){
 function save_changed_note(){
     console.log("Save change note button");
     let new_note_title = "";
-    let tags = [];
-
-    let new_note_title_field = document.getElementById("changeNoteTitle");
-    let new_note_tags_field = document.getElementById("changeNoteTags");
-    let new_note_text_field = document.getElementById("changeNoteText");
-
-    new_note_title = new_note_title_field.value; 
     if (new_note_title == "") {
         // alert("Canno save a note with an empty title");
         return;
@@ -286,7 +278,6 @@ function show_snooze_modal() {
     let today = new Date();
     let currentDate = today.toDateInputValue();
     $('#snoozeDate').val(currentDate);
-    c_note_id = find_orig_note();
 }
 
 function snoozeMorn(){

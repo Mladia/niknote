@@ -2,7 +2,7 @@ var c_note_id = 0;
 var max_rows;
 var notes = [];
 var notes_html = [];
-var c_image;
+var image_to_upload;
 
 function Note(title){
     this.id = get_first_free_id();
