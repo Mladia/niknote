@@ -208,6 +208,7 @@ function save_new_note(){
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
     reload_current();
+    push_notes();
 }
 
 
@@ -225,7 +226,14 @@ function c_note_change(){
 
 function save_changed_note(){
     console.log("Save change note button");
-    let new_note_title = "";
+
+     let tags = [];
+
+    let new_note_title_field = document.getElementById("changeNoteTitle");
+    let new_note_tags_field = document.getElementById("changeNoteTags");
+    let new_note_text_field = document.getElementById("changeNoteText");
+
+    new_note_title = new_note_title_field.value; 
     if (new_note_title == "") {
         // alert("Canno save a note with an empty title");
         return;
@@ -246,12 +254,14 @@ function save_changed_note(){
     }else {
         notes[c_note_id].image = false;
     }
+    console.log("Closing");
     
     close_note_modal();
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
 
+    push_notes();
 }
 
 
