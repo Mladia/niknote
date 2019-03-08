@@ -1,8 +1,6 @@
 <?php
-    // ini_set('display_errors', 1);
-    // ini_set('display_startup_errors', 1);
-    // error_reporting(E_ALL);
 
+    $images_folder = "notes_images";
 
     $contentType = explode(';', $_SERVER['CONTENT_TYPE']); // Check all available Content-Type
     $rawBody = file_get_contents("php://input"); // Read body
@@ -12,29 +10,16 @@
     } else {
         parse_str($data, $data); // If not JSON, just do same as PHP default method
     }
-
-
-   $images_folder = "notes_images";
-
+    // echo var_dump($_FILES['image']);
+    // $filename = "notes";
+    // echo $filename;
+    // $filelink= fopen($filename, 'w+');
     if ($_POST['push'] == "yes") {
         assert ($_POST["id"] != "");
         assert ($_POST["imageData"] != "");
         //request to upload image
         $note_id = $_POST["id"];
         $data = $_POST["imageData"];
-        push_image($note_id, $data);
-    } elseif($data->cmd == "push_notes"){
-        push_notes($data->notes);
-    } elseif ($_POST["cmd"] == "get_notes") {
-        get_notes();
-    } elseif (is_numeric($data->update_current)) {
-        update_current($data->update_current);
-    }
-
-
-
-    function push_image($note_id, $data){
-        $images_folder = $GLOBALS["images_folder"];
 
         if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
             $data = substr($data, strpos($data, ',') + 1);
@@ -66,53 +51,36 @@
             // dir doesn't exist, make it
             mkdir($images_folder);
         }
-        $rc = file_put_contents("${images_folder}/img_${note_id}.${type}", $data);
+        file_put_contents("${images_folder}/img_${note_id}.${type}", $data);
         // file_put_contents("${images_folder}/img_${note_id}.jpeg", $img);
-        if ($rc) {
-            echo '{"success" : "true"}';
-        } else {
-            echo '{"success" : "false"}';
-        }
+        echo '{"success" : "true"}';
     }
 
-    function update_current($note_id){
-        $images_folder = $GLOBALS["images_folder"];
-        // $note_id = $data->update_current;
-        $src = "${images_folder}/img_${note_id}.jpeg";
-        $dest = "images/current.jpeg";
+    mkdir("images/");
 
-        if (!is_dir("images")) {
-            // dir doesn't exist, make it
-            mkdir("images/");
-        }
-
-        $rc = copy($src, $dest);
-        if ($rc) {
-            echo '{"success" : "true"}';
-        } else {
-            echo '{"success" : "false"}';
-        }
+    if (is_numeric($data->update_current)) {
+        $note_id = $data->update_current;
+        copy("${images_folder}/img_${note_id}.jpeg", "images/current.jpeg");
+        echo '{"success" : "true"}';
     }
 
-    function push_notes($data_notes){
+    if($data->cmd == "push_notes"){
         // $data->notes = $notes;
         // echo $notes;
-        $rc = file_put_contents('rsc/notes', json_encode($data_notes), LOCK_EX);
-        header('Content-Type: application/json');
-        if ($rc) {
-            echo '{"success" : "true"}';
-        } else {
-            echo '{"success" : "false"}';
-        }
+        file_put_contents('rsc/notes', json_encode($data->notes), LOCK_EX);
+        // fwrite($filelink, json_encode($data->notes));
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode($data->notes);
+        // echo '{"status" : "WRITTEN"}';
         
     }
 
-    function get_notes(){
-        $notes = file_get_contents('rsc/notes', LOCK_EX);
+    if ($_POST["cmd"] == "get_notes") {
         header('Access-Control-Allow-Origin: *; Content-Type: application/json; charset=UTF-8');
+        $notes = file_get_contents('rsc/notes', LOCK_EX);
         // $notes = fread($filelink, filesize($filename));
-        // fwrite($filelink, json_encode($data->notes));
         echo $notes;
     }
 
+    fclose($filelink);
 ?>

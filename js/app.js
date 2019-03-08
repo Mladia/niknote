@@ -162,6 +162,7 @@ function push_notes() {
         cmd : "push_notes",
         notes : notes 
     });
+    console.log(data);
     console.log("Pushing notes request")
     $.ajax({
         url: "server.php",
@@ -354,7 +355,7 @@ function load_current_image() {
                 console.log("Loading current image success!");
                 reload_current();
             } else {
-                console.log("result");
+                console.log(result);
                 console.log("Loading current image ERROR1!");
             }
         },

@@ -135,7 +135,7 @@ function delete_new_image (){
 
 //#########
 function show_change_note_modal() {
-    if(is_empty()){
+    if(is_empty() || notes[c_note_id].done){
         return;
     }
     $('#changeOK').hide();

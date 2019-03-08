@@ -96,11 +96,17 @@ const closeBtnNew = document.getElementById("closeBtnNew");
 const closeBtnChange = document.getElementById("closeBtnChange");
 const closeBtnSnooze = document.getElementById("closeBtnSnooze");
 
+function show_new_note_modal() {
+    newNoteModal.style.display = 'block';
+
+    $('#newPhotoLabel').show();
+    $('#newImageNote').hide();
+}
 
 function show_photo_new_dialog() {
     //TODO: open, load image, close, repoen
     console.log("Showing current ima");
-    $('#newImageNote').css("display", "initial") ;
+    $('#newImageNote').show();
     $('#newPhotoLabel').hide();
 }
 
@@ -110,10 +116,7 @@ function delete_new_image (){
     image_to_upload = ""
 }
 
-function show_new_note_modal() {
-    newNoteModal.style.display = 'block';
-    $('#newPhotoLabel').show();
-}
+
 
 //#########
 function show_change_note_modal() {
@@ -241,18 +244,22 @@ function save_changed_note(){
     current_note.text = new_note_text_field.value; 
     current_note.tags = new_note_tags_field.value.split(",");
     
+    if (image_to_upload != "") {
+        sendFile(c_note_id, image_to_upload);
+        notes[c_note_id].image = true;
+        image_to_upload = "";
+    } else if (notes[c_note_id].image && image_to_upload == "") {
+        notes[c_note_id].image = true;
+        image_to_upload = "";
+    }else {
+        notes[c_note_id].image = false;
+    }
     
     close_note_modal();
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
-    if (image_to_upload != "") {
-        sendFile(c_note_id, image_to_upload);
-        notes[c_note_id].image = true;
-        image_to_upload = "";
-    } else {
-        notes[c_note_id].image = false;
-    }
+
 }
 
 
