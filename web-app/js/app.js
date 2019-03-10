@@ -162,7 +162,6 @@ function push_notes() {
         cmd : "push_notes",
         notes : notes 
     });
-    console.log(data);
     console.log("Pushing notes request")
     $.ajax({
         url: "server.php",

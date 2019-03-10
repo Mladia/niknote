@@ -81,11 +81,17 @@ function print_notes() {
 
 
 function go_back_note() {
-    c_note_id = mod(c_note_id-1, notes.length);
+    do {
+        c_note_id = mod(c_note_id-1, notes.length);
+    } while (notes[c_note_id] == null 
+        || notes[c_note_id].done || notes[c_note_id].snoozed);
     print_notes();
 }
 function go_for_note() {
-    c_note_id = mod(c_note_id+1, notes.length);
+    do {
+        c_note_id = mod(c_note_id+1, notes.length);
+    } while (notes[c_note_id] == null 
+        || notes[c_note_id].done || notes[c_note_id].snoozed);
     print_notes();
 }
 const newNoteModal = document.getElementById("newNoteModal");

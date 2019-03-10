@@ -109,15 +109,19 @@ function print_notes() {
     }
 }
 
+
 function go_back_note() {
-    c_note_id = mod(c_note_id-1, show_notes.length);
+    do {
+        c_note_id = mod(c_note_id-1, notes.length);
+    } while (notes[c_note_id] == null);
     print_notes();
 }
 function go_for_note() {
-    c_note_id = mod(c_note_id+1, show_notes.length);
+    do {
+        c_note_id = mod(c_note_id+1, notes.length);
+    } while (notes[c_note_id] == null);
     print_notes();
 }
-
 
 const newNoteModal = document.getElementById("newNoteModal");
 const changeNoteModal = document.getElementById("changeNoteModal")

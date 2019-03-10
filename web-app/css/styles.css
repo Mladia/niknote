@@ -152,6 +152,9 @@ button {
     font-weight: 400; 
     text-decoration: underline; 
     word-wrap: break-word;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
 }
 
 .currentNoteImage {
