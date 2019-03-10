@@ -1,40 +1,79 @@
-// This sample shows adding an action to an [AppBar] that opens a shopping cart.
-
 import 'package:flutter/material.dart';
+import 'package:niknote/.env.example.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:niknote/scoped_models/app_model.dart';
+import 'package:niknote/pages/register/register_page.dart';
+import 'package:niknote/pages/settings/settings_page.dart';
+import 'package:niknote/pages/auth/auth_page.dart';
+import 'package:niknote/pages/todo/todo_editor_page.dart';
+import 'package:niknote/pages/todo/todo_list_page.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  runApp(TodoApp());
+}
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class TodoApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Code Sample for material.AppBar.actions',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyStatelessWidget(),
-    );
+  State<StatefulWidget> createState() {
+    return _TodoAppState();
   }
 }
 
-class MyStatelessWidget extends StatelessWidget {
-  MyStatelessWidget({Key key}) : super(key: key);
+
+class _TodoAppState extends State<TodoApp> {
+  AppModel _model;
+  bool _isAuthenticated = true;
+  bool _isDarkThemeUsed = false;
+
+  @override
+  void initState() {
+    _model = AppModel();
+
+    _model.loadSettings();
+    _model.autoAuthentication();
+
+    _model.userSubject.listen((bool isAuthenticated) {
+      setState(() {
+        _isAuthenticated = isAuthenticated;
+      });
+    });
+
+    _model.themeSubject.listen((bool isDarkThemeUsed) {
+      setState(() {
+        _isDarkThemeUsed = isDarkThemeUsed;
+      });
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Hello World live reload'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            tooltip: 'Open shopping cart',
-            onPressed: () {
-              // ...
-            },
-          ),
-        ],
+    return ScopedModel<AppModel>(
+      model: _model,
+      child: MaterialApp(
+        title: Configure.AppName,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          accentColor: Colors.blue,
+          brightness: _isDarkThemeUsed ? Brightness.dark : Brightness.light,
+        ),
+        routes: {
+          '/': (BuildContext context) =>
+              _isAuthenticated ? TodoListPage(_model) : AuthPage(),
+          '/editor': (BuildContext context) =>
+              _isAuthenticated ? TodoEditorPage() : AuthPage(),
+          '/register': (BuildContext context) =>
+              _isAuthenticated ? TodoListPage(_model) : RegisterPage(),
+          '/settings': (BuildContext context) =>
+              _isAuthenticated ? SettingsPage(_model) : AuthPage(),
+        },
+        onUnknownRoute: (RouteSettings settings) {
+          return MaterialPageRoute(
+            builder: (BuildContext context) =>
+                _isAuthenticated ? TodoListPage(_model) : AuthPage(),
+          );
+        },
       ),
     );
   }
