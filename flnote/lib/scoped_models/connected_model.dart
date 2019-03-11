@@ -19,7 +19,7 @@ mixin CoreModel on Model {
   Todo _todo;
   bool _isLoading = false;
   Filter _filter = Filter.All;
-  User _user;
+  User _user = User( id: "0", email: "s@gmail.com", token: "s");
 }
 
 mixin TodosModel on CoreModel {
@@ -60,8 +60,13 @@ mixin TodosModel on CoreModel {
   }
 
   Future fetchTodos() async {
+    print("Fetching todos");
     _isLoading = true;
     notifyListeners();
+
+    _isLoading = false;
+    notifyListeners();
+    return;
 
     try {
       //TODO: read notes from URL
@@ -115,7 +120,7 @@ mixin TodosModel on CoreModel {
       'content': content,
       'priority': priority.toString(),
       'isDone': isDone,
-      'userId': _user.id,
+      // 'userId': _user.id,
     };
 
     try {
@@ -169,6 +174,7 @@ mixin TodosModel on CoreModel {
     };
 
     try {
+      //TODO: create new note
       final http.Response response = await http.put(
         '${Configure.FirebaseUrl}/todos/${currentTodo.id}.json?auth=${_user.token}',
         body: json.encode(formData),
@@ -178,7 +184,7 @@ mixin TodosModel on CoreModel {
         _isLoading = false;
         notifyListeners();
 
-        return false;
+        // return false;
       }
 
       Todo todo = Todo(
@@ -291,9 +297,11 @@ mixin TodosModel on CoreModel {
 mixin UserModel on CoreModel {
   Timer _authTimer;
   PublishSubject<bool> _userSubject = PublishSubject();
+  var defUser = User( id: "0", email: "s@gmail.com", token: "s");
 
   User get user {
-    return _user;
+    return defUser;
+    // return _user;
   }
 
   PublishSubject<bool> get userSubject {
@@ -325,7 +333,6 @@ mixin UserModel on CoreModel {
       String message;
 
       if (responseData.containsKey('idToken')) {
-        return {'success': true};
 
         _user = User(
           id: responseData['localId'],
@@ -397,7 +404,7 @@ mixin UserModel on CoreModel {
       String message;
 
       if (responseData.containsKey('idToken')) {
-        return {'success': true};
+        // return {'success': true};
         _user = User(
           id: responseData['localId'],
           email: responseData['email'],
@@ -556,6 +563,7 @@ mixin SettingsModel on CoreModel {
     final prefs = await SharedPreferences.getInstance();
     final isDarkThemeUsed = _loadIsDarkThemeUsed(prefs);
 
+    print("is Shortcuts enabled");
     _settings = Settings(
       isShortcutsEnabled: _loadIsShortcutsEnabled(prefs),
       isDarkThemeUsed: isDarkThemeUsed,

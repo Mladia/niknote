@@ -27,11 +27,13 @@ class _TodoAppState extends State<TodoApp> {
 
   @override
   void initState() {
+    print("initState TodoAppState");
     _model = AppModel();
 
     _model.loadSettings();
     _model.autoAuthentication();
 
+    print("User subject");
     _model.userSubject.listen((bool isAuthenticated) {
       setState(() {
         _isAuthenticated = isAuthenticated;
@@ -60,7 +62,7 @@ class _TodoAppState extends State<TodoApp> {
         ),
         routes: {
           '/': (BuildContext context) =>
-              _isAuthenticated ? TodoListPage(_model) : AuthPage(),
+              TodoListPage(_model),
           '/editor': (BuildContext context) =>
               _isAuthenticated ? TodoEditorPage() : AuthPage(),
           '/register': (BuildContext context) =>

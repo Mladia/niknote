@@ -77,6 +77,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
             }
           });
         } else {
+          print("Creating todo");
           model
               .createTodo(
             _formData['title'],

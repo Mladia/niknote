@@ -24,16 +24,17 @@ class _AuthPageState extends State<AuthPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void _authenticate(AppModel model) async {
-    if (!_formKey.currentState.validate()) {
-      return;
-    }
+    // if (!_formKey.currentState.validate()) {
+    //   return;
+    // }
 
-    _formKey.currentState.save();
+    // _formKey.currentState.save();
 
     Map<String, dynamic> authResult =
         await model.authenticate(_formData['email'], _formData['password']);
 
     if (authResult['success']) {
+      print("success on authentication");
     } else {
       MessageDialog.show(context, message: authResult['message']);
     }

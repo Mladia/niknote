@@ -39,9 +39,6 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   Widget _buildFloatingActionButton(AppModel model) {
-    if (model.settings.isShortcutsEnabled) {
-      return ShortcutsEnabledTodoFab(model);
-    } else {
       return FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
@@ -50,7 +47,6 @@ class _TodoListPageState extends State<TodoListPage> {
           Navigator.pushNamed(context, '/editor');
         },
       );
-    }
   }
 
   Widget _buildAllFlatButton(AppModel model) {

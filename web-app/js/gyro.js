@@ -73,6 +73,7 @@ function handleOrientation(event) {
     beta     = event.beta;
     gamma    = event.gamma;
   
+    // TODO on comment out, gyro doesn't work
 
     output.innerHTML = "";
     output.innerHTML = "alpha: " + alpha + "\n";
@@ -90,6 +91,8 @@ function handleOrientation(event) {
     }
 
     handle_gestures();
+
+    output.innerHTML = "";
 }
 
 
@@ -191,11 +194,11 @@ function moveTouch(e) {
     if (diffY > 0) {
       // swiped up
       console.log("swiped up");
-      go_back_note();
+      go_for_note();
     } else {
       // swiped down
       console.log("swiped down");
-      go_for_note();
+      go_back_note();
     }  
   }
  
