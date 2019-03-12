@@ -2,6 +2,7 @@ var c_note_id = 0;
 var max_rows;
 var notes = [];
 var notes_html = [];
+var unsnooze = [];
 var image_to_upload;
 
 function Note(title){
@@ -125,7 +126,9 @@ ex_note.tags = ['ba'];
 notes.push(ex_note); 
 var ex_note = new Note('5 note');
 notes.push(ex_note); 
-c_note_id = 1;
+c_note_id = 1; 
+
+
 pull_notes();
 print_notes();
 
@@ -142,6 +145,7 @@ function pull_notes() {
         success: function (result) {
             console.log("Pulling notes completed!");
             notes = result;
+            unsnooze_notes();
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log("Pullung notes ERROR!");
@@ -373,3 +377,18 @@ function reload_current(){
         $('#imageChangeIMG').attr("src", url);
     }
 }
+
+function unsnooze_notes() {
+    let today = new Date();
+    let currentDate = today.toDateInputValue();
+    let currentTime = today.getHours() + ":" + today.getMinutes();
+    for (let i = 0; i < notes.length && notes[i].snoozed; i++) {
+       if (notes[i].snoozed_date >= currentDate
+            && notes[i].snoozed_time >= currentTime) {
+                unsnooze.push( { note : notes[i], id: i } );
+            }
+    }
+
+
+}
+   ;

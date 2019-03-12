@@ -269,7 +269,7 @@ function save_changed_note(){
         notes[c_note_id].image = true;
         image_to_upload = "";
     } else if (notes[c_note_id].image && image_to_upload == "") {
-        notes[c_note_id].image = true;
+        notes[c_note_id].image = false;
         image_to_upload = "";
     }else {
         notes[c_note_id].image = false;

@@ -10,9 +10,13 @@ function print_notes() {
         $('#currentNoteTags').text("");
         return;
     }
+
+    show_snoozed_notes();
     
     if (notes[c_note_id].snoozed
         || notes[c_note_id].done) {
+
+        // go_for_note();
         c_note_id = mod(c_note_id+1, notes.length);
     }
 
@@ -255,7 +259,7 @@ function save_changed_note(){
         notes[c_note_id].image = true;
         image_to_upload = "";
     } else if (notes[c_note_id].image && image_to_upload == "") {
-        notes[c_note_id].image = true;
+        notes[c_note_id].image = false;
         image_to_upload = "";
     }else {
         notes[c_note_id].image = false;
@@ -348,3 +352,45 @@ function finishSnooze() {
     snooze(c_note_id, timeControl, dateControl);
     close_note_modal();
 }
+
+function show_snoozed_notes() {
+
+    if (unsnooze.length == 0) {
+        $("#unsnoozeModel").css("display", "none");
+        return;
+    }
+    
+    console.log("Showing snoozed notes");
+
+    let snoozed_tuple = unsnooze[unsnooze.length-1];
+    let snoozed_id = snoozed_tuple.id;
+    let snoozed_note = snoozed_tuple.note;
+    let info_text = "Snoozed for ";
+    info_text += snoozed_note.snoozed_date + ", " 
+                                + snoozed_note.snoozed_time ;
+                                
+    c_note_id = snoozed_id;
+    reload_current();
+    if (!snoozed_note.image) {
+        $("#unsnoozedNoteImage").hide();
+    } else {
+        $("#unsnoozedNoteImage").show();
+    }
+    $("#infoSnooze").text(info_text);
+    $("#unsnoozedTitle").text(snoozed_note.title);
+    $("#unsnoozedTags").text(snoozed_note.tags);
+    $("#unsnoozedText").text(snoozed_note.text);
+    
+
+    $("#unsnoozeModel").css("display", "block");
+}
+
+$( "#unsnooze_ok" ).click(function() {
+    console.log("Unsnoozing note");
+    let snooze_id = unsnooze.pop().id;
+    notes[snooze_id].snoozed = false;
+    notes[snooze_id].snoozed_date = "";
+    notes[snooze_id].snoozed_time = "";
+    $("#unsnoozeModel").css("display", "none");
+    print_notes();
+});
