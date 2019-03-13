@@ -3,12 +3,15 @@ import 'package:niknote/models/Priority.dart';
 
 
 class Todo {
-  final String id;
+  final int id;
   final String title;
   final String content;
   final Priority priority;
   final bool isDone;
-  final String userId;
+  final bool snoozed;
+  final String snoozed_time;
+  final String snoozed_date;
+  final List<String> tags;
 
   Todo({
     @required this.id,
@@ -16,6 +19,15 @@ class Todo {
     this.content,
     this.priority = Priority.Low,
     this.isDone = false,
-    @required this.userId,
+    this.snoozed = false,
+    this.snoozed_time,
+    this.snoozed_date, 
+    this.tags
   });
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "Note: $id, title: " + this.title;
+  }
 }

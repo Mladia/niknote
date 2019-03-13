@@ -55,7 +55,6 @@ class _ShortcutsEnabledTodoFabState extends State<ShortcutsEnabledTodoFab>
                 _model.setCurrentTodo(Todo(
                   id: null,
                   title: '',
-                  userId: _model.user.id,
                   priority: Priority.Low,
                 ));
 
@@ -80,7 +79,6 @@ class _ShortcutsEnabledTodoFabState extends State<ShortcutsEnabledTodoFab>
                 _model.setCurrentTodo(Todo(
                   id: null,
                   title: '',
-                  userId: _model.user.id,
                   priority: Priority.Medium,
                 ));
 
@@ -105,7 +103,6 @@ class _ShortcutsEnabledTodoFabState extends State<ShortcutsEnabledTodoFab>
                 _model.setCurrentTodo(Todo(
                   id: null,
                   title: '',
-                  userId: _model.user.id,
                   priority: Priority.High,
                 ));
 

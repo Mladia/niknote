@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:niknote/.env.example.dart';
 
 import 'package:scoped_model/scoped_model.dart';
 
+import 'package:http/http.dart' as http;
 import 'package:niknote/models/Todo.dart';
 import 'package:niknote/models/Priority.dart';
 import 'package:niknote/scoped_models/app_model.dart';
@@ -33,26 +36,63 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
       title: Text(Configure.AppName),
       backgroundColor: Colors.blue,
       actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.lock),
-          onPressed: () async {
-            bool confirm = await ConfirmDialog.show(context);
-
-            if (confirm) {
-              Navigator.pop(context);
-
-              model.logout();
-            }
-          },
-        ),
       ],
     );
+  }
+
+
+Future<http.Response> postRequest () async {
+
+  String url = "http://192.168.2.38/server.php";
+  String body = "cmd=get_notes";
+  // final http.Response response = await http.post(url, body: body);
+
+  http.post(url,
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: body
+  ).then((http.Response response) {
+    print("Response status: ${response.statusCode}");
+    print("Response body: ${response.contentLength}");
+    // print(response.headers);
+    // print(response.request);
+    // print(response.body);
+
+    final List <dynamic> todoListData = json.decode(response.body);
+
+    if (todoListData == null) {
+      print("Fetched notes are null");
+      return;
+    }
+    todoListData.forEach( (dynamic todoData) {
+      if (todoData == null) {
+        print("null note");
+        return;
+      }
+      
+      final Todo todo = Todo (
+        id: todoData['id'],
+        title: todoData['title'],
+        content: todoData['text'],
+        snoozed: todoData['snoozed'],
+        isDone: todoData["done"],
+        snoozed_date: todoData['snoozed_date'],
+        snoozed_time: todoData['snoozed_time'],
+        tags: new List<String>.from( todoData['tags'])
+      );
+      print(todo.toString());
+    });
+
+
+  });
   }
 
   Widget _buildFloatingActionButton(AppModel model) {
     return FloatingActionButton(
       child: Icon(Icons.save),
       onPressed: () {
+        print("Save is pressed");
+        postRequest();
+
         if (!_formKey.currentState.validate()) {
           return;
         }
@@ -77,7 +117,6 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
             }
           });
         } else {
-          print("Creating todo");
           model
               .createTodo(
             _formData['title'],
@@ -131,18 +170,6 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        ToggleFormField(
-          initialValue: isDone,
-          onSaved: (bool value) {
-            _formData['isDone'] = value;
-          },
-        ),
-        PriorityFormField(
-          initialValue: priority,
-          onSaved: (Priority value) {
-            _formData['priority'] = value;
-          },
-        ),
       ],
     );
   }

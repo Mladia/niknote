@@ -59,49 +59,59 @@ mixin TodosModel on CoreModel {
     _todo = todo;
   }
 
+
+
+
   Future fetchTodos() async {
     print("Fetching todos");
     _isLoading = true;
     notifyListeners();
 
-    _isLoading = false;
-    notifyListeners();
-    return;
-
     try {
       //TODO: read notes from URL
-      final http.Response response = await http.get(
-          '${Configure.FirebaseUrl}/todos.json?auth=${_user.token}&orderBy="userId"&equalTo="${_user.id}"');
+      String url = "http://192.168.2.38/server.php";
+      String body = "cmd=get_notes";
+      final http.Response response = await http.post(
+        url,
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: body
+      );
 
       if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
+        print("not 200 or 201 status code");
         notifyListeners();
-
         return;
       }
 
-      final Map<String, dynamic> todoListData = json.decode(response.body);
 
+    final List <dynamic> todoListData = json.decode(response.body);
       if (todoListData == null) {
+        print("Fetched notes are null");
         _isLoading = false;
         notifyListeners();
-
         return;
       }
 
-      todoListData.forEach((String todoId, dynamic todoData) {
-        final Todo todo = Todo(
-          id: todoId,
+    todoListData.forEach( (dynamic todoData) {
+      if (todoData == null) {
+        print("null note");
+        return;
+      }
+      
+        final Todo todo = Todo (
+          id: todoData['id'],
           title: todoData['title'],
-          content: todoData['content'],
-          priority: PriorityHelper.toPriority(todoData['priority']),
-          isDone: todoData['isDone'],
-          userId: _user.id,
+          content: todoData['text'],
+          snoozed: todoData['snoozed'],
+          isDone: todoData["done"],
+          snoozed_date: todoData['snoozed_date'],
+          snoozed_time:todoData['snoozed_time'],
+          tags: new List<String>.from( todoData['tags'])
         );
-
+        print(todo.toString());
         _todos.add(todo);
       });
-
       _isLoading = false;
       notifyListeners();
     } catch (error) {
@@ -114,37 +124,37 @@ mixin TodosModel on CoreModel {
       String title, String content, Priority priority, bool isDone) async {
     _isLoading = true;
     notifyListeners();
-
+    print("Creating todo");
     final Map<String, dynamic> formData = {
       'title': title,
       'content': content,
       'priority': priority.toString(),
       'isDone': isDone,
-      // 'userId': _user.id,
+      'userId': _user.id,
     };
-
+    print("For user:" + _user.id);
     try {
-      final http.Response response = await http.post(
-        '${Configure.FirebaseUrl}/todos.json?auth=${_user.token}',
-        body: json.encode(formData),
-      );
+      // final http.Response response = await http.post(
+      //   '${Configure.FirebaseUrl}/todos.json?auth=${_user.token}',
+      //   body: json.encode(formData),
+      // );
 
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        _isLoading = false;
-        notifyListeners();
+      // if (response.statusCode != 200 && response.statusCode != 201) {
+      //   _isLoading = false;
+      //   notifyListeners();
 
-        return false;
-      }
+      //   return false;
+      // }
 
-      final Map<String, dynamic> responseData = json.decode(response.body);
+      // final Map<String, dynamic> responseData = json.decode(response.body);
 
       Todo todo = Todo(
-        id: responseData['name'],
+        id: 0,
+        // id: responseData['name'],
         title: title,
         content: content,
         priority: priority,
-        isDone: isDone,
-        userId: _user.id,
+        isDone: isDone
       );
       _todos.add(todo);
 
@@ -192,8 +202,7 @@ mixin TodosModel on CoreModel {
         title: title,
         content: content,
         priority: priority,
-        isDone: isDone,
-        userId: _user.id,
+        isDone: isDone
       );
       int todoIndex = _todos.indexWhere((t) => t.id == currentTodo.id);
       _todos[todoIndex] = todo;
@@ -210,7 +219,7 @@ mixin TodosModel on CoreModel {
     }
   }
 
-  Future<bool> removeTodo(String id) async {
+  Future<bool> removeTodo(int id) async {
     _isLoading = true;
     notifyListeners();
 
@@ -243,7 +252,7 @@ mixin TodosModel on CoreModel {
     }
   }
 
-  Future<bool> toggleDone(String id) async {
+  Future<bool> toggleDone(int id) async {
     _isLoading = true;
     notifyListeners();
 
@@ -275,8 +284,7 @@ mixin TodosModel on CoreModel {
         title: todo.title,
         content: todo.content,
         priority: todo.priority,
-        isDone: !todo.isDone,
-        userId: _user.id,
+        isDone: !todo.isDone
       );
       int todoIndex = _todos.indexWhere((t) => t.id == id);
       _todos[todoIndex] = todo;
@@ -293,6 +301,8 @@ mixin TodosModel on CoreModel {
     }
   }
 }
+
+
 
 mixin UserModel on CoreModel {
   Timer _authTimer;
