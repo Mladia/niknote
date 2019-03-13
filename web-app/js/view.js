@@ -4,22 +4,30 @@ max_rows = 15;
 function print_notes() {
     //set current note
 
-    if (notes[0] == null || notes.length == 0) {
+    if (notes.length == 0) {
         $('#currentNoteTitle').text("  ");
         $('#currentNoteBox').find('p').text("  No notes saved. Your new note will appear here..");
         $('#currentNoteTags').text("");
+        $('#currentNoteImageDiv').hide()
         return;
     }
 
-    show_snoozed_notes();
+    if (show_snoozed_notes()){
+        return;
+    }
+
+    if (notes[c_note_id] == null){
+        console.log("Current is null");
+        go_for_note();
+        return;
+    }
     
     if (notes[c_note_id].snoozed
         || notes[c_note_id].done) {
 
-        // go_for_note();
-        c_note_id = mod(c_note_id+1, notes.length);
+         go_for_note();
+        return;
     }
-
 
     //remove old notes
     for (i in notes_html){
@@ -27,12 +35,6 @@ function print_notes() {
     }
    
     image_to_upload = "";
-    if (notes[c_note_id] == null){
-        console.log("current note is null");
-        c_note_id = mod(c_note_id+1, notes.length);
-        print_notes();
-        return;
-    }
 
     $('#currentNoteTitle').text(notes[c_note_id].title);
     $('#currentNoteBox').find('p').text(notes[c_note_id].text);
@@ -41,21 +43,46 @@ function print_notes() {
     if (! notes[c_note_id].image) {
         $('#currentNoteImageDiv').hide()
     } else {
-        load_current_image();
+        load_current_image(c_note_id);
         console.log("Showing image also!");
         $('#currentNoteImageDiv').show();
     }
 
-    let rows = ( (max_rows > notes.length) ? notes.length : max_rows);
-    let limit_before = 2;
-    let show_id = 0;
-    show_id = mod( (c_note_id - limit_before) , notes.length);
-    for (i = 1; i <= rows; i++){
+    let notes_length_abs = 0;
+    for( let i = 0; i <notes.length; i++) {
+        if (notes[i] == null || notes[i].done || notes[i].snoozed) {
+            continue;
+        }
 
-        if (notes[show_id].snoozed
-            || notes[show_id].done
-            || show_id == c_note_id){
+        notes_length_abs++;
+    }
+    let rows = ( (max_rows > notes_length_abs) ? notes_length_abs : max_rows) -1 ;
+    let limit_before = 2;
+    let show_id = c_note_id;
+    for (let i=0; i<limit_before; i++) {
+        do {
+            show_id = mod( (show_id - 1), notes.length );
+        } while (notes[show_id] == null
+            || notes[show_id].snoozed
+            || notes[show_id].done );
+    }
+    for (let i = 1; i <= rows; i++){
+
+        if (show_id == c_note_id) {
+            // console.log("barrier");
+            show_id = c_note_id + 1;
+        }
+        while (notes[show_id] == null || show_id == c_note_id) {
+            // console.log("Show id is null");
             show_id = mod( (show_id + 1), notes.length );
+        }
+
+        
+        if (notes[show_id].snoozed
+            || notes[show_id].done){
+            show_id = mod( (show_id + 1), notes.length );
+            // console.log("ssnoozed or done");
+            i = i-1;
             continue;
         }
  
@@ -85,17 +112,31 @@ function print_notes() {
 
 
 function go_back_note() {
+    console.log("Go back note");
+    if (notes.length == 0) {
+        print_notes();
+        return;
+    }
+
     do {
         c_note_id = mod(c_note_id-1, notes.length);
     } while (notes[c_note_id] == null 
-        || notes[c_note_id].done || notes[c_note_id].snoozed);
+        || notes[c_note_id].done 
+        || notes[c_note_id].snoozed);
     print_notes();
 }
 function go_for_note() {
+    console.log("Go for note");
+    if (notes.length == 0) {
+        print_notes();
+        return;
+    }
+
     do {
         c_note_id = mod(c_note_id+1, notes.length);
     } while (notes[c_note_id] == null 
-        || notes[c_note_id].done || notes[c_note_id].snoozed);
+        || notes[c_note_id].done 
+        || notes[c_note_id].snoozed);
     print_notes();
 }
 const newNoteModal = document.getElementById("newNoteModal");
@@ -113,7 +154,6 @@ function show_new_note_modal() {
 }
 
 function show_photo_new_dialog() {
-    //TODO: open, load image, close, repoen
     console.log("Showing current ima");
     $('#newImageNote').show();
     $('#newPhotoLabel').hide();
@@ -136,7 +176,7 @@ function show_change_note_modal() {
     if(notes[c_note_id].image){
         console.log("image");
         //no photo, take picture
-        reload_current();
+        reload_current(c_note_id);
         $("#changeImageBlock").show();
         $('#changePhotoLabel').hide();
         $('#imageChangeIMG').show();
@@ -217,7 +257,7 @@ function save_new_note(){
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
-    reload_current();
+    reload_current(c_note_id);
     push_notes();
 }
 
@@ -370,7 +410,7 @@ function show_snoozed_notes() {
                                 + snoozed_note.snoozed_time ;
                                 
     c_note_id = snoozed_id;
-    reload_current();
+    reload_current(c_note_id);
     if (!snoozed_note.image) {
         $("#unsnoozedNoteImage").hide();
     } else {
@@ -383,6 +423,8 @@ function show_snoozed_notes() {
     
 
     $("#unsnoozeModel").css("display", "block");
+
+    return true;
 }
 
 $( "#unsnooze_ok" ).click(function() {

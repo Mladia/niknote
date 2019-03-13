@@ -9,59 +9,58 @@ function print_notes() {
     show_notes = [];
     show_notes = get_searched_notes(search_term);
     
-    console.log("Current note is " + c_note_id + ",length:" + show_notes.length);
+    if (show_notes.length == 0) {
+        $('#currentNoteTitle').text("  ");
+        $('#currentNoteBox').find('p').text("  No notes found.");
+        $('#currentNoteTags').text("");
+        $('#currentNoteImageDiv').hide()
+        return;
+    }
 
+   
+
+    if (show_notes[c_note_id] == null){
+        console.log("Current note is null");
+        c_note_id = mod(c_note_id+1, show_notes.length);
+    }
+
+    let current_note = show_notes[c_note_id].note;
+    console.log("Current is " + c_note_id);
     //remove old notes
     for (i in notes_html){
       notes_html[i].remove();
     }
 
-    image_to_upload = "";
-    if (show_notes[0] == null || show_notes.length == 0) {
-        $('#currentNoteTitle').text("  ");
-        $('#currentNoteBox').find('p').text("  No notes found.");
-        $('#currentNoteTags').text("");
-        return;
-    }
-
-   
-    if (show_notes[c_note_id] == null){
-        console.log("current note is null");
-        c_note_id = mod(c_note_id+1, notes.length);
-        print_notes();
-        return;
-    }
-
-
-    if (! show_notes[c_note_id].image) {
+    if (! current_note.image) {
         $('#currentNoteImageDiv').hide()
     } else {
-        load_current_image();
+        load_current_image(show_notes[c_note_id].id);
         console.log("Showing image also!");
         $('#currentNoteImageDiv').show();
     }
 
-    $('#currentNoteTitle').text(show_notes[c_note_id].title);
-    $('#currentNoteBox').find('p').text(show_notes[c_note_id].text);
-    $('#currentNoteTags').text(show_notes[c_note_id].tags);
+    image_to_upload = "";
+    $('#currentNoteTitle').text(current_note.title);
+    $('#currentNoteBox').find('p').text(current_note.text);
+    $('#currentNoteTags').text(current_note.tags);
     //colors for done/snoozed
-    if (show_notes[c_note_id].done) {
+    if (current_note.done) {
         $('#currentNoteTitle').css('text-decoration', 'line-through')
         $('#currentNoteTitle').css("color", "green");
         $('#c_done_button').hide();
         $('#c_snooze_button').hide();
         $('#c_change_button').hide();
-    } else if (show_notes[c_note_id].snoozed) {
+    } else if (current_note.snoozed) {
         $('#currentNoteTitle').css("color", "orange");
         $('#currentNoteTitle').css('text-decoration', 'none')
         $('#c_done_button').show();
         $('#c_snooze_button').show();
         $('#c_change_button').show();
-        $('#currentNoteTitle').text(show_notes[c_note_id].title +
+        $('#currentNoteTitle').text(current_note.title +
             "; Snoozed untill " + 
         // $('#currentNoteBox').find('p').text( "Snoozed for " + 
-            show_notes[c_note_id].snoozed_time + " on " +
-            show_notes[c_note_id].snoozed_date );
+            current_note.snoozed_time + " on " +
+            current_note.snoozed_date );
     } else {
         $('#c_done_button').show();
         $('#c_snooze_button').show();
@@ -71,23 +70,30 @@ function print_notes() {
     }
 
     let rows = ( (max_rows > show_notes.length) ? show_notes.length : max_rows);
-    let show_id = 0;
+    let show_id = c_note_id;
     for (i = 1; i <= rows; i++){
+
+        while (show_notes[show_id] == null) {
+            console.log("Show id is null..");
+            show_id =  mod( (show_id + 1),  show_notes.length ) ;
+        }
 
         if (show_id == c_note_id) {
             show_id =  mod( (show_id + 1),  show_notes.length ) ;
             continue;
         }
 
+        let show_note = show_notes[show_id].note;
+
         let new_div = document.createElement('div');
         new_div.setAttribute('onclick','change_current(' + show_id + ')' );
         new_div.className = "noteContainer";
-        new_div.innerText = show_notes[show_id].title;
+        new_div.innerText = show_note.title;
         notes_html.push(new_div);
-        if (show_notes[show_id].done) {
+        if (show_note.done) {
             new_div.style.color = "green";
             new_div.style.textDecoration = "line-through";
-        } else if (show_notes[show_id].snoozed) {
+        } else if (show_note.snoozed) {
             new_div.style.color = "orange";
             new_div.style.textDecoration = "none";
         } else {
@@ -97,7 +103,7 @@ function print_notes() {
 
         let new_div_inner = document.createElement('div');
         new_div_inner.className = "noteContainerTags";
-        new_div_inner.innerText = show_notes[show_id].tags;
+        new_div_inner.innerText = show_note.tags;
         
         let big_container = document.getElementById('bigContainer');
         big_container.appendChild(new_div);
@@ -111,15 +117,27 @@ function print_notes() {
 
 
 function go_back_note() {
+    console.log("Go back note");
+    if (notes.length == 0) {
+        print_notes();
+        return;
+    }
+
     do {
-        c_note_id = mod(c_note_id-1, notes.length);
-    } while (notes[c_note_id] == null);
+        c_note_id = mod(c_note_id-1, show_notes.length);
+    } while (show_notes[c_note_id] == null);
     print_notes();
 }
 function go_for_note() {
+    console.log("Go for note");
+    if (notes.length == 0) {
+        print_notes();
+        return;
+    }
+
     do {
-        c_note_id = mod(c_note_id+1, notes.length);
-    } while (notes[c_note_id] == null);
+        c_note_id = mod(c_note_id+1, show_notes.length);
+    } while (show_notes[c_note_id] == null);
     print_notes();
 }
 
@@ -140,14 +158,24 @@ function delete_new_image (){
 
 //#########
 function show_change_note_modal() {
-    if(is_empty() || notes[c_note_id].done){
+    if (is_empty()){
         return;
     }
+
+    if (notes[c_note_id] == null) {
+        console.log("Changing null note..");
+        return
+    }
+
+    if (notes[c_note_id].done) {
+        return;
+    }
+
     $('#changeOK').hide();
     if(notes[c_note_id].image){
         console.log("image");
         //no photo, take picture
-        reload_current();
+        reload_current(c_note_id);
         $("#changeImageBlock").show();
         $('#changePhotoLabel').hide();
         $('#imageChangeIMG').show();
@@ -228,7 +256,7 @@ function save_new_note(){
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
-    reload_current();
+    reload_current(c_note_id);
 }
 
 
@@ -374,6 +402,9 @@ searchBar.addEventListener("keyup", function(e){
 function get_searched_notes(term){
     let alter_notes = [];
     notes.forEach(function(note, index, array) {
+        if (note == null) {
+            return;
+        }
         let added = false;
         if (note.title.toLowerCase().includes(term)) {
             added = true;
@@ -390,7 +421,7 @@ function get_searched_notes(term){
         });
 
         if (added) {
-             alter_notes.push(note);
+             alter_notes.push( { id: index, note: note } );
         }
     });
     return alter_notes;
@@ -404,24 +435,4 @@ function c_note_done(){
     push_notes();
 }
 
-function find_orig_note() {
-    let suspect = null
-    let found = null;
 
-    searching = show_notes[c_note_id];
-    for (let i = 0; i < notes.length; i++) {
-        let orig_note = notes[i];
-        if (orig_note == null){
-            continue;
-        }
-        //no logic here...
-        if (searching.title.localeCompare(orig_note.title))  {
-            continue;
-        }
-
-        if (searching.text.localeCompare(orig_note.text)) {
-            continue;
-        }
-        return i;
-    }
-}

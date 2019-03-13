@@ -29,6 +29,9 @@
         get_notes();
     } elseif (is_numeric($data->update_current)) {
         update_current($data->update_current);
+    } else {
+        print("Request not recognised\n");
+        var_dump($rawBody);
     }
 
 

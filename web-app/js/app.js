@@ -37,19 +37,14 @@ function set_done(id) {
     notes[id].image = false;
 }
 
-function delete_note(id) {
-    if (is_empty()){
-        return;
-    }
-    // notes.splice( notes[id], 1 );
-    console.log("1Deleting " + c_note_id);
-    delet(id);
-}
 
 function delet(id) {
-    let return_next = false;
     console.log("Deleting " + c_note_id);
-    notes.splice(id, 1);
+    notes[id]=null;
+    clean_up_last();
+    return;
+
+    //notes.splice(id, 1);
     while (notes[c_note_id] == null) {
         console.log("trying:" + c_note_id);
         if (is_empty()){
@@ -63,10 +58,27 @@ function is_empty() {
     return notes.length == 0;
 }
 
+function clean_up_last() {
+    console.log("Cleaning up last");
+   
+    while (notes[notes.length-1] == null) {
+        console.log("Cleaning..");
+        notes.pop();
+        if (is_empty()){
+            break;
+        }
+    }
+}
+
 function mod(n, m) {
   return ((n % m) + m) % m;
 }
 function get_first_free_id(){
+    //for (let i = 0; i<notes.length; i++){
+        //if (notes[i] == null){
+            //return i;
+        //}
+    //}
     return notes.length;
 }
 
@@ -128,13 +140,12 @@ var ex_note = new Note('5 note');
 notes.push(ex_note); 
 c_note_id = 1; 
 
-
 pull_notes();
 print_notes();
 
 
 function pull_notes() {
-    // return;
+    //  return;
     console.log("Pulling notes request");
     $.ajax({
         url: "/server.php",
@@ -160,7 +171,15 @@ function pull_notes() {
 }
 
 function push_notes() {
-    // return;
+    //  return;
+
+    //correcting ids;
+    //for (let i = 0; i < notes.length; i++) {
+        //if (notes[i] == null){
+            //continue;
+        //}
+        //notes[i].id = i;
+    //}
 
     let data = JSON.stringify({
         cmd : "push_notes",
@@ -321,7 +340,7 @@ function sendFile(id, fileData) {
 			if (data.success) {
                 // alert('Your file was successfully uploaded!');
                 console.log("Sending image request completed");
-                load_current_image();
+                load_current_image(c_note_id);
 			} else {
                 console.log(data);
 				alert('There was an ERROR sending your image!');
@@ -338,11 +357,11 @@ function sendFile(id, fileData) {
 }
 
 
-function load_current_image() {
+function load_current_image(id) {
     //set image to current
     console.log("Loading current image request");
     let s_data = JSON.stringify( 
-        {update_current : c_note_id}
+        {update_current : id}
     );
     
     $.ajax({
@@ -356,7 +375,7 @@ function load_current_image() {
         success: function (result) {
             if (result.success) {
                 console.log("Loading current image success!");
-                reload_current();
+                reload_current(id);
             } else {
                 console.log(result);
                 console.log("Loading current image ERROR1!");
@@ -370,8 +389,12 @@ function load_current_image() {
         });      
 }
 
-function reload_current(){
-    if (notes[c_note_id].image){
+function reload_current(id){
+    if (id == null) {
+        console.log("Cannot load image to null note");
+        return;
+    }
+    if (notes[id].image){
         let url = "images/current.jpeg?rnd="+Math.random();
         $('#currentNoteImage').attr("src", url);
         $('#imageChangeIMG').attr("src", url);
@@ -379,12 +402,28 @@ function reload_current(){
 }
 
 function unsnooze_notes() {
+    clean_up_last();
+
     let today = new Date();
     let currentDate = today.toDateInputValue();
     let currentTime = today.getHours() + ":" + today.getMinutes();
-    for (let i = 0; i < notes.length && notes[i].snoozed; i++) {
+    for (let i = 0; i < notes.length; i++) {
+        if (notes[i] == null){
+            continue;
+        }
+
+        if (!notes[i].snoozed) {
+            continue;
+        }
+
+        if (notes[i].snoozed == false) {
+            notes[i].snoozed_date = "";
+            notes[i].snoozed_time = "";
+        }
+
        if (notes[i].snoozed_date >= currentDate
             && notes[i].snoozed_time >= currentTime) {
+                console.log("Add to to be unsnoozed " + notes[i].title);
                 unsnooze.push( { note : notes[i], id: i } );
             }
     }
