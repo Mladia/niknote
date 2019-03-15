@@ -63,7 +63,8 @@ class TodoListView extends StatelessWidget {
 
         return Dismissible(
           key: Key(todo.id.toString()),
-          onDismissed: (DismissDirection direction) {
+          onDismissed: (DismissDirection startToEnd) {
+            print("Dismissed");
             model.removeTodo(todo.id);
           },
           child: TodoCard(todo),

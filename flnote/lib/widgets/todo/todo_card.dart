@@ -4,7 +4,6 @@ import 'package:scoped_model/scoped_model.dart';
 
 import 'package:niknote/scoped_models/app_model.dart';
 import 'package:niknote/models/Todo.dart';
-import 'package:niknote/widgets/helpers/priority_helper.dart';
 
 class TodoCard extends StatelessWidget {
   final Todo todo;
@@ -20,7 +19,7 @@ class TodoCard extends StatelessWidget {
             children: <Widget>[
               Container(
                 decoration: new BoxDecoration(
-                  color: PriorityHelper.getPriorityColor(todo.priority),
+                  color: Colors.lightGreen,
                   borderRadius: new BorderRadius.only(
                     topLeft: const Radius.circular(4.0),
                     bottomLeft: const Radius.circular(4.0),

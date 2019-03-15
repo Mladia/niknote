@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:niknote/models/Priority.dart';
 import 'package:niknote/models/Todo.dart';
 import 'package:niknote/scoped_models/app_model.dart';
 
@@ -54,8 +53,7 @@ class _ShortcutsEnabledTodoFabState extends State<ShortcutsEnabledTodoFab>
               onPressed: () {
                 _model.setCurrentTodo(Todo(
                   id: null,
-                  title: '',
-                  priority: Priority.Low,
+                  title: ''
                 ));
 
                 Navigator.pushNamed(context, '/editor');
@@ -78,8 +76,7 @@ class _ShortcutsEnabledTodoFabState extends State<ShortcutsEnabledTodoFab>
               onPressed: () {
                 _model.setCurrentTodo(Todo(
                   id: null,
-                  title: '',
-                  priority: Priority.Medium,
+                  title: ''
                 ));
 
                 Navigator.pushNamed(context, '/editor');
@@ -102,8 +99,7 @@ class _ShortcutsEnabledTodoFabState extends State<ShortcutsEnabledTodoFab>
               onPressed: () {
                 _model.setCurrentTodo(Todo(
                   id: null,
-                  title: '',
-                  priority: Priority.High,
+                  title: ''
                 ));
 
                 Navigator.pushNamed(context, '/editor');
