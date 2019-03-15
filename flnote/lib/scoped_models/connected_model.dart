@@ -66,8 +66,9 @@ mixin TodosModel on CoreModel {
     notifyListeners();
 
     try {
-      String url = "http://192.168.2.38/server.php";
-      String body = "cmd=get_notes";
+      final String url = Configure.ServerUrl;
+      print("from url:" + url);
+      final String body = "cmd=get_notes";
       final http.Response response = await http.post(
         url,
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
@@ -101,7 +102,7 @@ mixin TodosModel on CoreModel {
           title: todoData['title'],
           content: todoData['text'],
           snoozed: todoData['snoozed'],
-          isDone: todoData["done"],
+          isDone: todoData['done'],
           snoozedDate: todoData['snoozedDate'],
           snoozedTime: todoData['snoozedTime'],
           image: todoData['image'],
@@ -114,11 +115,63 @@ mixin TodosModel on CoreModel {
       _isLoading = false;
       notifyListeners();
     } catch (error) {
+      print("Error fetching");
       _isLoading = false;
       notifyListeners();
     }
   }
 
+Future<bool> pushNotes() async {
+  print("Pushin notes");
+  List jsonList = List();
+  int currentId = 0;
+  var it = _todos.iterator;
+  while (it.moveNext()) {
+    while (it.current.id !=currentId) {
+      jsonList.add("null");
+      currentId++;
+    }
+    jsonList.add(it.current.toJson());
+    currentId++;
+  }
+
+  final String notes = jsonList.toString();
+  final String url = Configure.ServerUrl;
+  print("from url:" + url);
+
+  final String data = '{ "cmd" : "push_notes", "notes" : ' + notes + '}';
+
+  try {
+      final http.Response response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: data 
+      );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      print("not 200 or 201 status code");
+      await fetchTodos();
+      return false;
+    }
+
+    try {
+      final Map <String, dynamic> decoded =  json.decode(response.body); 
+      final String success = decoded['success'];
+      print("3Returning success: " + success);
+      return success == "true";
+    } catch (e) {
+      print("Problem decoding result");
+      await fetchTodos();
+      print("sorry boy");
+      return false;
+    }
+
+  } catch (e) {
+    print("Problem sending");
+    await fetchTodos();
+    return false;
+  }
+}
 
 
   Future<bool> createTodo(
@@ -126,47 +179,23 @@ mixin TodosModel on CoreModel {
     _isLoading = true;
     notifyListeners();
     print("Creating todo");
-    final Map<String, dynamic> formData = {
-      'title': title,
-      'content': content,
-      'isDone': isDone,
-      'userId': _user.id,
-    };
-    print("For user:" + _user.id);
-    try {
-      // final http.Response response = await http.post(
-      //   '${Configure.FirebaseUrl}/todos.json?auth=${_user.token}',
-      //   body: json.encode(formData),
-      // );
 
-      // if (response.statusCode != 200 && response.statusCode != 201) {
-      //   _isLoading = false;
-      //   notifyListeners();
+    int newId = _todos.last.id + 1;
+    //PRAY TO GOD NO DUPLICATES
+    Todo todo = Todo(
+      id: newId,
+      title: title,
+      content: content,
+      isDone: isDone
+    );
+    _todos.add(todo);
 
-      //   return false;
-      // }
+    final bool success  = await pushNotes();
 
-      // final Map<String, dynamic> responseData = json.decode(response.body);
+    _isLoading = false;
+    notifyListeners();
 
-      Todo todo = Todo(
-        id: 0,
-        // id: responseData['name'],
-        title: title,
-        content: content,
-        isDone: isDone
-      );
-      _todos.add(todo);
-
-      _isLoading = false;
-      notifyListeners();
-
-      return true;
-    } catch (error) {
-      _isLoading = false;
-      notifyListeners();
-
-      return false;
-    }
+    return success;
   }
 
   Future<bool> updateTodo(
@@ -174,7 +203,7 @@ mixin TodosModel on CoreModel {
       String newContent
       ) async {
 
-
+    print("Updating todo");
     _isLoading = true;
     notifyListeners();
 
@@ -208,7 +237,8 @@ mixin TodosModel on CoreModel {
         snoozed: currentTodo.snoozed,
         snoozedTime: currentTodo.snoozedTime,
         snoozedDate: currentTodo.snoozedDate,
-        tags: currentTodo.tags
+        tags: currentTodo.tags,
+        isDone: currentTodo.isDone
       );
 
       int todoIndex = _todos.indexWhere((t) => t.id == currentTodo.id);
@@ -248,6 +278,7 @@ Future<bool> removeTodo(int id) async {
 
     return true;
   } catch (error) {
+
     _isLoading = false;
     notifyListeners();
 
@@ -256,96 +287,36 @@ Future<bool> removeTodo(int id) async {
 }
 
 Future<bool> toggleDone(int id) async {
+
   print("Toggle done");
   _isLoading = true;
   notifyListeners();
 
   Todo todo = _todos.firstWhere((t) => t.id == id);
 
-  final Map<String, dynamic> formData = {
-    'title': todo.title,
-    'content': todo.content,
-    'isDone': !todo.isDone,
-    'userId': _user.id,
-  };
-
-  try {
-    final http.Response response = await http.put(
-      '${Configure.FirebaseUrl}/todos/$id.json?auth=${_user.token}',
-      body: json.encode(formData),
-    );
-
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      _isLoading = false;
-      notifyListeners();
-
-      return false;
-    }
-
     todo = Todo(
       id: todo.id,
       title: todo.title,
       content: todo.content,
-      isDone: !todo.isDone
+      isDone: !todo.isDone,
+      image: todo.image,
+      snoozed: todo.snoozed,
+      snoozedTime: todo.snoozedTime,
+      snoozedDate: todo.snoozedDate,
+      tags: todo.tags,
     );
     int todoIndex = _todos.indexWhere((t) => t.id == id);
     _todos[todoIndex] = todo;
 
-    _isLoading = false;
-    notifyListeners();
 
-    return true;
-  } catch (error) {
-    _isLoading = false;
-    notifyListeners();
-    return false;
-    }
-  }
-
-Future<bool> pushNotes() async {
-
-  List jsonList = List();
-  int currentId = 0;
-  var it = _todos.iterator;
-  while (it.moveNext()) {
-    while (it.current.id !=currentId) {
-      jsonList.add("null");
-      currentId++;
-    }
-    jsonList.add(it.current.toJson());
-    currentId++;
-  }
-
-  final String notes = jsonList.toString();
-  final String url = "http://192.168.2.38/server.php";
-
-  final String data = '{ "cmd" : "push_notes", "notes" : ' + notes + '}';
-
-  final http.Response response = await http.post(
-    url,
-    headers: {"Content-Type": "application/json"},
-    body: data 
-  );
-
-  if (response.statusCode != 200 && response.statusCode != 201) {
-    print("not 200 or 201 status code");
-    return false;
-  } 
-
-  // try {
-    final Map <String, dynamic> decoded =  json.decode(response.body); 
-    final String success = decoded['success'];
-    return success == "true";
-  // } catch (e) {
-    // print("sorry boy");
-    // return false;
-  // }
-}
-
+     final bool success = await pushNotes();
+      _isLoading = false;
+      notifyListeners();
+      return success;
       
 }
 
-
+}
 
 
 mixin UserModel on CoreModel {

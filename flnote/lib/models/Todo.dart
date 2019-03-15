@@ -7,21 +7,21 @@ class Todo {
   final int id;
   final String title;
   final String content;
-  final bool isDone;
-  final bool snoozed;
-  final String snoozedTime;
-  final String snoozedDate;
-  final bool image;
+  bool isDone = false;
+  bool snoozed = false;
+  String snoozedTime;
+  String snoozedDate;
+  bool image = false;
   final List<String> tags;
 
   Todo({
     @required this.id,
     @required this.title,
     this.content,
-    this.isDone = false,
-    this.snoozed = false,
+    this.isDone,
+    this.snoozed,
     this.snoozedTime,
-    this.snoozedDate, 
+    this.snoozedDate,
     this.tags,
     this.image
   });
@@ -34,16 +34,18 @@ class Todo {
 
   // Map <String, dynamic> toJson (){
   String toJson (){
+
+    String done;
     return  json.encode({
       'id': id,
       'title': title,
       'text': content,
-      'done': isDone,
-      'image': image,
-      'snoozed': snoozed,
+      'done': isDone == null ? false : isDone,
+      'image': image == null ? false : image,
+      'snoozed': snoozed == null ? false : snoozed,
       'snoozedTime' : snoozedTime == null ? "" : snoozedTime,
       'snoozedDate' : snoozedDate == null ? "" : snoozedDate,
-      'tags' : tags
+      'tags' : tags == null ? [] : tags
     });
   }
 }

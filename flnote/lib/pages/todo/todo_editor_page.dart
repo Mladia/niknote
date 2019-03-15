@@ -59,7 +59,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
               .then((bool success) {
             if (success) {
               model.setCurrentTodo(null);
-
+              
               Navigator.pop(context);
             } else {
               MessageDialog.show(context);
