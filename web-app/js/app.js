@@ -5,6 +5,7 @@ var notes_html = [];
 var unsnooze = [];
 var image_to_upload;
 
+
 function Note(title){
     this.id = get_first_free_id();
     this.title = title;
@@ -34,7 +35,12 @@ function set_done(id) {
     console.log("Setting " + id + " as node");
     notes[id].done = true;
     notes[id].snoozed = false;
-    notes[id].image = false;
+    push_notes();
+}
+
+function set_undone(id) {
+    notes[id].done = false;
+    push_notes();
 }
 
 
@@ -340,7 +346,7 @@ function sendFile(id, fileData) {
 			if (data.success) {
                 // alert('Your file was successfully uploaded!');
                 console.log("Sending image request completed");
-                load_current_image(c_note_id);
+                load_current_image(id);
 			} else {
                 console.log(data);
 				alert('There was an ERROR sending your image!');
@@ -398,15 +404,14 @@ function reload_current(id){
         let url = "images/current.jpeg?rnd="+Math.random();
         $('#currentNoteImage').attr("src", url);
         $('#imageChangeIMG').attr("src", url);
+        $('#unsnoozedNoteImage1').attr("src", url);
     }
 }
 
 function unsnooze_notes() {
     clean_up_last();
-
-    let today = new Date();
-    let currentDate = today.toDateInputValue();
-    let currentTime = today.getHours() + ":" + today.getMinutes();
+    let currentTime = getCurrentTime();
+    let currentDate = getCurrentDate();
     for (let i = 0; i < notes.length; i++) {
         if (notes[i] == null){
             continue;
@@ -421,8 +426,8 @@ function unsnooze_notes() {
             notes[i].snoozed_time = "";
         }
 
-       if (notes[i].snoozed_date >= currentDate
-            && notes[i].snoozed_time >= currentTime) {
+       if (notes[i].snoozed_date <= currentDate
+            && notes[i].snoozed_time <= currentTime) {
                 console.log("Add to to be unsnoozed " + notes[i].title);
                 unsnooze.push( { note : notes[i], id: i } );
             }
@@ -430,4 +435,21 @@ function unsnooze_notes() {
 
 
 }
-   ;
+
+function getCurrentTime() {
+
+    let today = new Date();
+    let minutes;
+    if (today.getMinutes() < 10) {
+        minutes = "0" + today.getMinutes();
+    } else {
+        minutes = today.getMinutes();
+    }
+    return  today.getHours() + ":" + minutes;
+}
+
+function getCurrentDate() {
+
+    let today = new Date();
+    return today.toDateInputValue();
+}

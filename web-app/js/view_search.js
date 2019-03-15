@@ -26,10 +26,12 @@ function print_notes() {
 
     let current_note = show_notes[c_note_id].note;
     console.log("Current is " + c_note_id);
+    // console.log(current_note);
     //remove old notes
     for (i in notes_html){
       notes_html[i].remove();
     }
+    $('#recoverButton').hide();
 
     if (! current_note.image) {
         $('#currentNoteImageDiv').hide()
@@ -45,6 +47,7 @@ function print_notes() {
     $('#currentNoteTags').text(current_note.tags);
     //colors for done/snoozed
     if (current_note.done) {
+        $('#recoverButton').show();
         $('#currentNoteTitle').css('text-decoration', 'line-through')
         $('#currentNoteTitle').css("color", "green");
         $('#c_done_button').hide();
@@ -161,21 +164,21 @@ function show_change_note_modal() {
     if (is_empty()){
         return;
     }
-
-    if (notes[c_note_id] == null) {
-        console.log("Changing null note..");
-        return
+    let c_note = show_notes[c_note_id] != null ? show_notes[c_note_id].note : null;
+    if(c_note == null) {
+        console.log("Current is null");
+        return;
     }
-
-    if (notes[c_note_id].done) {
+    let current_id = show_notes[c_note_id].id;
+    if (c_note.done) {
         return;
     }
 
     $('#changeOK').hide();
-    if(notes[c_note_id].image){
+    if(c_note.image){
         console.log("image");
         //no photo, take picture
-        reload_current(c_note_id);
+        reload_current(current_id);
         $("#changeImageBlock").show();
         $('#changePhotoLabel').hide();
         $('#imageChangeIMG').show();
@@ -267,9 +270,14 @@ function c_note_change(){
     let note_tags_field = document.getElementById("changeNoteTags");
     let note_text_field = document.getElementById("changeNoteText");
 
-    note_title_field.value = notes[c_note_id].title;
-    note_tags_field.value = notes[c_note_id].tags;
-    note_text_field.value = notes[c_note_id].text;
+    let c_note = show_notes[c_note_id] != null ? show_notes[c_note_id].note : null;
+    if(c_note == null) {
+        console.log("Current is null");
+        return;
+    }
+    note_title_field.value = c_note.title;
+    note_tags_field.value = c_note.tags;
+    note_text_field.value = c_note.text;
 }
 
 function save_changed_note(){
@@ -286,27 +294,34 @@ function save_changed_note(){
         // alert("Canno save a note with an empty title");
         return;
     }
-    let current_note = notes[c_note_id];
-    
+
+    let current_note = show_notes[c_note_id] != null ? show_notes[c_note_id].note : null;
+    if(current_note == null) {
+        console.log("Current is null");
+        return;
+    }
+    let current_id = show_notes[c_note_id].id;
+
     current_note.title = new_note_title_field.value;
     current_note.text = new_note_text_field.value; 
     current_note.tags = new_note_tags_field.value.split(",");
 
      if (image_to_upload != "") {
-        sendFile(c_note_id, image_to_upload);
-        notes[c_note_id].image = true;
+        sendFile(current_id, image_to_upload);
+        notes[current_id].image = true;
         image_to_upload = "";
-    } else if (notes[c_note_id].image && image_to_upload == "") {
-        notes[c_note_id].image = false;
+    } else if (notes[current_id].image && image_to_upload == "") {
+        notes[current_id].image = true;
         image_to_upload = "";
     }else {
-        notes[c_note_id].image = false;
+        notes[current_id].image = false;
     }
     
     close_note_modal();
     new_note_title_field.value = "";
     new_note_tags_field.value = "";
     new_note_text_field.text = "";
+    push_notes();
 }
 
 
@@ -315,7 +330,6 @@ function c_note_done(){
     // notes[c_note_id].set_done();   
     set_done(c_note_id);
     print_notes();
-    push_notes();
 }
 
 
@@ -332,11 +346,14 @@ function c_note_snooze() {
 function show_snooze_modal() {
     snoozeModal.style.display = 'block';
     //set current date
-    let today = new Date();
-    let currentDate = today.toDateInputValue();
-    $('#snoozeDate').val(currentDate);
-    c_note_id = find_orig_note();
+    let currentDate = getCurrentDate();
 
+    $('#snoozeDate').val(currentDate);
+    let current_note = show_notes[c_note_id] != null ? show_notes[c_note_id].note : null;
+    if(current_note == null) {
+        console.log("Current is null");
+        return;
+    }
 }
 
 function snoozeMorn(){
@@ -366,9 +383,8 @@ function snoozeCustom(){
 }
 
 function finishSnooze() {
-    let today = new Date();
+    let currentTime = getCurrentTime();
     let currentDate = today.toDateInputValue();
-    let curretTime = today.getHours() + ":" + today.getMinutes();
     console.log("Trying to snooze " + timeControl + ", and " + dateControl);
     //is date valid
     if (dateControl < currentDate) {
@@ -377,7 +393,10 @@ function finishSnooze() {
     }
     
     if (dateControl == currentDate 
-        && timeControl < curretTime){
+        && timeControl < currentTime ){
+            console.log("Current: " + currentTime);
+            console.log("Field" + timeControl);
+
             alert("Time traveler alert! Cannot set a reminder in the past!");
             return;
     }
@@ -388,7 +407,8 @@ function finishSnooze() {
     }
 
     close_note_modal();
-    snooze(c_note_id, timeControl, dateControl);
+    let current_id = show_notes[c_note_id].id;
+    snooze(current_id, timeControl, dateControl);
     close_note_modal();
 }
 
@@ -428,7 +448,13 @@ function get_searched_notes(term){
 }
 
 function c_note_done(){
-    c_note_id = find_orig_note();
+    let current_note = show_notes[c_note_id] != null ? show_notes[c_note_id].note : null;
+    if(current_note == null) {
+        console.log("Current is null");
+        return;
+    }
+    let current_id = show_notes[c_note_id].id;
+    c_note_id = current_id;
     console.log("Setting " + c_note_id + " current note as done!");
     set_done(c_note_id);
     print_notes();
@@ -436,3 +462,15 @@ function c_note_done(){
 }
 
 
+function c_note_recover() {
+    console.log("Recovering note");
+    let note = show_notes[c_note_id] != null ? show_notes[c_note_id].null : null;
+
+    if (note != null && !show_notes[c_note_id].done) {
+        return;
+    }
+    let current_id = show_notes[c_note_id].id;
+
+    set_undone(current_id);
+    print_notes();
+}

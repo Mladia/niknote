@@ -299,9 +299,11 @@ function save_changed_note(){
         notes[c_note_id].image = true;
         image_to_upload = "";
     } else if (notes[c_note_id].image && image_to_upload == "") {
-        notes[c_note_id].image = false;
+        console.log("Retaining image")
+        notes[c_note_id].image = true;
         image_to_upload = "";
-    }else {
+    }else if ( (! notes[c_note_id].image) && image_to_upload =="" ) {
+        console.log("no image whatsover");
         notes[c_note_id].image = false;
     }
     console.log("Closing");
@@ -410,7 +412,7 @@ function show_snoozed_notes() {
                                 + snoozed_note.snoozed_time ;
                                 
     c_note_id = snoozed_id;
-    reload_current(c_note_id);
+    load_current_image(c_note_id);
     if (!snoozed_note.image) {
         $("#unsnoozedNoteImage").hide();
     } else {
@@ -434,5 +436,6 @@ $( "#unsnooze_ok" ).click(function() {
     notes[snooze_id].snoozed_date = "";
     notes[snooze_id].snoozed_time = "";
     $("#unsnoozeModel").css("display", "none");
+    push_notes();
     print_notes();
 });
