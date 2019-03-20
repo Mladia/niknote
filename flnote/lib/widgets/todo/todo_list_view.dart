@@ -62,9 +62,9 @@ class TodoListView extends StatelessWidget {
       itemCount: model.todos.length,
       itemBuilder: (BuildContext context, int index) {
         Todo todo = model.todos[index];
-        print("showing todo" + todo.title);
+        print("showing todo " + todo.title);
 
-        child: Dismissible(
+        return Dismissible(
             key: Key(todo.id.toString()),
             onDismissed: (DismissDirection dismissDirection) {
               if (dismissDirection == DismissDirection.startToEnd) {
@@ -73,8 +73,10 @@ class TodoListView extends StatelessWidget {
               } else if (dismissDirection == DismissDirection.endToStart) {
                 print("Snooze this note");
               } 
-            },
-            
+            }, 
+            // child: TodoCard(todo), background: Container(color: Colors.red,),);
+
+
             child: GestureDetector (
             onLongPress: () {
               print("Long pressing");
@@ -87,7 +89,7 @@ class TodoListView extends StatelessWidget {
             ),
             background: Container(color: Colors.red),
           );
-      },
+      }
     );
   }
 

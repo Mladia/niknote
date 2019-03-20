@@ -12,6 +12,7 @@ class TodoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Showing notes");
     return ScopedModelDescendant(
       builder: (BuildContext context, Widget child, AppModel model) {
         return Card(

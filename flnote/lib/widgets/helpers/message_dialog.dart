@@ -44,12 +44,13 @@ class MessageDialog {
           actions: <Widget>[
             FlatButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Dont!'),
+              child: Text('Cancel'),
             ),
             FlatButton(
               onPressed: () {
                 //TODO:
-                model.removeTodo(noteId);
+                print("not calling remove note on " + noteId.toString());
+                // model.removeTodo(noteId);
                 Navigator.of(context).pop();
               },
               child: Text('Okay'),
