@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:niknote/models/filter.dart';
+import 'package:niknote/widgets/helpers/message_dialog.dart';
 
 import 'package:scoped_model/scoped_model.dart';
 
@@ -56,20 +57,36 @@ class TodoListView extends StatelessWidget {
   }
 
   Widget _buildListView(AppModel model) {
+    print("building list view");
     return ListView.builder(
       itemCount: model.todos.length,
       itemBuilder: (BuildContext context, int index) {
         Todo todo = model.todos[index];
+        print("showing todo" + todo.title);
 
-        return Dismissible(
-          key: Key(todo.id.toString()),
-          onDismissed: (DismissDirection startToEnd) {
-            print("Dismissed");
-            model.removeTodo(todo.id);
-          },
-          child: TodoCard(todo),
-          background: Container(color: Colors.red),
-        );
+        child: Dismissible(
+            key: Key(todo.id.toString()),
+            onDismissed: (DismissDirection dismissDirection) {
+              if (dismissDirection == DismissDirection.startToEnd) {
+                print("Dismissing start to end");
+                model.toggleDone(todo.id);
+              } else if (dismissDirection == DismissDirection.endToStart) {
+                print("Snooze this note");
+              } 
+            },
+            
+            child: GestureDetector (
+            onLongPress: () {
+              print("Long pressing");
+              print("Let's delete this");
+              int noteId = todo.id;
+              MessageDialog.showConfirmationDelete(context, noteId: noteId );
+                    // MessageDialog.show(context, message: authResult['message']);
+            },
+            child: TodoCard(todo),
+            ),
+            background: Container(color: Colors.red),
+          );
       },
     );
   }

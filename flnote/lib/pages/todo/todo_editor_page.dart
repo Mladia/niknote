@@ -124,6 +124,11 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
           initialValue: snoozed,
           hint: "Snooze",
           onSaved: (bool value) {
+            if (value) {
+            //showForm with snoozed
+            } else {
+              //note unsnoozed
+            }
             _formData['snoozed'] = value;
           },
           color: Colors.yellow
@@ -156,6 +161,19 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
     );
   }
 
+  Widget _buildSnoozeText(Todo todo) {
+    if (todo == null) {
+        return Text("");
+    }
+    return Text(
+      todo.snoozed ?
+        "Note is snoozed for " + todo.snoozedDate + " at " + todo.snoozedTime
+        : "",
+      style:
+        TextStyle (color: Colors.yellow)
+    );
+  }
+
   Widget _buildForm(AppModel model) {
     Todo todo = model.currentTodo;
     //TODO: set current image
@@ -169,6 +187,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
       key: _formKey,
       child: ListView(
         children: <Widget>[
+          _buildSnoozeText(todo),
           _buildTitleField(todo),
           _buildContentField(todo),
           SizedBox(

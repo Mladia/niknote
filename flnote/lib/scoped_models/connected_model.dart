@@ -121,7 +121,7 @@ mixin TodosModel on CoreModel {
     }
   }
 
-Future<bool> pushNotes() async {
+Future<bool> _pushNotes() async {
   print("Pushin notes");
   List jsonList = List();
   int currentId = 0;
@@ -190,7 +190,9 @@ Future<bool> pushNotes() async {
     );
     _todos.add(todo);
 
-    final bool success  = await pushNotes();
+    //TODO: if a note is snoozed, schedule a notification
+
+    final bool success  = await _pushNotes();
 
     _isLoading = false;
     notifyListeners();
@@ -207,83 +209,39 @@ Future<bool> pushNotes() async {
     _isLoading = true;
     notifyListeners();
 
-    // final Map<String, dynamic> formData = {
-    //   'title': title,
-    //   'content': content,
-    // };
-
-    // print("formData:");
-    // print(formData);
-    // print(json.encode(formData));
-
-    // try {
-      //TODO: create new note
-      // final http.Response response = await http.put(
-      //   '${Configure.FirebaseUrl}/todos/${currentTodo.id}.json?auth=${_user.token}',
-      //   body: json.encode(formData),
-      // );
-
-      // if (response.statusCode != 200 && response.statusCode != 201) {
-      //   _isLoading = false;
-      //   notifyListeners();
-      //   // return false;
-      // }
-
-      Todo todo = Todo(
-        id: currentTodo.id,
-        title: newTitle,
-        content: newContent,
-        image: currentTodo.image,
-        snoozed: currentTodo.snoozed,
-        snoozedTime: currentTodo.snoozedTime,
-        snoozedDate: currentTodo.snoozedDate,
-        tags: currentTodo.tags,
-        isDone: currentTodo.isDone
-      );
+    Todo todo = Todo(
+      id: currentTodo.id,
+      title: newTitle,
+      content: newContent,
+      image: currentTodo.image,
+      snoozed: currentTodo.snoozed,
+      snoozedTime: currentTodo.snoozedTime,
+      snoozedDate: currentTodo.snoozedDate,
+      tags: currentTodo.tags,
+      isDone: currentTodo.isDone
+    );
 
       int todoIndex = _todos.indexWhere((t) => t.id == currentTodo.id);
       _todos[todoIndex] = todo;
 
-     final bool success = await pushNotes();
+    //TODO: if a note is snoozed, schedule a notification
+     final bool success = await _pushNotes();
           _isLoading = false;
           notifyListeners();
           return success;
-    // } catch (error) {
-    // }
 }
                   
 Future<bool> removeTodo(int id) async {
   _isLoading = true;
   notifyListeners();
 
-  try {
-    Todo todo = _todos.firstWhere((t) => t.id == id);
-    int todoIndex = _todos.indexWhere((t) => t.id == id);
-    _todos.removeAt(todoIndex);
-
-    final http.Response response = await http.delete(
-        '${Configure.FirebaseUrl}/todos/$id.json?auth=${_user.token}');
-
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      _todos[todoIndex] = todo;
-
-      _isLoading = false;
-      notifyListeners();
-
-      return false;
-    }
-
-    _isLoading = false;
-    notifyListeners();
-
-    return true;
-  } catch (error) {
-
-    _isLoading = false;
-    notifyListeners();
-
-    return false;
-  }
+  Todo todo = _todos.firstWhere((t) => t.id == id);
+  int todoIndex = _todos.indexWhere((t) => t.id == id);
+  _todos.removeAt(todoIndex);
+  final bool success = await _pushNotes();
+  _isLoading = false;
+  notifyListeners();
+  return success;
 }
 
 Future<bool> toggleDone(int id) async {
@@ -309,7 +267,7 @@ Future<bool> toggleDone(int id) async {
     _todos[todoIndex] = todo;
 
 
-     final bool success = await pushNotes();
+     final bool success = await _pushNotes();
       _isLoading = false;
       notifyListeners();
       return success;
@@ -335,6 +293,10 @@ mixin UserModel on CoreModel {
 
   Future<Map<String, dynamic>> authenticate(
       String email, String password) async {
+      _isLoading = false;
+      notifyListeners();
+
+      return {'success': false, 'message': 'sorry'};
     _isLoading = true;
     notifyListeners();
 
@@ -496,6 +458,7 @@ mixin UserModel on CoreModel {
   }
 
   void autoAuthentication() async {
+    return;
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token');
 
@@ -524,6 +487,7 @@ mixin UserModel on CoreModel {
   }
 
   void tryRefreshToken() async {
+    return;
     final prefs = await SharedPreferences.getInstance();
     final refreshToken = prefs.getString('refreshToken');
 
@@ -585,6 +549,7 @@ mixin SettingsModel on CoreModel {
   }
 
   void loadSettings() async {
+    return;
     final prefs = await SharedPreferences.getInstance();
     final isDarkThemeUsed = _loadIsDarkThemeUsed(prefs);
 
@@ -598,6 +563,7 @@ mixin SettingsModel on CoreModel {
   }
 
   bool _loadIsShortcutsEnabled(SharedPreferences prefs) {
+    return false;
     return prefs.getKeys().contains('isShortcutsEnabled') &&
             prefs.getBool('isShortcutsEnabled')
         ? true
@@ -605,6 +571,7 @@ mixin SettingsModel on CoreModel {
   }
 
   bool _loadIsDarkThemeUsed(SharedPreferences prefs) {
+    return false;
     return prefs.getKeys().contains('isDarkThemeUsed') &&
             prefs.getBool('isDarkThemeUsed')
         ? true
@@ -612,6 +579,7 @@ mixin SettingsModel on CoreModel {
   }
 
   Future toggleIsShortcutEnabled() async {
+    return;
     _isLoading = true;
     notifyListeners();
 
@@ -628,6 +596,7 @@ mixin SettingsModel on CoreModel {
   }
 
   Future toggleIsDarkThemeUsed() async {
+    return;
     _isLoading = true;
     notifyListeners();
 
