@@ -48,9 +48,7 @@ class MessageDialog {
             ),
             FlatButton(
               onPressed: () {
-                //TODO:
-                print("not calling remove note on " + noteId.toString());
-                // model.removeTodo(noteId);
+                model.removeTodo(noteId);
                 Navigator.of(context).pop();
               },
               child: Text('Okay'),
@@ -60,39 +58,4 @@ class MessageDialog {
       },
     );
   }
-
-
-  static void showSnoozeOptions (
-    BuildContext context, {
-    String title = 'Snooze note',
-    String message = '',
-    int noteId
-  }) {
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          // content: Text(message),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
-            ),
-            FlatButton(
-              onPressed: () {
-                //TODO:
-                // snnozeNote(noteId);
-                Navigator.of(context).pop();
-              },
-              child: Text('Snooze')
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
 }

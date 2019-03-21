@@ -11,6 +11,8 @@ import 'package:niknote/widgets/helpers/confirm_dialog.dart';
 import 'package:niknote/widgets/ui_elements/loading_modal.dart';
 import 'package:niknote/widgets/form_fields/toggle_form_field.dart';
 
+import '../../widgets/helpers/snooze_dialog.dart';
+
 class TodoEditorPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -38,7 +40,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
 
 
 
-  Widget _buildFloatingActionButton(AppModel model) {
+  Widget _buildFloatingActionButton(AppModel model, BuildContext context) {
     return FloatingActionButton(
       child: Icon(Icons.save),
       onPressed: () {
@@ -47,6 +49,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
         if (!_formKey.currentState.validate()) {
           return;
         }
+
 
         _formKey.currentState.save();
 
@@ -80,6 +83,12 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
             }
           });
         }
+
+        if (_formData['snoozed']) {
+              print("showing options");
+              SnoozeDialog.showOptions(context);
+        }
+
       },
     );
   }
@@ -117,31 +126,18 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
     //TODO: add snoozed
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        Text("Snooze:"),
+
+        Text("Snooze:   "),
         ToggleFormField(
           initialValue: snoozed,
           hint: "Snooze",
           onSaved: (bool value) {
-            if (value) {
-            //showForm with snoozed
-            } else {
-              //note unsnoozed
-            }
             _formData['snoozed'] = value;
           },
           color: Colors.yellow
         ),
-        Text("Done:"),
-        ToggleFormField(
-          initialValue: isDone,
-          onSaved: (bool value) {
-            _formData['snoozed'] = value;
-          },
-          color: Colors.green
-        )
-        // ,
         // GestureDetector(
         //   onTap: (){
         //     print("1You pressed the image");
@@ -199,10 +195,10 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
     );
   }
 
-  Widget _buildPageContent(AppModel model) {
+  Widget _buildPageContent(AppModel model, BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(model),
-      floatingActionButton: _buildFloatingActionButton(model),
+      floatingActionButton: _buildFloatingActionButton(model, context),
       body: Container(
         padding: EdgeInsets.all(10.0),
         child: Center(
@@ -218,7 +214,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
       builder: (BuildContext context, Widget child, AppModel model) {
         Stack mainStack = Stack(
           children: <Widget>[
-            _buildPageContent(model),
+            _buildPageContent(model, context),
           ],
         );
 

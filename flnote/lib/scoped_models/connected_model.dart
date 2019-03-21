@@ -122,7 +122,8 @@ mixin TodosModel on CoreModel {
   }
 
 Future<bool> _pushNotes() async {
-  print("Pushin notes");
+  return true;
+  print("Pushing notes");
   List jsonList = List();
   int currentId = 0;
   var it = _todos.iterator;

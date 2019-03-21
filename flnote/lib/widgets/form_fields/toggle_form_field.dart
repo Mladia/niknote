@@ -12,8 +12,7 @@ class ToggleFormField extends FormField<bool> {
           builder: (FormFieldState<bool> state) {
             return Container(
               height: 60.0,
-              // child: Text(hint),
-              child: FlatButton(
+              child:  FlatButton(
                 color: color,
                 child: state.value
                     ? Icon(Icons.check)

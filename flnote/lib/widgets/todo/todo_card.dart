@@ -12,7 +12,7 @@ class TodoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Showing notes");
+    // print("Showing notes");
     return ScopedModelDescendant(
       builder: (BuildContext context, Widget child, AppModel model) {
         return Card(
@@ -20,7 +20,7 @@ class TodoCard extends StatelessWidget {
             children: <Widget>[
               Container(
                 decoration: new BoxDecoration(
-                  color: Colors.lightGreen,
+                  color: todo.snoozed ? Colors.yellow : Colors.lightGreen,
                   borderRadius: new BorderRadius.only(
                     topLeft: const Radius.circular(4.0),
                     bottomLeft: const Radius.circular(4.0),
