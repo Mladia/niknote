@@ -79,7 +79,8 @@ class _AuthPageState extends State<AuthPage> {
           icon: Icon(Icons.edit),
           label: 'Register',
           onPressed: () {
-            Navigator.pushNamed(context, '/register');
+          // Navigator.pushNamed(context, '/editor');
+      Navigator.pushNamed(context, '/snooze_actions');
           },
         ),
         SizedBox(

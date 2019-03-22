@@ -29,7 +29,7 @@ class Todo {
   @override
   String toString() {
     // TODO: implement toString
-    return "Note: $id, title: " + this.title;
+    return "Note: $id, title: " + this.title + " ,snoozed:" + snoozed.toString() + " , snoozedDate:" + snoozedDate + ", snoozedTime: " + snoozedTime ;
   }
 
   // Map <String, dynamic> toJson (){

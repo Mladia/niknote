@@ -8,6 +8,8 @@ import 'package:niknote/pages/auth/auth_page.dart';
 import 'package:niknote/pages/todo/todo_editor_page.dart';
 import 'package:niknote/pages/todo/todo_list_page.dart';
 
+import 'widgets/todo/snooze_actions.dart';
+
 void main() async {
   runApp(TodoApp());
 }
@@ -56,19 +58,17 @@ class _TodoAppState extends State<TodoApp> {
       child: MaterialApp(
         title: Configure.AppName,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          accentColor: Colors.blue,
-          brightness: _isDarkThemeUsed ? Brightness.dark : Brightness.light,
-        ),
         routes: {
           '/': (BuildContext context) =>
               TodoListPage(_model),
           '/editor': (BuildContext context) =>
-              _isAuthenticated ? TodoEditorPage() : AuthPage(),
+              TodoEditorPage(),
           '/register': (BuildContext context) =>
-              _isAuthenticated ? TodoListPage(_model) : RegisterPage(),
+              TodoListPage(_model),
           '/settings': (BuildContext context) =>
-              _isAuthenticated ? SettingsPage(_model) : AuthPage(),
+              SettingsPage(_model),
+          '/snooze_actions': (BuildContext context) =>
+              SnoozeActions(_model),
         },
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(
@@ -76,6 +76,11 @@ class _TodoAppState extends State<TodoApp> {
                 _isAuthenticated ? TodoListPage(_model) : AuthPage(),
           );
         },
+        theme: ThemeData(
+          accentColor: Colors.green[700],
+          primaryColor: Colors.green[300],
+          brightness: Brightness.light,
+        )
       ),
     );
   }

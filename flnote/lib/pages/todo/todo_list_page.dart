@@ -32,7 +32,7 @@ class _TodoListPageState extends State<TodoListPage> {
   Widget _buildAppBar(AppModel model) {
     return AppBar(
       title: Text(Configure.AppName),
-      backgroundColor: Colors.blue,
+      backgroundColor: Theme.of(context).primaryColor,
       actions: <Widget>[
       ],
     );
@@ -44,7 +44,8 @@ class _TodoListPageState extends State<TodoListPage> {
         onPressed: () {
           model.setCurrentTodo(null);
 
-          Navigator.pushNamed(context, '/editor');
+          // Navigator.pushNamed(context, '/editor');
+      Navigator.pushNamed(context, '/snooze_actions');
         },
       );
   }

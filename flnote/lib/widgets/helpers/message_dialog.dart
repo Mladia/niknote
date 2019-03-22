@@ -27,6 +27,28 @@ class MessageDialog {
     );
   }
 
+static void showSnoozeOptions(
+    BuildContext context, {
+    String title = 'Snoozing at time: ',
+    String message = '',
+  }) {
+    print("Show Snooze optins");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Okay'),
+            )
+          ],
+        );
+      },
+    );
+  }
 
   static void showConfirmationDelete (
     BuildContext context, {

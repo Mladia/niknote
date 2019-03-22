@@ -20,7 +20,8 @@ class TodoCard extends StatelessWidget {
             children: <Widget>[
               Container(
                 decoration: new BoxDecoration(
-                  color: todo.snoozed ? Colors.yellow : Colors.lightGreen,
+                  color: todo.snoozed != null ? (todo.snoozed ? Colors.yellow : Colors.lightGreen) 
+                                                : Colors.lightGreen,
                   borderRadius: new BorderRadius.only(
                     topLeft: const Radius.circular(4.0),
                     bottomLeft: const Radius.circular(4.0),

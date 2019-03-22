@@ -12,6 +12,7 @@ import 'package:niknote/widgets/ui_elements/loading_modal.dart';
 import 'package:niknote/widgets/form_fields/toggle_form_field.dart';
 
 import '../../widgets/helpers/snooze_dialog.dart';
+import '../../widgets/todo/snooze_actions.dart';
 
 class TodoEditorPage extends StatefulWidget {
   @override
@@ -32,7 +33,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   Widget _buildAppBar(AppModel model) {
     return AppBar(
       title: Text(Configure.AppName),
-      backgroundColor: Colors.blue,
+      backgroundColor: Theme.of(context).primaryColor,
       actions: <Widget>[
       ],
     );
@@ -45,8 +46,9 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
       child: Icon(Icons.save),
       onPressed: () {
         print("Save is pressed");
+        Navigator.pushNamed(context, '/snooze_actions');
 
-        if (!_formKey.currentState.validate()) {
+      if (!_formKey.currentState.validate()) {
           return;
         }
 
@@ -86,7 +88,16 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
 
         if (_formData['snoozed']) {
               print("showing options");
-              SnoozeDialog.showOptions(context);
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SnoozeActions(model)),
+            );
+
+              // MessageDialog.showSnoozeOptions(context);
+              // SnoozeDialog.showOptions(context);
+              // MessageDialog.show(context);
+              // Navigator.pushNamed(context, '/snooze_actions');
+              print("Done here");
         }
 
       },
@@ -148,11 +159,12 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
         //     print("You long pressed the image");
         //     //set_state
         //   },
-        //   child: Image.asset( 
-        //   'assets/current.jpg', 
-        //     fit: BoxFit.cover
-        //   )
-        // ) 
+        //   child: 
+        //      Image.asset( 
+        //         'assets/current.jpg', 
+        //        fit: BoxFit.fitWidth
+        //     )
+        // )
       ],
     );
   }
@@ -166,6 +178,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
         "Note is snoozed for " + todo.snoozedDate + " at " + todo.snoozedTime
         : "",
       style:
+      //TODO: better color
         TextStyle (color: Colors.yellow)
     );
   }
