@@ -9,8 +9,7 @@ class Todo {
   final String content;
   bool isDone = false;
   bool snoozed = false;
-  String snoozedTime;
-  String snoozedDate;
+  DateTime snoozedDate;
   bool image = false;
   final List<String> tags;
 
@@ -20,7 +19,6 @@ class Todo {
     this.content,
     this.isDone,
     this.snoozed,
-    this.snoozedTime,
     this.snoozedDate,
     this.tags,
     this.image
@@ -28,14 +26,18 @@ class Todo {
 
   @override
   String toString() {
-    // TODO: implement toString
-    return "Note: $id, title: " + this.title + " ,snoozed:" + snoozed.toString() + " , snoozedDate:" + snoozedDate + ", snoozedTime: " + snoozedTime ;
+    return "Note: $id, title: " + this.title + " ,snoozed:" + snoozed.toString() + ", " + snoozedDate.toString();
   }
 
-  // Map <String, dynamic> toJson (){
   String toJson (){
-
-    String done;
+    //TODO: check to see if it works
+    String formattedDate;
+    String formattedTime;
+    if (snoozedDate != null) {
+      formattedDate = "${snoozedDate.year}-${snoozedDate.month}-${snoozedDate.day}";
+      formattedTime = "${snoozedDate.hour}:${snoozedDate.minute}" + (snoozedDate.minute < 10 ? "0" + snoozedDate.minute.toString() : snoozedDate.minute ) ;
+      print(formattedDate + " at " + formattedTime);
+    }
     return  json.encode({
       'id': id,
       'title': title,
@@ -43,8 +45,8 @@ class Todo {
       'done': isDone == null ? false : isDone,
       'image': image == null ? false : image,
       'snoozed': snoozed == null ? false : snoozed,
-      'snoozedTime' : snoozedTime == null ? "" : snoozedTime,
-      'snoozedDate' : snoozedDate == null ? "" : snoozedDate,
+      'snoozedTime' :formattedTime == null ? "" : formattedTime,
+      'snoozedDate' : formattedDate == null ? "" : formattedDate,
       'tags' : tags == null ? [] : tags
     });
   }

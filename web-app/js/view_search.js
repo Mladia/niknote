@@ -162,6 +162,7 @@ function delete_new_image (){
 //#########
 function show_change_note_modal() {
     if (is_empty()){
+        console.log("Empty");
         return;
     }
     let c_note = show_notes[c_note_id] != null ? show_notes[c_note_id].note : null;
@@ -171,6 +172,7 @@ function show_change_note_modal() {
     }
     let current_id = show_notes[c_note_id].id;
     if (c_note.done) {
+        console.log("Note is done");
         return;
     }
 
@@ -383,6 +385,7 @@ function snoozeCustom(){
 }
 
 function finishSnooze() {
+    let today = new Date();
     let currentTime = getCurrentTime();
     let currentDate = today.toDateInputValue();
     console.log("Trying to snooze " + timeControl + ", and " + dateControl);

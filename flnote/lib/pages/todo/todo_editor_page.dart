@@ -44,60 +44,43 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   Widget _buildFloatingActionButton(AppModel model, BuildContext context) {
     return FloatingActionButton(
       child: Icon(Icons.save),
-      onPressed: () {
+      onPressed: () async {
         print("Save is pressed");
-        Navigator.pushNamed(context, '/snooze_actions');
 
       if (!_formKey.currentState.validate()) {
           return;
         }
 
-
         _formKey.currentState.save();
+        bool todoActionSuccess = false;
 
         if (model.currentTodo != null && model.currentTodo.id != null) {
-          model
+          todoActionSuccess = await model
               .updateTodo(
             _formData['title'],
-            _formData['content'],
-          )
-              .then((bool success) {
-            if (success) {
-              model.setCurrentTodo(null);
-              
-              Navigator.pop(context);
-            } else {
-              MessageDialog.show(context);
-            }
-          });
+            _formData['content']);
         } else {
-          model
+          todoActionSuccess = await model
               .createTodo(
             _formData['title'],
             _formData['content'],
             _formData['isDone'],
-          )
-              .then((bool success) {
-            if (success) {
-              Navigator.pop(context);
-            } else {
-              MessageDialog.show(context);
-            }
-          });
+          );
         }
 
-        if (_formData['snoozed']) {
-              print("showing options");
-              Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SnoozeActions(model)),
-            );
+        if (!todoActionSuccess) {
+          //bad input
+          print("bad input");
+          MessageDialog.show(context);
+          return;
+        } 
 
-              // MessageDialog.showSnoozeOptions(context);
-              // SnoozeDialog.showOptions(context);
-              // MessageDialog.show(context);
-              // Navigator.pushNamed(context, '/snooze_actions');
-              print("Done here");
+        if (_formData['snoozed']) {
+          print("showing options");
+          Navigator.pushNamed(context, '/snooze_actions');
+          print("Done here");
+        } else {
+          Navigator.pop(context);
         }
 
       },
@@ -135,7 +118,9 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
     final bool snoozed = todo !=null && todo.snoozed;
     final bool image = todo != null && todo.image;
     //TODO: add snoozed
-
+    if (todo.isDone) {
+      return Row();
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[

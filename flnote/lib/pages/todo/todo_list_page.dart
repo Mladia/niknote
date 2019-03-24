@@ -44,8 +44,7 @@ class _TodoListPageState extends State<TodoListPage> {
         onPressed: () {
           model.setCurrentTodo(null);
 
-          // Navigator.pushNamed(context, '/editor');
-      Navigator.pushNamed(context, '/snooze_actions');
+          Navigator.pushNamed(context, '/editor');
         },
       );
   }

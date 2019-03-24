@@ -5,6 +5,7 @@ import 'package:niknote/scoped_models/app_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../../.env.example.dart';
+import '../helpers/message_dialog.dart';
 
 class SnoozeActions extends StatefulWidget {
   final AppModel model;
@@ -28,6 +29,7 @@ class _SnoozeActionsState extends State<SnoozeActions> {
   InputType inputType = InputType.both;
   bool editable = true;
   DateTime date;
+  bool dateInfoFilled = false;
 
   @override
   void initState() {
@@ -58,18 +60,37 @@ class _SnoozeActionsState extends State<SnoozeActions> {
               editable: editable,
               decoration: InputDecoration(
                   labelText: 'Date/Time', hasFloatingPlaceholder: false),
-              onChanged: (dt) => setState(() => date = dt),
+              onChanged: (dt) => setState(() { 
+                date = dt;
+                if (valid(dt)) {
+                  date = dt;
+                } else {
+                  date = null;
+                }
+              }
+              ),
             ),
 
-            Text('Date value: $date'),
+            // Text('Date value: $date'),
             RaisedButton(
               color: Theme.of(context).primaryColor,
               splashColor: Colors.blueGrey,
-              onPressed: () {
-                //TODO: model.snoozeNote(date);
-                Navigator.pop(context);
+              onPressed: () async {
+                if (date == null) {
+                  //do nothing
+                } else {
+                  print(date);
+                  final bool success = await model.snoozeNote(model.currentTodo.id, date);
+                  if (success) {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  } else {
+                    MessageDialog.show(context);
+                    print("cannot snooze note");
+                  }
+                }
               },
-              child: const Text("Snooze note"),
+              child: Text( date == null ? "Please choose a valid time and date" : "Snooze note" ),
             ),
             // SizedBox(height: 16.0),
             // CheckboxListTile(
@@ -99,6 +120,21 @@ class _SnoozeActionsState extends State<SnoozeActions> {
     time = time ?? inputType != InputType.date;
     setState(() => inputType =
         date ? time ? InputType.both : InputType.date : InputType.time);
+  }
+
+  bool valid(DateTime date) {
+    if (date == null)  {
+      return false;
+    }
+    DateTime now = DateTime.now();
+    print(now);
+    if (date.isBefore(now)) {
+      print("Date in the past");
+      return false;
+    }
+
+
+    return true;
   }
 }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:niknote/.env.example.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,15 +97,14 @@ mixin TodosModel on CoreModel {
           print("null note");
           return;
         }
-      
+        DateTime dateTodo = DateTime.parse(todoData['snoozedDate'] + todoData['snoozedTime']);
         final Todo todo = Todo (
           id: todoData['id'],
           title: todoData['title'],
           content: todoData['text'],
           snoozed: todoData['snoozed'],
+          snoozedDate: dateTodo,
           isDone: todoData['done'],
-          snoozedDate: todoData['snoozedDate'],
-          snoozedTime: todoData['snoozedTime'],
           image: todoData['image'],
           tags: new List<String>.from( todoData['tags'])
         );
@@ -132,6 +132,7 @@ Future<bool> _pushNotes() async {
       jsonList.add("null");
       currentId++;
     }
+
     jsonList.add(it.current.toJson());
     currentId++;
   }
@@ -216,7 +217,6 @@ Future<bool> _pushNotes() async {
       content: newContent,
       image: currentTodo.image,
       snoozed: currentTodo.snoozed,
-      snoozedTime: currentTodo.snoozedTime,
       snoozedDate: currentTodo.snoozedDate,
       tags: currentTodo.tags,
       isDone: currentTodo.isDone
@@ -260,7 +260,6 @@ Future<bool> toggleDone(int id) async {
       isDone: !todo.isDone,
       image: todo.image,
       snoozed: todo.snoozed,
-      snoozedTime: todo.snoozedTime,
       snoozedDate: todo.snoozedDate,
       tags: todo.tags,
     );
@@ -273,6 +272,32 @@ Future<bool> toggleDone(int id) async {
       notifyListeners();
       return success;
       
+}
+
+Future<bool> snoozeNote(int id,  DateTime toSnoozeDate) async {
+  print("Snooze note");
+  _isLoading = true;
+  notifyListeners();
+  Todo todo = _todos.firstWhere((t) => t.id == id);
+
+  //TODO:
+  todo = Todo(
+    id: todo.id,
+    title: todo.title,
+    content: todo.content,
+    isDone: todo.isDone,
+    image: todo.image,
+    snoozed: true,
+    snoozedDate: toSnoozeDate,
+    tags: todo.tags,
+  );
+  int todoIndex = _todos.indexWhere((t) => t.id == id);
+  
+  _todos[todoIndex] = todo;
+  final bool success = await _pushNotes();
+  _isLoading = false;
+  notifyListeners();
+  return success;
 }
 
 }
