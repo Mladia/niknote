@@ -408,6 +408,7 @@ function reload_current(id){
     }
 }
 
+//TODO: not working...
 function unsnooze_notes() {
     clean_up_last();
     let currentTime = getCurrentTime();
@@ -420,10 +421,23 @@ function unsnooze_notes() {
         if (!notes[i].snoozed) {
             continue;
         }
+        console.log(notes[i]);
 
         if (notes[i].snoozed == false) {
             notes[i].snoozed_date = "";
             notes[i].snoozed_time = "";
+        }
+
+       if (notes[i].snoozed_date <= currentDate) {
+        //console.log("edno");
+       } else {
+        //console.log("edno1");
+       }
+
+        if (notes[i].snoozed_time <= currentTime) {
+            //console.log("dve");
+        } else {
+            //console.log("dve2");
         }
 
        if (notes[i].snoozed_date <= currentDate
@@ -440,12 +454,18 @@ function getCurrentTime() {
 
     let today = new Date();
     let minutes;
+    let hours;
+    if (today.getHours() < 10) {
+        hours = "0" + today.getHours();
+    } else {
+        hours = today.getHours();
+    }
     if (today.getMinutes() < 10) {
         minutes = "0" + today.getMinutes();
     } else {
         minutes = today.getMinutes();
     }
-    return  today.getHours() + ":" + minutes;
+    return  hours + ":" + minutes;
 }
 
 function getCurrentDate() {
