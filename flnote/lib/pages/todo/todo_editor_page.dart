@@ -7,12 +7,9 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:niknote/models/Todo.dart';
 import 'package:niknote/scoped_models/app_model.dart';
 import 'package:niknote/widgets/helpers/message_dialog.dart';
-import 'package:niknote/widgets/helpers/confirm_dialog.dart';
 import 'package:niknote/widgets/ui_elements/loading_modal.dart';
 import 'package:niknote/widgets/form_fields/toggle_form_field.dart';
 
-import '../../widgets/helpers/snooze_dialog.dart';
-import '../../widgets/todo/snooze_actions.dart';
 
 class TodoEditorPage extends StatefulWidget {
   @override
@@ -117,7 +114,9 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
     final bool isDone = todo != null && todo.isDone;
     final bool snoozed = todo !=null && todo.snoozed;
     final bool image = todo != null && todo.image;
-    //TODO: add snoozed
+    if (todo == null) {
+      return Row();
+    }
     if (todo.isDone) {
       return Row();
     }
@@ -134,6 +133,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
           },
           color: Colors.yellow
         ),
+        //TODO: add image
         // GestureDetector(
         //   onTap: (){
         //     print("1You pressed the image");
@@ -156,16 +156,22 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
 
   Widget _buildSnoozeText(Todo todo) {
     if (todo == null) {
-        return Text("");
+      return Text("");
     }
-    return Text(
-      todo.snoozed ?
-        "Note is snoozed for " + todo.snoozedDate + " at " + todo.snoozedTime
-        : "",
-      style:
-      //TODO: better color
-        TextStyle (color: Colors.yellow)
-    );
+
+    if (todo.snoozed) {
+      if (todo.snoozedDate != null) {
+        return Text("Note is snoozed for " + todo.snoozedDate.toString() ,
+          style: TextStyle (color: Colors.yellow[900], fontSize: 15),
+          
+          );
+      } else {
+        print("snooze date is null");
+        return Text("");
+      }
+    } else {
+      return Text("");
+    }
   }
 
   Widget _buildForm(AppModel model) {

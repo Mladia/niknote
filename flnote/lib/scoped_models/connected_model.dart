@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:niknote/.env.example.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +17,6 @@ mixin CoreModel on Model {
   Todo _todo;
   bool _isLoading = false;
   Filter _filter = Filter.All;
-  User _user = User( id: "0", email: "s@gmail.com", token: "s");
 }
 
 mixin TodosModel on CoreModel {
@@ -94,10 +92,18 @@ mixin TodosModel on CoreModel {
 
     todoListData.forEach( (dynamic todoData) {
         if (todoData == null) {
-          print("null note");
+          // print("null note");
           return;
         }
-        DateTime dateTodo = DateTime.parse(todoData['snoozedDate'] + todoData['snoozedTime']);
+        DateTime dateTodo;
+        try {
+          if (todoData['snoozed'] == true ) {
+            dateTodo = DateTime.parse(todoData['snoozed_date'] + " " + todoData['snoozed_time']);
+          }
+        print(dateTodo);
+        } catch (error) {
+          print(error);
+        }
         final Todo todo = Todo (
           id: todoData['id'],
           title: todoData['title'],
@@ -109,7 +115,7 @@ mixin TodosModel on CoreModel {
           tags: new List<String>.from( todoData['tags'])
         );
 
-        print(todo.toString());
+        // print(todo.toJson());
         _todos.add(todo);
       });
       _isLoading = false;
@@ -280,7 +286,6 @@ Future<bool> snoozeNote(int id,  DateTime toSnoozeDate) async {
   notifyListeners();
   Todo todo = _todos.firstWhere((t) => t.id == id);
 
-  //TODO:
   todo = Todo(
     id: todo.id,
     title: todo.title,
@@ -294,10 +299,51 @@ Future<bool> snoozeNote(int id,  DateTime toSnoozeDate) async {
   int todoIndex = _todos.indexWhere((t) => t.id == id);
   
   _todos[todoIndex] = todo;
+  print(todo.toJson());
   final bool success = await _pushNotes();
   _isLoading = false;
   notifyListeners();
   return success;
+}
+
+Future<bool> unsnoozeNote(int id) async {
+  print("Unsnoozing note");
+  _isLoading = true;
+  notifyListeners();
+  Todo todo = _todos.firstWhere((t) => t.id == id);
+
+  todo = Todo(
+    id: todo.id,
+    title: todo.title,
+    content: todo.content,
+    isDone: todo.isDone,
+    image: todo.image,
+    snoozed: false,
+    snoozedDate: null,
+    tags: todo.tags,
+  );
+  int todoIndex = _todos.indexWhere((t) => t.id == id);
+  
+  _todos[todoIndex] = todo;
+  print(todo.toJson());
+  final bool success = await _pushNotes();
+  _isLoading = false;
+  notifyListeners();
+  return success;
+
+}
+
+List<Todo> snoozedNotes(){
+  List<Todo> snoozed = List();
+  Iterator todosIt = _todos.iterator;
+
+  while(todosIt.moveNext()) {
+      if (todosIt.current.snoozed) {
+        snoozed.add(todosIt.current);
+      }
+  }
+
+  return snoozed;
 }
 
 }
@@ -347,11 +393,6 @@ mixin UserModel on CoreModel {
 
       if (responseData.containsKey('idToken')) {
 
-        _user = User(
-          id: responseData['localId'],
-          email: responseData['email'],
-          token: responseData['idToken'],
-        );
 
         setAuthTimeout(int.parse(responseData['expiresIn']));
 
@@ -418,11 +459,6 @@ mixin UserModel on CoreModel {
 
       if (responseData.containsKey('idToken')) {
         // return {'success': true};
-        _user = User(
-          id: responseData['localId'],
-          email: responseData['email'],
-          token: responseData['idToken'],
-        );
 
         setAuthTimeout(int.parse(responseData['expiresIn']));
 
@@ -473,7 +509,6 @@ mixin UserModel on CoreModel {
     _todos = [];
     _todo = null;
     _filter = Filter.All;
-    _user = null;
 
     _authTimer.cancel();
 
@@ -494,16 +529,10 @@ mixin UserModel on CoreModel {
       final parsedExpiryTime = DateTime.parse(expiryTimeString);
 
       if (parsedExpiryTime.isBefore(now)) {
-        _user = null;
 
         return;
       }
 
-      _user = User(
-        id: prefs.getString('userId'),
-        email: prefs.getString('email'),
-        token: token,
-      );
 
       final int tokenLifespan = parsedExpiryTime.difference(now).inSeconds;
       setAuthTimeout(tokenLifespan);
@@ -532,11 +561,6 @@ mixin UserModel on CoreModel {
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       if (responseData.containsKey('id_token')) {
-        _user = User(
-          id: prefs.getString('userId'),
-          email: prefs.getString('email'),
-          token: responseData['id_token'],
-        );
 
         setAuthTimeout(int.parse(responseData['expires_in']));
 

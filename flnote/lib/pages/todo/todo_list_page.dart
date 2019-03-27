@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:niknote/.env.example.dart';
+import 'package:niknote/models/timers.dart';
 
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:niknote/models/filter.dart';
 import 'package:niknote/scoped_models/app_model.dart';
-import 'package:niknote/widgets/helpers/confirm_dialog.dart';
 import 'package:niknote/widgets/ui_elements/loading_modal.dart';
 import 'package:niknote/widgets/todo/todo_list_view.dart';
-import 'package:niknote/widgets/todo/shortcuts_enabled_todo_fab.dart';
 
 class TodoListPage extends StatefulWidget {
   final AppModel model;
@@ -26,6 +25,10 @@ class _TodoListPageState extends State<TodoListPage> {
   void initState() {
     widget.model.fetchTodos();
 
+    //TODO:
+    Timers timerSnoozed = Timers(model: widget.model, context: context);
+    timerSnoozed.periodical();
+
     super.initState();
   }
 
@@ -34,6 +37,22 @@ class _TodoListPageState extends State<TodoListPage> {
       title: Text(Configure.AppName),
       backgroundColor: Theme.of(context).primaryColor,
       actions: <Widget>[
+        PopupMenuButton<String>(
+          onSelected: (String choice) {
+            switch (choice) {
+              case 'Settings':
+                Navigator.pushNamed(context, '/settings');
+            }
+          },
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem<String>(
+                value: 'Settings',
+                child: Text('Settings'),
+              )
+            ];
+          },
+        ),
       ],
     );
   }
@@ -129,7 +148,12 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   Widget _buildBottomAppBar(AppModel model) {
+    //TODO: 
+    Timers timerSnoozed = Timers(model: model, context: context);
+    timerSnoozed.periodical();
+    
     return null;
+
     return BottomAppBar(
       child: Row(
         mainAxisSize: MainAxisSize.max,
@@ -161,6 +185,8 @@ class _TodoListPageState extends State<TodoListPage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return ScopedModelDescendant<AppModel>(
       builder: (BuildContext context, Widget child, AppModel model) {
         Stack stack = Stack(

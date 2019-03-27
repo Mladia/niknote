@@ -6,28 +6,6 @@ import 'package:intl/intl.dart';
 
 class SnoozeDialog {
 
-// static void showOptions (
-//     BuildContext context, {
-//     String title = 'Snooze note',
-//     String message = '',
-//     int noteId
-//   }) {
-//     showDialog(
-//       context: context,
-//       builder: (BuildContext context) {
-//         print("---Showing context");
-//         return AlertDialog(
-//           title: Text(title),
-//           actions: <Widget>[
-//             FlatButton(
-//               onPressed: () => Navigator.of(context).pop(),
-//               child: Text('Okay'),
-//             )
-//           ],
-//         );
-//     });
-//   }
-//TODO:
 static void showOptions (
     BuildContext context, {
     String title = 'Snooze note',

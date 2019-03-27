@@ -5,4 +5,5 @@ class Configure {
   // static const String ServerUrl = 'http://10.0.0.1/server.php';
   // static const String ServerUrl = 'http://192.168.2.38/server.php';
   static const String ServerUrl = 'http://192.168.2.37/server.php';
+  // static const String ServerUrl = 'http://localhost';
 }

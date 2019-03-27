@@ -26,6 +26,7 @@ dependencies:
   flutter_svg: ^0.6.3
   intl: ^0.15.7
   datetime_picker_formfield: ^0.1.8
+  flutter_blue: ^0.5.0
 
 dev_dependencies:
   flutter_test:

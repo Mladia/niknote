@@ -49,7 +49,7 @@ class TodoCard extends StatelessWidget {
                   child: Text(
                     todo.title,
                     style: TextStyle(
-                        fontSize: 24.0,
+                        fontSize: 20.0,
                         decoration: todo.isDone
                             ? TextDecoration.lineThrough
                             : TextDecoration.none),

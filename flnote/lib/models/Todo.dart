@@ -30,13 +30,42 @@ class Todo {
   }
 
   String toJson (){
-    //TODO: check to see if it works
     String formattedDate;
     String formattedTime;
     if (snoozedDate != null) {
-      formattedDate = "${snoozedDate.year}-${snoozedDate.month}-${snoozedDate.day}";
-      formattedTime = "${snoozedDate.hour}:${snoozedDate.minute}" + (snoozedDate.minute < 10 ? "0" + snoozedDate.minute.toString() : snoozedDate.minute ) ;
-      print(formattedDate + " at " + formattedTime);
+      String month;
+      if (snoozedDate.month < 10) {
+        month = "0" + snoozedDate.month.toString();
+      } else {
+        month = snoozedDate.month.toString();
+      }
+
+      String day;
+      if (snoozedDate.day < 10) {
+        day = "0" + snoozedDate.day.toString();
+      } else {
+        day = snoozedDate.day.toString();
+      }
+
+      String hour; 
+      if (snoozedDate.hour < 10) {
+        hour = "0" + snoozedDate.hour.toString();
+      } else {
+        hour = snoozedDate.hour.toString();
+      }
+
+      String minute;
+      if (snoozedDate.minute < 10) {
+        minute = "0" + snoozedDate.minute.toString();
+      } else {
+        minute = snoozedDate.minute.toString();
+      }
+
+
+
+      formattedDate = "${snoozedDate.year}-$month-$day";
+      formattedTime = "$hour:$minute";
+      // print(formattedDate + " at " + formattedTime);
     }
     return  json.encode({
       'id': id,

@@ -1,16 +1,19 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:niknote/.env.example.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:niknote/scoped_models/app_model.dart';
-import 'package:niknote/pages/register/register_page.dart';
 import 'package:niknote/pages/settings/settings_page.dart';
 import 'package:niknote/pages/auth/auth_page.dart';
 import 'package:niknote/pages/todo/todo_editor_page.dart';
 import 'package:niknote/pages/todo/todo_list_page.dart';
 
+import 'models/timers.dart';
 import 'widgets/todo/snooze_actions.dart';
 
+
 void main() async {
+
   runApp(TodoApp());
 }
 
@@ -25,7 +28,6 @@ class TodoApp extends StatefulWidget {
 class _TodoAppState extends State<TodoApp> {
   AppModel _model;
   bool _isAuthenticated = true;
-  bool _isDarkThemeUsed = false;
 
   @override
   void initState() {
@@ -44,7 +46,6 @@ class _TodoAppState extends State<TodoApp> {
 
     _model.themeSubject.listen((bool isDarkThemeUsed) {
       setState(() {
-        _isDarkThemeUsed = isDarkThemeUsed;
       });
     });
 
@@ -53,6 +54,8 @@ class _TodoAppState extends State<TodoApp> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return ScopedModel<AppModel>(
       model: _model,
       child: MaterialApp(
