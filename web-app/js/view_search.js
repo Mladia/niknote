@@ -9,6 +9,12 @@ function print_notes() {
     show_notes = [];
     show_notes = get_searched_notes(search_term);
     
+    //---reset
+    //remove old notes
+    for (i in notes_html){
+      notes_html[i].remove();
+    }
+    $('#recoverButton').hide();
     if (show_notes.length == 0) {
         $('#currentNoteTitle').text("  ");
         $('#currentNoteBox').find('p').text("  No notes found.");
@@ -26,12 +32,6 @@ function print_notes() {
 
     let current_note = show_notes[c_note_id].note;
     console.log("Current is " + c_note_id);
-    // console.log(current_note);
-    //remove old notes
-    for (i in notes_html){
-      notes_html[i].remove();
-    }
-    $('#recoverButton').hide();
 
     if (! current_note.image) {
         $('#currentNoteImageDiv').hide()
@@ -464,6 +464,9 @@ function c_note_done(){
     push_notes();
 }
 
+function c_note_delete() {
+    note_delete(show_notes[c_note_id].id);
+}
 
 function c_note_recover() {
     console.log("Recovering note");

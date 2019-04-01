@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "Disconnecting from current connection"
+ssid=`nmcli con show --active | tail -n1 | awk '{print $1}'`
+echo "Disconnecting from $ssid"
+nmcli con down id $ssid
+#exit
+echo Creating new ap
+#sudo create_ap wlp3s0 enp0s25 Hotypoty nikiegotin
+sudo create_ap wlp3s0 wlp3s0 Hotypoty nikiegotin
+echo Stopping interface on wlp3s0
+sudo create_ap --stop wlp3s0

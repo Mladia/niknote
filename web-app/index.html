@@ -6,6 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie-edge">
     <title>NIKNOTE</title>
     <link rel="stylesheet" href="css/styles.css">
+
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 <body>
 
 
@@ -126,8 +131,6 @@
                         <textarea name="text" id="newNoteText" class="textModal" placeholder="Text"></textarea>
                 </div>
                 <div class="buttonsModal">
-                    <!-- <button class="saveButton" id="takePhotoNew" onclick="take_photo_new()">Take picture</button> -->
-                    <!-- <input id="photoNew" type="file" accept="image/*"> -->
                     <label for="photoNew" id="newPhotoLabel" class="custom-file-upload">
                             <br>
                             Upload 
@@ -142,7 +145,7 @@
                     </div>
                     <button class="saveButton" id="saveNew" onclick="save_new_note()">Save</button>
                 </div>
-        </div>
+            </div>
         </div>
     </div>
 
@@ -182,50 +185,49 @@
 
 <div class="noteModal" id="unsnoozeModel">
     <div class="modal-content">
-        <div class="modal-header">
-            <!-- <span id="closeBtnNew" class="closeBtn">&times;</span> -->
-            Reminder! 
-        </div>
+            <div class="modal-header">
+                <!-- <span id="closeBtnNew" class="closeBtn">&times;</span> -->
+                Reminder! 
+            </div>
 
-        <div class="modal-body">
-        <p id="infoSnooze">
-        <!-- Note was snoozed for  -->
-        </p>
-
-
-        <div id='currentNoteBox' class="currentNoteBox">
-
-        <div class="currentNoteTitle" id="unsnoozedTitle">
-        <!--Note title -->
-        </div>
-        
-        <div class="currentNoteTags" id="unsnoozedTags">
-        <!--tags-->
-        </div>
-        <br>
-        <div class="currentNoteImageDiv" id="unsnoozedNoteImage">
-            <img  class="currentNoteImage" id="unsnoozedNoteImage1" src="images/current.jpeg" alt="Current note photo">
-        </div>
-
-        <p id="unsnoozedText">
-        <!--Lorem ipsum-->
-        </p>
-
-        <br>
-        <div class="currentNoteOptions">
-            <button id="unsnooze_ok"> OK! </button>
-        </div>
-    </div>
+            <div class="modal-body">
+                <p id="infoSnooze">
+                <!-- Note was snoozed for  -->
+                </p>
 
 
-        </div>
+                <div id='currentNoteBox' class="currentNoteBox">
+                    <div class="currentNoteTitle" id="unsnoozedTitle">
+                        <!--Note title -->
+                    </div>
+                    
+                    <div class="currentNoteTags" id="unsnoozedTags">
+                    <!--tags-->
+                    </div>
+                    <br>
+                    <div class="currentNoteImageDiv" id="unsnoozedNoteImage">
+                        <img  class="currentNoteImage" id="unsnoozedNoteImage1" src="images/current.jpeg" alt="Current note photo">
+                    </div>
+
+                    <p id="unsnoozedText">
+                    <!--Lorem ipsum-->
+                    </p>
+
+                    <br>
+                    
+                    <div class="currentNoteOptions">
+                        <button id="unsnooze_ok"> OK! </button>
+                    </div>
+
+                </div>
+            </div>
     </div>
 </div>
 
 
 <div id="demo">
-   <button type="button" onclick="pull_notes()">Pull</button>
-  <button type="button" onclick="push_notes()">Push</button> 
+   <!--<button type="button" onclick="pull_notes()">Pull</button>-->
+  <!--<button type="button" onclick="push_notes()">Push</button> -->
 </div>
 
 <pre class="output"></pre> 

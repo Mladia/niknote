@@ -395,6 +395,10 @@ function finishSnooze() {
     close_note_modal();
 }
 
+function c_note_delete(){
+    note_delete(c_note_id);
+}
+
 function show_snoozed_notes() {
 
     if (unsnooze.length == 0) {
@@ -428,6 +432,7 @@ function show_snoozed_notes() {
 
     return true;
 }
+
 
 $( "#unsnooze_ok" ).click(function() {
     console.log("Unsnoozing note");

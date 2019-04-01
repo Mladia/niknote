@@ -97,10 +97,10 @@ function snooze (id, time, date) {
 }
 
 
-function c_note_delete(){
+function note_delete(id){
     console.log("Deleting " + c_note_id);
     // notes[c_note_id].delete();
-    delet(c_note_id); 
+    delet(id); 
     go_back_note();
     push_notes();
     // print_notes();
@@ -143,8 +143,15 @@ ex_note.tags = ['ba'];
 // ex_note.image = true;
 notes.push(ex_note); 
 var ex_note = new Note('5 note');
+ex_note.image = true;
+ex_note.snoozed = true;
+ex_note.snoozed_date= "2019-03-28";
+ex_note.snoozed_time= "14:00";
+ex_note.text = "asdadas asdasd asd asd  ";
+
 notes.push(ex_note); 
 c_note_id = 1; 
+
 
 pull_notes();
 print_notes();
@@ -410,6 +417,7 @@ function reload_current(id){
 
 //TODO: not working...
 function unsnooze_notes() {
+    console.log("Unsnoozing notes");
     clean_up_last();
     let currentTime = getCurrentTime();
     let currentDate = getCurrentDate();
@@ -429,15 +437,15 @@ function unsnooze_notes() {
         }
 
        if (notes[i].snoozed_date <= currentDate) {
-        //console.log("edno");
+        console.log("edno");
        } else {
-        //console.log("edno1");
+        console.log("edno1");
        }
 
         if (notes[i].snoozed_time <= currentTime) {
-            //console.log("dve");
+            console.log("dve");
         } else {
-            //console.log("dve2");
+            console.log("dve2");
         }
 
        if (notes[i].snoozed_date <= currentDate

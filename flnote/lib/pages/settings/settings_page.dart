@@ -90,6 +90,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   // scanning for devices
   void _startScan() {
+    print('start scan');
     // handle scanning for devices and save them. Also call setState()
     // set isScanning on true and call setState()
     // use _stopScan when done scanning
@@ -236,6 +237,7 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       } else {
         // If not scanning show search button
+        print("Showing searh button");
         return new Center(
             child: new ListView(
               children: <Widget>[
@@ -289,6 +291,26 @@ class _SettingsPageState extends State<SettingsPage> {
     return ret;
   }
 
+  void startVibrationBurst() {
+    print("Starting vibration burst");
+    _writeCharacteristic(characteristic, [0xffffffffff]);
+     new Timer(const Duration(milliseconds: 900), () {
+       print("Stopping vibration");
+       _writeCharacteristic(characteristic,[0x0000000000]);
+    });
+  }
+
+  Widget _ModesWidget() {
+    return Column(children: <Widget>[
+      new RaisedButton(
+        child: new Text("Start vibration"),
+        onPressed: (){
+          startVibrationBurst();
+        },
+      )
+      // new Text(data)
+    ],);
+  }
 
   Widget _createTabBarView() {
     return new TabBarView(

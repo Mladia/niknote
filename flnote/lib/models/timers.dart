@@ -53,6 +53,7 @@ class Timers {
     print(todo.toJson());
     //show dialog
 
+    //TODO:
     DateTime now;
     // now = DateTime.now();
     now = DateTime(2020);
@@ -60,6 +61,7 @@ class Timers {
       print("showing notification");
       MessageDialog.show(context , title: "Note is here!", message: todo.title);
       //unsnooze event
+      
       // model.unsnoozeNote(todo.id);
     }
 
