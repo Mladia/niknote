@@ -147,11 +147,12 @@ class _SettingsPageState extends State<SettingsPage> {
       Widget text;
       int i = 0;
       if (r.advertisementData.localName != null && r.advertisementData.localName != "" ) {
-        if (r.device.id.toString() == "F7:A4:5E:88:83:53") {
-          text = new Text(r.advertisementData.localName);
-          i = 1;
-        }
-        // text = new Text(r.advertisementData.localName);
+        //TODO: show only this device?
+        // if (r.device.id.toString() == "F7:A4:5E:88:83:53") {
+        //   text = new Text(r.advertisementData.localName);
+        //   i = 1;
+        // }
+        text = new Text(r.advertisementData.localName);
       } else {
         // text = new Text(r.device.id.toString());
       }
@@ -164,7 +165,6 @@ class _SettingsPageState extends State<SettingsPage> {
         ret.add(w);
       }
 
-      //TODO
       print(r.device.id.toString());
     });
     return ret;
@@ -226,7 +226,7 @@ class _SettingsPageState extends State<SettingsPage> {
       length: 3,
       child: new Scaffold(
         appBar: new AppBar(
-          title: new Text("Vibration Reminder"),
+          title: new Text("Connect to device..."),
           bottom: new TabBar(
             tabs: <Widget>[
               new Tab(icon: new Icon(Icons.home)),

@@ -67,13 +67,17 @@ class TodoListView extends StatelessWidget {
         return Dismissible(
             key: Key(todo.id.toString()),
             onDismissed: (DismissDirection dismissDirection) {
-              if (dismissDirection == DismissDirection.endToStart) {
+              if (dismissDirection == DismissDirection.startToEnd) {
+                print("Deleting this note");
+                int noteId = todo.id;
+                MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
+              } else if (dismissDirection == DismissDirection.endToStart) {
                 print("Deleting this note");
                 int noteId = todo.id;
                 MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
               } else {
-                print("not nown dismissable");
-              } 
+                print("not known dismissable");
+              }
             }, 
             // child: TodoCard(todo), background: Container(color: Colors.red,),);
 
