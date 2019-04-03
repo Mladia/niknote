@@ -25,7 +25,6 @@ class _TodoListPageState extends State<TodoListPage> {
   void initState() {
     widget.model.fetchTodos();
 
-    //TODO:
     Timers timerSnoozed = Timers(model: widget.model, context: context);
     timerSnoozed.periodical();
 
@@ -37,22 +36,38 @@ class _TodoListPageState extends State<TodoListPage> {
       title: Text(Configure.AppName),
       backgroundColor: Theme.of(context).primaryColor,
       actions: <Widget>[
-        PopupMenuButton<String>(
-          onSelected: (String choice) {
-            switch (choice) {
-              case 'Settings':
-                Navigator.pushNamed(context, '/settings');
-            }
-          },
-          itemBuilder: (BuildContext context) {
-            return [
-              PopupMenuItem<String>(
-                value: 'Settings',
-                child: Text('Settings'),
-              )
-            ];
+        GestureDetector(
+          onTap: () => Navigator.pushNamed(context, '/settings'),
+          child:
+            Icon(
+           model.device == null ?
+              Icons.bluetooth
+              : Icons.bluetooth_connected,
+             
+        )),
+        IconButton(
+          // icon: Icon(Icons.compare_arrows),
+          icon: Icon(IconData(0xe800, fontFamily: 'reload')),
+          onPressed: () {
+            model.fetchTodos();
           },
         ),
+        // PopupMenuButton<String>(
+        //   onSelected: (String choice) {
+        //     switch (choice) {
+        //       case 'Settings':
+        //         Navigator.pushNamed(context, '/settings');
+        //     }
+        //   },
+        //   itemBuilder: (BuildContext context) {
+        //     return [
+        //       PopupMenuItem<String>(
+        //         value: 'Settings',
+        //         child: Text('Settings'),
+        //       )
+        //     ];
+        //   },
+        // ),
       ],
     );
   }

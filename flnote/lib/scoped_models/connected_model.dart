@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:http/http.dart' as http;
 import 'package:niknote/.env.example.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -90,6 +91,7 @@ mixin TodosModel on CoreModel {
         return;
       }
 
+    _todos = [];
     todoListData.forEach( (dynamic todoData) {
         if (todoData == null) {
           // print("null note");
@@ -198,8 +200,6 @@ Future<bool> _pushNotes() async {
     );
     _todos.add(todo);
 
-    //TODO: if a note is snoozed, schedule a notification
-
     final bool success  = await _pushNotes();
 
     _isLoading = false;
@@ -231,7 +231,6 @@ Future<bool> _pushNotes() async {
       int todoIndex = _todos.indexWhere((t) => t.id == currentTodo.id);
       _todos[todoIndex] = todo;
 
-    //TODO: if a note is snoozed, schedule a notification
      final bool success = await _pushNotes();
           _isLoading = false;
           notifyListeners();
@@ -242,7 +241,7 @@ Future<bool> removeTodo(int id) async {
   _isLoading = true;
   notifyListeners();
 
-  Todo todo = _todos.firstWhere((t) => t.id == id);
+  // Todo todo = _todos.firstWhere((t) => t.id == id);
   int todoIndex = _todos.indexWhere((t) => t.id == id);
   _todos.removeAt(todoIndex);
   final bool success = await _pushNotes();
@@ -311,7 +310,6 @@ Future<bool> unsnoozeNote(int id) async {
   _isLoading = true;
   notifyListeners();
   Todo todo = _todos.firstWhere((t) => t.id == id);
-
   todo = Todo(
     id: todo.id,
     title: todo.title,
@@ -348,6 +346,42 @@ List<Todo> snoozedNotes(){
 
 }
 
+mixin BluetoothModel on CoreModel {
+
+  FlutterBlue flutterBlue;
+  BluetoothDevice device; 
+  BluetoothCharacteristic characteristic;
+  
+
+  // Write characteristic method
+  _writeCharacteristic(BluetoothCharacteristic c,List<int> values) async {
+    if(device == null) {
+      return;
+    }
+    await device.writeCharacteristic(c, values,
+        type: CharacteristicWriteType.withResponse);
+  }
+
+
+  void startVibrationBurst() {
+
+    if (device == null) {
+      print("Device not connected");
+      return;
+    }
+
+    print("Starting vibration burst");
+    try {
+    _writeCharacteristic(characteristic, [0xffffffffff]);
+     new Timer(const Duration(milliseconds: 2500), () {
+       print("Stopping vibration");
+       _writeCharacteristic(characteristic,[0x0000000000]);
+    });
+    } catch (Error ) {
+        print("Error on writing characteristic");
+    }
+  }
+}
 
 mixin UserModel on CoreModel {
   Timer _authTimer;
@@ -585,6 +619,7 @@ mixin UserModel on CoreModel {
     _authTimer = Timer(Duration(seconds: time), tryRefreshToken);
   }
 }
+
 
 mixin SettingsModel on CoreModel {
   Settings _settings;

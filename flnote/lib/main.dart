@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:niknote/.env.example.dart';
+import 'package:niknote/pages/settings/bluetooth_settings.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:niknote/scoped_models/app_model.dart';
 import 'package:niknote/pages/settings/settings_page.dart';
@@ -69,6 +70,7 @@ class _TodoAppState extends State<TodoApp> {
           '/register': (BuildContext context) =>
               TodoListPage(_model),
           '/settings': (BuildContext context) =>
+              // BluetoothSettings(),
               SettingsPage(_model),
           '/snooze_actions': (BuildContext context) =>
               SnoozeActions(_model),

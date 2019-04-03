@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:niknote/models/Todo.dart';
 import 'package:niknote/scoped_models/app_model.dart';
 
 import 'package:niknote/scoped_models/connected_model.dart';
@@ -27,11 +28,14 @@ class MessageDialog {
     );
   }
 
-static void showSnoozeOptions(
+static Future <bool> showSnoozeOptions (
     BuildContext context, {
-    String title = 'Snoozing at time: ',
-    String message = '',
-  }) {
+      unsnoozeNote,
+      Todo todo
+  }) async {
+    // String title = 'Snoozing at time: ' + todo.snoozedDate.toString();
+    String title = "Reminder for note:";
+    String message = todo.title;
     print("Show Snooze optins");
     showDialog(
       context: context,
@@ -41,7 +45,18 @@ static void showSnoozeOptions(
           content: Text(message),
           actions: <Widget>[
             FlatButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: (){
+                print("clicked canncel");
+                 Navigator.of(context).pop(false);
+              },
+              child: Text("Cancel"),
+              ),
+            FlatButton(
+              onPressed: () {
+                print("clicked okay");
+                unsnoozeNote(todo.id);
+                Navigator.of(context).pop(true);
+              },
               child: Text('Okay'),
             )
           ],

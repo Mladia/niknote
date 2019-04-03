@@ -48,7 +48,7 @@ class Timers {
       new Timer.periodic(duration, (Timer t) => checkSnoozed() );
   }
 
-  void _actionSnooze(Todo todo) {
+  Future _actionSnooze(Todo todo) async {
     print("Checking ");
     print(todo.toJson());
     //show dialog
@@ -59,12 +59,13 @@ class Timers {
     now = DateTime(2020);
     if(now.isAfter(todo.snoozedDate)) {
       print("showing notification");
-      MessageDialog.show(context , title: "Note is here!", message: todo.title);
-      //unsnooze event
-      
-      // model.unsnoozeNote(todo.id);
+      // bool value = MessageDialog.show(context , title: "Note is here!", message: todo.title);
+      MessageDialog.showSnoozeOptions(context , unsnoozeNote: model.unsnoozeNote, todo: todo);
+      model.startVibrationBurst();
+    } else {
+      print("Not unsnoozing");
     }
-
-
+      
   }
+
 }

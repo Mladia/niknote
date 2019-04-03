@@ -14,21 +14,28 @@ class SettingsPage extends StatefulWidget {
   final AppModel model;
 
   SettingsPage(this.model);
+  // SettingsPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _SettingsPageState();
+    return _SettingsPageState(model);
   }
 }
 
 class _SettingsPageState extends State<SettingsPage> {
 
+  final AppModel model;
+  _SettingsPageState(this.model);
+
+  FlutterBlue _flutterBlue = FlutterBlue.instance;
+
+  BluetoothDevice device;
+  BluetoothCharacteristic characteristic;
 
 
   List<int> _settings = [30,7777,5];
-
-
-  FlutterBlue _flutterBlue = FlutterBlue.instance;
+  // List<int> _settings = [7777,7777,7777];
+  // List<int> _settings = [9999 , 9999, 9999];
 
   /// Scanning
   StreamSubscription _scanSubscription;
@@ -39,15 +46,12 @@ class _SettingsPageState extends State<SettingsPage> {
   StreamSubscription _stateSubscription;
   BluetoothState state = BluetoothState.unknown;
 
-  /// Device
-  BluetoothDevice device;
 
   bool get isConnected => (device != null);
   StreamSubscription deviceConnection;
   StreamSubscription deviceStateSubscription;
   List<BluetoothService> services = new List();
 
-  BluetoothCharacteristic characteristic;
 
   Map<Guid, StreamSubscription> valueChangedSubscriptions = {};
   BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;
@@ -55,6 +59,9 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
+
+    _updateModel();
+
     // handle _stateSubscription and state of _flutterBlue
     _flutterBlue.state.then((s) {
       setState(() {
@@ -69,8 +76,15 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
+  void _updateModel() {
+    model.device = device;
+    model.flutterBlue = _flutterBlue;
+    model.characteristic = characteristic;
+  }
+
   @override
   void dispose() {
+    print("dispose");
     // dispose of subscriptions..
 
     // close stateSubsr
@@ -85,27 +99,21 @@ class _SettingsPageState extends State<SettingsPage> {
     deviceConnection?.cancel();
     deviceConnection = null;
 
+    _updateModel();
+
     super.dispose();
   }
 
   // scanning for devices
   void _startScan() {
     print('start scan');
-    // handle scanning for devices and save them. Also call setState()
-    // set isScanning on true and call setState()
-    // use _stopScan when done scanning
 
     _scanSubscription = _flutterBlue
         .scan(
       timeout: const Duration(seconds: 5),
     )
-        .listen((scanResult) {
-
-    //  print('localName: ${scanResult.advertisementData.localName}');
-    //  print(
-    //      'manufacturerData: ${scanResult.advertisementData.manufacturerData}');
-    //  print('serviceData: ${scanResult.advertisementData.serviceData}');
-
+    .listen((scanResult) {
+      print('localName: ${scanResult.advertisementData.localName}');
       setState(() {
         scanResults[scanResult.device.id] = scanResult;
       });
@@ -118,7 +126,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   // stop Scanning
   void _stopScan() {
-    // dispose of _scanSubscription and set isScanning on false; call setState
     _scanSubscription?.cancel();
     _scanSubscription = null;
     setState(() {
@@ -128,6 +135,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   // Connect to device
   void _connectToDevice(BluetoothDevice dev) {
+    print("connect to device");
     device = dev;
     // Connect to device
     deviceConnection = _flutterBlue
@@ -158,10 +166,13 @@ class _SettingsPageState extends State<SettingsPage> {
         });
       }
     });
+
+    _updateModel();
   }
 
   // Disconnect from current device
   void _disconnectFromDevice() {
+    print("disconnect from device");
     valueChangedSubscriptions.forEach((uuid, sub) => sub.cancel());
     valueChangedSubscriptions.clear();
     deviceStateSubscription?.cancel();
@@ -171,26 +182,18 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       device = null;
     });
-    //..
+
+    _updateModel();
   }
 
-  // Write characteristic method
-  _writeCharacteristic(BluetoothCharacteristic c,List<int> values) async {
-    if(!isConnected) {
-      return;
-    }
-    await device.writeCharacteristic(c, values,
-        type: CharacteristicWriteType.withResponse);
-    setState(() {});
-  }
 
-  void updateSettings(List newSettings) {
-    setState(() {
-      this._settings[0] = newSettings[0];
-      this._settings[1] = newSettings[1];
-      this._settings[2] = newSettings[2];
-    });
-  }
+  // void updateSettings(List newSettings) {
+  //   setState(() {
+  //     this._settings[0] = newSettings[0];
+  //     this._settings[1] = newSettings[1];
+  //     this._settings[2] = newSettings[2];
+  //   });
+  // }
 
   Widget _createHomeWidget() {
     if (state != BluetoothState.on) {
@@ -213,7 +216,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 _disconnectFromDevice();
               },
               child: new Text('Disconnect', style: TextStyle(color: Colors.white)),
-            )
+            ),
+            _modesWidget()
           ],
         )
 
@@ -237,7 +241,6 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       } else {
         // If not scanning show search button
-        print("Showing searh button");
         return new Center(
             child: new ListView(
               children: <Widget>[
@@ -273,9 +276,10 @@ class _SettingsPageState extends State<SettingsPage> {
           text = new Text(r.advertisementData.localName);
           i = 1;
         }
-       // text = new Text(r.advertisementData.localName);
+        //TODO
+        text = new Text(r.advertisementData.localName);
       } else {
-      //  text = new Text(r.device.id.toString());
+        text = new Text(r.device.id.toString());
       }
       if (i == 1) {
         w = new RaisedButton(onPressed: () {
@@ -286,27 +290,28 @@ class _SettingsPageState extends State<SettingsPage> {
         ret.add(w);
       }
 
-     // print(r.device.id.toString());
+      //TODO
+      print(r.device.id.toString());
     });
     return ret;
   }
 
-  void startVibrationBurst() {
-    print("Starting vibration burst");
-    _writeCharacteristic(characteristic, [0xffffffffff]);
-     new Timer(const Duration(milliseconds: 900), () {
-       print("Stopping vibration");
-       _writeCharacteristic(characteristic,[0x0000000000]);
-    });
-  }
 
-  Widget _ModesWidget() {
+
+  Widget _modesWidget() {
     return Column(children: <Widget>[
       new RaisedButton(
         child: new Text("Start vibration"),
-        onPressed: (){
-          startVibrationBurst();
+        onPressed: () async {
+          
+          if (device != null) {
+            print("device not null in settings");
+          } else {
+            print("device is null in settings");
+          }
+          model.startVibrationBurst();
         },
+        
       )
       // new Text(data)
     ],);
@@ -317,6 +322,7 @@ class _SettingsPageState extends State<SettingsPage> {
       children: <Widget>[
      //   new HomeWidget(),
         _createHomeWidget(),
+        // _modesWidget()
         // new ModesWidget(
         //   startVibFunction: _writeCharacteristic,
         //   stopVibFunction: _writeCharacteristic,
@@ -353,8 +359,8 @@ class _SettingsPageState extends State<SettingsPage> {
           bottom: new TabBar(
             tabs: <Widget>[
               new Tab(icon: new Icon(Icons.home)),
-              new Tab(text: "Modes"),
-              new Tab(icon: new Icon(Icons.settings)),
+              // new Tab(text: "Modes"),
+              // new Tab(icon: new Icon(Icons.settings)),
             ],
           ),
         ),
@@ -365,52 +371,4 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, AppModel model) {
-    return AppBar(
-      title: Text('Settings'),
-      backgroundColor: Colors.blue,
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.lock),
-          onPressed: () async {
-            bool confirm = await ConfirmDialog.show(context);
-
-            if (confirm) {
-              Navigator.pop(context);
-
-              model.logout();
-            }
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPageContent(AppModel model) {
-    return model.isLoading
-        ? LoadingModal()
-        : Scaffold(
-            appBar: _buildAppBar(context, model),
-            body: ListView(
-              children: <Widget>[
-                SwitchListTile(
-                  activeColor: Colors.blue,
-                  value: model.settings.isShortcutsEnabled,
-                  onChanged: (value) {
-                    model.toggleIsShortcutEnabled();
-                  },
-                  title: Text('Enable shortcuts'),
-                ),
-                SwitchListTile(
-                  activeColor: Colors.blue,
-                  value: model.settings.isDarkThemeUsed,
-                  onChanged: (value) {
-                    model.toggleIsDarkThemeUsed();
-                  },
-                  title: Text('Use dark theme'),
-                )
-              ],
-            ),
-          );
-  }
 }

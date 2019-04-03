@@ -62,7 +62,6 @@ class TodoListView extends StatelessWidget {
       itemCount: model.todos.length,
       itemBuilder: (BuildContext context, int index) {
         Todo todo = model.todos[index];
-        // print("showing todo " + todo.title);
 
         //TODO: fix this
         return Dismissible(
@@ -71,9 +70,11 @@ class TodoListView extends StatelessWidget {
               if (dismissDirection == DismissDirection.startToEnd) {
                 print("Dismissing start to end");
                 model.toggleDone(todo.id);
-              } else if (dismissDirection == DismissDirection.endToStart) {
-                //TODO: just delete maybe
-                print("Snooze this note");
+              } 
+              else if (dismissDirection == DismissDirection.endToStart) {
+                print("Deleting this note");
+                int noteId = todo.id;
+                MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
               } else {
                 print("not nown dismissable");
               } 
