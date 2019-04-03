@@ -9,3 +9,4 @@ echo Creating new ap
 sudo create_ap wlp3s0 wlp3s0 Hotypoty nikiegotin
 echo Stopping interface on wlp3s0
 sudo create_ap --stop wlp3s0
+
