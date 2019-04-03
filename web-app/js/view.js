@@ -369,9 +369,8 @@ function snoozeCustom(){
 }
 
 function finishSnooze() {
-    let today = new Date();
-    let currentDate = today.toDateInputValue();
-    let curretTime = today.getHours() + ":" + today.getMinutes();
+    let currentTime = getCurrentTime();
+    let currentDate = getCurrentDate();
     console.log("Trying to snooze " + timeControl + ", and " + dateControl);
     //is date valid
     if (dateControl < currentDate) {
@@ -380,7 +379,8 @@ function finishSnooze() {
     }
     
     if (dateControl == currentDate 
-        && timeControl < curretTime){
+        && timeControl < currentTime){
+            console.log("Now is " + currentTime + " on " + currentDate);
             alert("Time traveler alert! Cannot set a reminder in the past!");
             return;
     }

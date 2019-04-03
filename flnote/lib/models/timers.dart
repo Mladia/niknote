@@ -60,8 +60,8 @@ class Timers {
     if(now.isAfter(todo.snoozedDate)) {
       print("showing notification");
       // bool value = MessageDialog.show(context , title: "Note is here!", message: todo.title);
+      model.vibrationBurst();
       MessageDialog.showSnoozeOptions(context , unsnoozeNote: model.unsnoozeNote, todo: todo);
-      model.startVibrationBurst();
     } else {
       print("Not unsnoozing");
     }

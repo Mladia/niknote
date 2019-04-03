@@ -348,11 +348,70 @@ List<Todo> snoozedNotes(){
 
 mixin BluetoothModel on CoreModel {
 
-  FlutterBlue flutterBlue;
+  FlutterBlue flutterBlue = FlutterBlue.instance;
   BluetoothDevice device; 
   BluetoothCharacteristic characteristic;
-  
 
+  /// Scanning
+  StreamSubscription scanSubscription;
+  Map<DeviceIdentifier, ScanResult> scanResults = new Map();
+  bool isScanning = false;
+
+  /// State
+  StreamSubscription stateSubscription;
+  BluetoothState state = BluetoothState.unknown;
+
+
+  bool get isConnected => (device != null);
+  StreamSubscription deviceConnection;
+  StreamSubscription deviceStateSubscription;
+  List<BluetoothService> services = new List();
+
+
+  Map<Guid, StreamSubscription> valueChangedSubscriptions = {};
+  BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;
+
+  void dispose() {
+    print("dispose");
+    // dispose of subscriptions..
+
+    // close stateSubsr
+    stateSubscription?.cancel();
+    stateSubscription = null;
+
+    // close scanSubscr
+    scanSubscription?.cancel();
+    scanSubscription = null;
+
+    // close deviceConnectionSubscr
+    deviceConnection?.cancel();
+    deviceConnection = null;
+
+
+  }
+  
+  void startScan() {
+    print('start scan');
+
+    scanSubscription = flutterBlue
+        .scan(
+      timeout: const Duration(seconds: 5),
+    )
+    .listen((scanResult) {
+      print('localName: ${scanResult.advertisementData.localName}');
+        scanResults[scanResult.device.id] = scanResult;
+        notifyListeners();
+    }, onDone: stopScan);
+
+      isScanning = true;
+  }
+
+  void stopScan() {
+    scanSubscription?.cancel();
+    scanSubscription = null;
+      isScanning = false;
+      notifyListeners();
+  }
   // Write characteristic method
   _writeCharacteristic(BluetoothCharacteristic c,List<int> values) async {
     if(device == null) {
@@ -363,7 +422,53 @@ mixin BluetoothModel on CoreModel {
   }
 
 
-  void startVibrationBurst() {
+
+  // Connect to device
+  void connectToDevice(BluetoothDevice dev) {
+    print("connect to device");
+    device = dev;
+    // Connect to device
+    deviceConnection = flutterBlue
+        .connect(device, timeout: const Duration(seconds: 5))
+        .listen(
+          null,
+          onDone: disconnectFromDevice,
+        );
+
+    // Update the connection state immediately
+    device.state.then((s) {
+        deviceState = s;
+        notifyListeners();
+    });
+
+    // Subscribe to connection changes
+    deviceStateSubscription = device.onStateChanged().listen((s) {
+        deviceState = s;
+      if (s == BluetoothDeviceState.connected) {
+        device.discoverServices().then((s) {
+            services = s;
+            characteristic = services[2].characteristics[0];
+            notifyListeners();
+        });
+      }
+    });
+
+  }
+
+  // Disconnect from current device
+  void disconnectFromDevice() {
+    print("disconnect from device");
+    valueChangedSubscriptions.forEach((uuid, sub) => sub.cancel());
+    valueChangedSubscriptions.clear();
+    deviceStateSubscription?.cancel();
+    deviceStateSubscription = null;
+    deviceConnection?.cancel();
+    deviceConnection = null;
+    device = null;
+    notifyListeners();
+
+  }
+  void vibrationBurst() {
 
     if (device == null) {
       print("Device not connected");

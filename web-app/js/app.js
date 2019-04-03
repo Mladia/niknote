@@ -426,9 +426,13 @@ function unsnooze_notes() {
             continue;
         }
 
+
         if (!notes[i].snoozed) {
             continue;
         }
+
+        let do_add = false;
+
         console.log(notes[i]);
 
         if (notes[i].snoozed == false) {
@@ -436,20 +440,19 @@ function unsnooze_notes() {
             notes[i].snoozed_time = "";
         }
 
-       if (notes[i].snoozed_date <= currentDate) {
+       if (notes[i].snoozed_date < currentDate) {
         console.log("edno");
-       } else {
-        console.log("edno1");
+           do_add = true;
+       } else if (notes[i].snoozed_date = currentDate) {
+            if (notes[i].snoozed_time <= currentTime) {
+                do_add = true;
+                console.log("dve");
+            } else {
+                console.log("dve2");
+            }
        }
 
-        if (notes[i].snoozed_time <= currentTime) {
-            console.log("dve");
-        } else {
-            console.log("dve2");
-        }
-
-       if (notes[i].snoozed_date <= currentDate
-            && notes[i].snoozed_time <= currentTime) {
+        if (do_add) {
                 console.log("Add to to be unsnoozed " + notes[i].title);
                 unsnooze.push( { note : notes[i], id: i } );
             }

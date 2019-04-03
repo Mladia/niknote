@@ -67,11 +67,7 @@ class TodoListView extends StatelessWidget {
         return Dismissible(
             key: Key(todo.id.toString()),
             onDismissed: (DismissDirection dismissDirection) {
-              if (dismissDirection == DismissDirection.startToEnd) {
-                print("Dismissing start to end");
-                model.toggleDone(todo.id);
-              } 
-              else if (dismissDirection == DismissDirection.endToStart) {
+              if (dismissDirection == DismissDirection.endToStart) {
                 print("Deleting this note");
                 int noteId = todo.id;
                 MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
