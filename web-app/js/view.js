@@ -160,9 +160,11 @@ function show_photo_new_dialog() {
 }
 
 function delete_new_image (){
+    console.log("delete new image");
     $("#changeImageBlock").hide();
     $('#changePhotoLabel').show();
-    image_to_upload = ""
+    image_to_upload = "";
+    notes[c_note_id].image = false;
 }
 
 

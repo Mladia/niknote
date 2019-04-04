@@ -373,6 +373,15 @@ function sendFile(id, fileData) {
 function load_current_image(id) {
     //set image to current
     console.log("Loading current image request");
+    console.log("Setting temp image");
+
+    let empty1x1png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQI12NgYAAAAAMAASDVlMcAAAAASUVORK5CYII=";
+    let sourcec = "data:image/png;base64," + empty1x1png;
+    let url = sourcec; 
+    $('#currentNoteImage').attr("src", url);
+    $('#imageChangeIMG').attr("src", url);
+    $('#unsnoozedNoteImage1').attr("src", url);
+
     let s_data = JSON.stringify( 
         {update_current : id}
     );
