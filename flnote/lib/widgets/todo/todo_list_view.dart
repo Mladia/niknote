@@ -23,9 +23,9 @@ class TodoListView extends StatelessWidget {
             'This is boring here. \r\nCreate a Done todo to make it crowd.';
         break;
 
-      case Filter.NotDone:
+      case Filter.Current:
         emptyText =
-            'This is boring here. \r\nCreate a Not Done todo to make it crowd.';
+            'This is boring here. \r\nCreate a running todo to make it crowd.';
         break;
     }
 
@@ -63,7 +63,6 @@ class TodoListView extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         Todo todo = model.todos[index];
 
-        //TODO: fix this
         return Dismissible(
             key: Key(todo.id.toString()),
             onDismissed: (DismissDirection dismissDirection) {
@@ -83,19 +82,84 @@ class TodoListView extends StatelessWidget {
 
 
             child: GestureDetector (
-            onLongPress: () {
-              print("Long pressing");
-              print("Let's delete this");
-              int noteId = todo.id;
-              MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
-            },
-            child: TodoCard(todo),
+              onTap: () =>_settingModalBottomSheet(context, todo),
+              onLongPress: () {
+                // print("Long pressing");
+                // print("Let's delete this");
+                // int noteId = todo.id;
+                // MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
+              },
+              child: TodoCard(todo),
             ),
             background: Container(color: Colors.red),
           );
       }
     );
   }
+
+Widget titleText(BuildContext context, String text) {
+  return new Text(
+      text,
+      style: TextStyle(
+        decoration: TextDecoration.underline,
+        decorationColor: Theme.of(context).primaryColor,
+        fontSize: 25,
+      )
+    );
+}
+
+Widget _snoozedText(BuildContext context, Todo todo) {
+  if (todo.snoozed) {
+      return new Text( "Snoozed for " + todo.snoozedDate.toString().substring(0, todo.snoozedDate.toString().length-7) ,
+          style: TextStyle (color: Colors.yellow[900], fontSize: 15)); 
+  }
+
+  return new Text("");
+
+
+}
+
+void _settingModalBottomSheet(BuildContext context, Todo todo){
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc){
+          return Padding(
+            padding: EdgeInsets.all(10.0),
+            child: new Wrap(
+              children: <Widget>[
+                new Center(
+                  child: 
+                    new Icon(
+                      IconData(0xe801, fontFamily: 'note'),
+                      color: !todo.snoozed ?
+                             Theme.of(context).accentColor 
+                             : Colors.yellow[900]
+                    // new Text("Note:"),
+                    )
+                ),
+                new Center(
+                  child:
+                  _snoozedText(context, todo)
+                ),
+                new Padding(
+                  padding: EdgeInsets.all(2.0)
+                ),
+                new ListTile(
+                            leading: new Text(""),
+                            title: titleText(context, todo.title),
+                            onTap: () => {}          
+                          ),
+                          new ListTile(
+                            leading: new Text(""),
+                            title: new Text(todo.content),
+                            onTap: () => {},          
+                          ),
+              ],
+          ),
+          );
+      }
+    );
+}
 
   @override
   Widget build(BuildContext context) {

@@ -58,6 +58,9 @@ flutter:
     - family: reload 
       fonts:
         - asset: fonts/reload.ttf
+    - family: note
+      fonts:
+        - asset: fonts/note.ttf
   #       - asset: fonts/Schyler-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic

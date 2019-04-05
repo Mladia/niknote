@@ -43,8 +43,8 @@ class _TodoListPageState extends State<TodoListPage> {
            model.device == null ?
               Icons.bluetooth
               : Icons.bluetooth_connected,
-             
         )),
+        Padding(padding: EdgeInsets.all(5.0) ,),
         IconButton(
           // icon: Icon(Icons.compare_arrows),
           icon: Icon(IconData(0xe800, fontFamily: 'reload')),
@@ -143,12 +143,12 @@ class _TodoListPageState extends State<TodoListPage> {
             Icon(
               Icons.check_box_outline_blank,
               color:
-                  model.filter == Filter.NotDone ? Colors.white : Colors.black,
+                  model.filter == Filter.Current ? Colors.white : Colors.black,
             ),
             Text(
-              'Not Done',
+              'Running',
               style: TextStyle(
-                color: model.filter == Filter.NotDone
+                color: model.filter == Filter.Current
                     ? Colors.white
                     : Colors.black,
               ),
@@ -157,17 +157,18 @@ class _TodoListPageState extends State<TodoListPage> {
         ),
       ),
       onPressed: () {
-        model.applyFilter(Filter.NotDone);
+        model.applyFilter(Filter.Current);
       },
     );
+  
+  
   }
 
+
+
   Widget _buildBottomAppBar(AppModel model) {
-    //TODO: 
-    Timers timerSnoozed = Timers(model: model, context: context);
-    timerSnoozed.periodical();
     
-    return null;
+    // return null;
 
     return BottomAppBar(
       child: Row(
@@ -175,15 +176,15 @@ class _TodoListPageState extends State<TodoListPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           // SizedBox(),
-          _buildAllFlatButton(model),
-          _buildDoneFlatButton(model),
           _buildNotDoneFlatButton(model),
-          // SizedBox(
-          //   width: 80.0,
-          // ),
+          _buildDoneFlatButton(model),
+          _buildAllFlatButton(model),
+          SizedBox(
+            width: 80.0,
+          ),
         ],
       ),
-      color: Colors.blue,
+      color: Theme.of(context).primaryColor,
       shape: CircularNotchedRectangle(),
     );
   }
@@ -191,9 +192,10 @@ class _TodoListPageState extends State<TodoListPage> {
   Widget _buildPageContent(AppModel model) {
     return Scaffold(
       appBar: _buildAppBar(model),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: _buildFloatingActionButton(model),
-      // bottomNavigationBar: _buildBottomAppBar(model),
+      bottomNavigationBar: _buildBottomAppBar(model),
       body: TodoListView(),
     );
   }

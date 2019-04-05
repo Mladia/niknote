@@ -4,7 +4,6 @@ import 'package:niknote/.env.example.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:niknote/widgets/ui_elements/loading_modal.dart';
-import 'package:niknote/widgets/helpers/message_dialog.dart';
 import 'package:niknote/scoped_models/app_model.dart';
 import 'package:niknote/widgets/ui_elements/rounded_button.dart';
 
@@ -30,14 +29,7 @@ class _AuthPageState extends State<AuthPage> {
 
     // _formKey.currentState.save();
 
-    Map<String, dynamic> authResult =
-        await model.authenticate(_formData['email'], _formData['password']);
 
-    if (authResult['success']) {
-      print("success on authentication");
-    } else {
-      MessageDialog.show(context, message: authResult['message']);
-    }
   }
 
   Widget _buildEmailField() {

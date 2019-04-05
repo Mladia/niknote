@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 
@@ -6,7 +5,6 @@ import 'package:scoped_model/scoped_model.dart';
 
 import 'package:niknote/scoped_models/app_model.dart';
 import 'package:niknote/widgets/ui_elements/loading_modal.dart';
-import 'package:niknote/widgets/helpers/confirm_dialog.dart';
 
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -90,9 +88,13 @@ class _SettingsPageState extends State<SettingsPage> {
               onPressed: () {
                 model.disconnectFromDevice();
               },
-              child: new Text('Disconnect', style: TextStyle(color: Colors.white)),
+              child: GestureDetector(
+                onLongPress: () => model.vibrationPattern() ,
+                // onDoubleTap: () => model.vibrationPattern(),
+                child: new Text('Disconnect', style: TextStyle(color: Colors.white)),
+              ),
             ),
-            _modesWidget()
+            // _modesWidget()
           ],
         )
 
@@ -148,11 +150,11 @@ class _SettingsPageState extends State<SettingsPage> {
       int i = 0;
       if (r.advertisementData.localName != null && r.advertisementData.localName != "" ) {
         //TODO: show only this device?
-        // if (r.device.id.toString() == "F7:A4:5E:88:83:53") {
-        //   text = new Text(r.advertisementData.localName);
-        //   i = 1;
-        // }
-        text = new Text(r.advertisementData.localName);
+        if (r.device.id.toString() == "F7:A4:5E:88:83:53") {
+          text = new Text(r.advertisementData.localName);
+          i = 1;
+        }
+        // text = new Text(r.advertisementData.localName);
       } else {
         // text = new Text(r.device.id.toString());
       }
@@ -186,6 +188,19 @@ class _SettingsPageState extends State<SettingsPage> {
           model.vibrationBurst();
         },
         
+      ),
+      new RaisedButton(
+        child: new Text("Start pattern"),
+        onPressed: () async {
+          
+          if (model.device != null) {
+            print("device not null in settings");
+          } else {
+            print("device is null in settings");
+          }
+          model.vibrationPattern();
+        },
+        
       )
       // new Text(data)
     ],);
@@ -217,11 +232,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
 
-  @override
-  Widget build(BuildContext context) {
-    return ScopedModelDescendant<AppModel>(
-      builder: (BuildContext context, Widget child, AppModel model) {
-        // return _buildPageContent(model);
+  Widget _buildPageContent(model) {
+
          return new DefaultTabController(
       length: 3,
       child: new Scaffold(
@@ -238,6 +250,23 @@ class _SettingsPageState extends State<SettingsPage> {
         body: _createTabBarView(),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScopedModelDescendant<AppModel>(
+      builder: (BuildContext context, Widget child, AppModel model) {
+        Stack stack = Stack(
+          children: <Widget>[
+            _buildPageContent(model),
+          ]
+        );
+
+        if (model.isLoading) {
+          stack.children.add(LoadingModal());
+        }
+
+        return stack;
       },
     );
   }

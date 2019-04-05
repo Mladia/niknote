@@ -10,6 +10,23 @@ class TodoCard extends StatelessWidget {
 
   TodoCard(this.todo);
 
+  Color _colorTodo(Todo todo, BuildContext context){
+    if (todo == null) {
+      return Theme.of(context).cardColor;
+    }
+
+
+    if (todo.snoozed) {
+      return Colors.yellow;
+    }
+
+    if (todo.isDone) {
+      return Theme.of(context).highlightColor;
+    }
+
+    return Theme.of(context).cardColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     // print("Showing notes");
@@ -20,8 +37,7 @@ class TodoCard extends StatelessWidget {
             children: <Widget>[
               Container(
                 decoration: new BoxDecoration(
-                  color: todo.snoozed != null ? (todo.snoozed ? Colors.yellow : Colors.lightGreen) 
-                                                : Colors.lightGreen,
+                  color: _colorTodo(todo, context), 
                   borderRadius: new BorderRadius.only(
                     topLeft: const Radius.circular(4.0),
                     bottomLeft: const Radius.circular(4.0),

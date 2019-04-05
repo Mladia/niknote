@@ -6,18 +6,15 @@ import 'package:http/http.dart' as http;
 import 'package:niknote/.env.example.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:rxdart/subjects.dart';
 
-import 'package:niknote/models/user.dart';
 import 'package:niknote/models/filter.dart';
 import 'package:niknote/models/Todo.dart';
-import 'package:niknote/models/settings.dart';
 
 mixin CoreModel on Model {
   List<Todo> _todos = [];
   Todo _todo;
   bool _isLoading = false;
-  Filter _filter = Filter.All;
+  Filter _filter = Filter.Current;
 }
 
 mixin TodosModel on CoreModel {
@@ -29,8 +26,11 @@ mixin TodosModel on CoreModel {
       case Filter.Done:
         return List.from(_todos.where((todo) => todo.isDone));
 
-      case Filter.NotDone:
-        return List.from(_todos.where((todo) => !todo.isDone));
+      case Filter.Current:
+        return List.from(_todos.where((todo) {
+          var todo2 = todo;
+                    return (!todo2.isDone && !todo.snoozed);
+        }));
     }
 
     return List.from(_todos);
@@ -104,7 +104,7 @@ mixin TodosModel on CoreModel {
           }
         print(dateTodo);
         } catch (error) {
-          print(error);
+          print("Parsing time error in fetch todos:" + error);
         }
         final Todo todo = Todo (
           id: todoData['id'],
@@ -117,7 +117,9 @@ mixin TodosModel on CoreModel {
           tags: new List<String>.from( todoData['tags'])
         );
 
-        // print(todo.toJson());
+        if (todo.snoozed) {
+          print(todo.toJson());
+        }
         _todos.add(todo);
       });
       _isLoading = false;
@@ -130,7 +132,7 @@ mixin TodosModel on CoreModel {
   }
 
 Future<bool> _pushNotes() async {
-  return true;
+  // return true;
   print("Pushing notes");
   List jsonList = List();
   int currentId = 0;
@@ -142,9 +144,11 @@ Future<bool> _pushNotes() async {
     }
 
     jsonList.add(it.current.toJson());
+    if (it.current.snoozed) {
+      print("Adding " + it.current.toJson());
+    }
     currentId++;
   }
-
   final String notes = jsonList.toString();
   final String url = Configure.ServerUrl;
   print("from url:" + url);
@@ -363,6 +367,7 @@ mixin BluetoothModel on CoreModel {
 
 
   bool get isConnected => (device != null);
+  bool connectedSimulated = false;
   StreamSubscription deviceConnection;
   StreamSubscription deviceStateSubscription;
   List<BluetoothService> services = new List();
@@ -371,7 +376,8 @@ mixin BluetoothModel on CoreModel {
   Map<Guid, StreamSubscription> valueChangedSubscriptions = {};
   BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;
 
-  void dispose() {
+
+  void _dispose() {
     print("dispose");
     // dispose of subscriptions..
 
@@ -425,6 +431,9 @@ mixin BluetoothModel on CoreModel {
 
   // Connect to device
   void connectToDevice(BluetoothDevice dev) {
+    _isLoading = true;
+    notifyListeners();
+    
     print("connect to device");
     device = dev;
     // Connect to device
@@ -438,7 +447,6 @@ mixin BluetoothModel on CoreModel {
     // Update the connection state immediately
     device.state.then((s) {
         deviceState = s;
-        notifyListeners();
     });
 
     // Subscribe to connection changes
@@ -448,10 +456,18 @@ mixin BluetoothModel on CoreModel {
         device.discoverServices().then((s) {
             services = s;
             characteristic = services[2].characteristics[0];
+            _isLoading = false;
             notifyListeners();
+            vibrationBurst();
         });
+      } else {
+        print("connected, but not connected");
+
       }
     });
+
+    // _isLoading = false;
+    // notifyListeners();
 
   }
 
@@ -465,343 +481,88 @@ mixin BluetoothModel on CoreModel {
     deviceConnection?.cancel();
     deviceConnection = null;
     device = null;
+
+    _isLoading = false;
     notifyListeners();
 
   }
-  void vibrationBurst() {
+
+  bool vibrationBurst() {
+    if (device == null) {
+      print("Device not connected");
+      return false;
+    }
+    
+    _writeCharacteristic(characteristic, [ 0xf0, 0xf0, 0xf0, 0x30]);
+
+    new Timer(const Duration(milliseconds: 1500), () {
+    _writeCharacteristic(characteristic, [ 0x0 , 0x0 , 0x0, 0x0]);
+      // _writeCharacteristic(characteristic,[0x00, 0x00, 0x00, 0x00]);
+    });
+
+    return true;
+  }
+
+  void vibrationPattern() {
 
     if (device == null) {
       print("Device not connected");
       return;
     }
 
-    print("Starting vibration burst");
-    try {
-    _writeCharacteristic(characteristic, [0xffffffffff]);
-     new Timer(const Duration(milliseconds: 2500), () {
-       print("Stopping vibration");
-       _writeCharacteristic(characteristic,[0x0000000000]);
+    print("Starting vibration pattern");
+    int i = 0xf;
+    int limit = 0xbb;
+    int step = 0x1;
+    // for (; i < limit; i+=step) {
+    //   _writeCharacteristic(characteristic, [ i, 0x3, i, 0x3]);
+
+    //   new Timer(const Duration(milliseconds: 300), () {
+    //   _writeCharacteristic(characteristic, [ 0x3 , i , 0x3, i]);
+    //   });
+    // }
+
+    _writeCharacteristic(characteristic, [ 0xf0, 0x33, 0xf0, 0x33]);
+
+    new Timer(const Duration(milliseconds: 700), () {
+      print("second vibr");
+      _writeCharacteristic(characteristic,[0x30, 0xf0, 0x30, 0xf0]);
+      new Timer(const Duration(milliseconds: 500), () {
+        print('third');
+        _writeCharacteristic(characteristic, [ 0xf0 , 0x30 , 0x33, 0xff]);
+        new Timer(const Duration(milliseconds: 1000), () {
+          print("stopping all");
+          _writeCharacteristic(characteristic,[0x00, 0x00, 0x00, 0x00]);
+        });
+      });
     });
-    } catch (Error ) {
-        print("Error on writing characteristic");
-    }
+
+      //stop all
   }
 }
 
 mixin UserModel on CoreModel {
-  Timer _authTimer;
-  PublishSubject<bool> _userSubject = PublishSubject();
-  var defUser = User( id: "0", email: "s@gmail.com", token: "s");
-
-  User get user {
-    return defUser;
-    // return _user;
-  }
-
-  PublishSubject<bool> get userSubject {
-    return _userSubject;
-  }
-
-  Future<Map<String, dynamic>> authenticate(
-      String email, String password) async {
-      _isLoading = false;
-      notifyListeners();
-
-      return {'success': false, 'message': 'sorry'};
-    _isLoading = true;
-    notifyListeners();
-
-    final Map<String, dynamic> formData = {
-      'email': email,
-      'password': password,
-      'returnSecureToken': true,
-    };
-
-
-
-    try {
-      final http.Response response = await http.post(
-        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${Configure.ApiKey}',
-        body: json.encode(formData),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      String message;
-
-      if (responseData.containsKey('idToken')) {
-
-
-        setAuthTimeout(int.parse(responseData['expiresIn']));
-
-        final DateTime now = DateTime.now();
-        final DateTime expiryTime =
-            now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
-
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setString('userId', responseData['localId']);
-        prefs.setString('email', responseData['email']);
-        prefs.setString('token', responseData['idToken']);
-        prefs.setString('refreshToken', responseData['refreshToken']);
-        prefs.setString('expiryTime', expiryTime.toIso8601String());
-
-        _userSubject.add(true);
-
-        _isLoading = false;
-        notifyListeners();
-
-        // return {'success': true};
-      } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
-        message = 'Email is not found.';
-      } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
-        message = 'Password is invalid.';
-      } else if (responseData['error']['message'] == 'USER_DISABLED') {
-        message = 'The user account has been disabled.';
-      }
-
-      _isLoading = false;
-      notifyListeners();
-
-      return {'success': true};
-      return {
-        'success': false,
-        'message': message,
-      };
-    } catch (error) {
-      _isLoading = false;
-      notifyListeners();
-
-      return {'success': false, 'message': error};
-    }
-  }
-
-  Future<Map<String, dynamic>> register(String email, String password) async {
-    _isLoading = true;
-    notifyListeners();
-
-    final Map<String, dynamic> formData = {
-      'email': email,
-      'password': password,
-      'returnSecureToken': true,
-    };
-
-    try {
-      final http.Response response = await http.post(
-        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=${Configure.ApiKey}',
-        body: json.encode(formData),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      String message;
-
-      if (responseData.containsKey('idToken')) {
-        // return {'success': true};
-
-        setAuthTimeout(int.parse(responseData['expiresIn']));
-
-        final DateTime now = DateTime.now();
-        final DateTime expiryTime =
-            now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
-
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setString('userId', responseData['localId']);
-        prefs.setString('email', responseData['email']);
-        prefs.setString('token', responseData['idToken']);
-        prefs.setString('refreshToken', responseData['refreshToken']);
-        prefs.setString('expiryTime', expiryTime.toIso8601String());
-
-        _userSubject.add(true);
-
-        _isLoading = false;
-        notifyListeners();
-
-        return {'success': true};
-      } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
-        message = 'Email is already exists.';
-      } else if (responseData['error']['message'] == 'OPERATION_NOT_ALLOWED') {
-        message = 'Password sign-in is disabled.';
-      } else if (responseData['error']['message'] ==
-          'TOO_MANY_ATTEMPTS_TRY_LATER') {
-        message =
-            'We have blocked all requests from this device due to unusual activity. Try again later.';
-      }
-
-      _isLoading = false;
-      notifyListeners();
-      return {'success': true};
-
-      return {
-        'success': false,
-        'message': message,
-      };
-    } catch (error) {
-      _isLoading = false;
-      notifyListeners();
-
-      return {'success': false, 'message': error};
-    }
-  }
-
-  void logout() async {
-    _todos = [];
-    _todo = null;
-    _filter = Filter.All;
-
-    _authTimer.cancel();
-
-    _userSubject.add(false);
-
-    final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
-  }
-
-  void autoAuthentication() async {
-    return;
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token');
-
-    if (token != null) {
-      final String expiryTimeString = prefs.getString('expiryTime');
-      final DateTime now = DateTime.now();
-      final parsedExpiryTime = DateTime.parse(expiryTimeString);
-
-      if (parsedExpiryTime.isBefore(now)) {
-
-        return;
-      }
-
-
-      final int tokenLifespan = parsedExpiryTime.difference(now).inSeconds;
-      setAuthTimeout(tokenLifespan);
-
-      _userSubject.add(true);
-    }
-  }
-
-  void tryRefreshToken() async {
-    return;
-    final prefs = await SharedPreferences.getInstance();
-    final refreshToken = prefs.getString('refreshToken');
-
-    final Map<String, dynamic> formData = {
-      'grant_type': 'refresh_token',
-      'refresh_token': refreshToken
-    };
-
-    try {
-      final http.Response response = await http.post(
-        'https://securetoken.googleapis.com/v1/token?key=${Configure.ApiKey}',
-        body: json.encode(formData),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      final Map<String, dynamic> responseData = json.decode(response.body);
-
-      if (responseData.containsKey('id_token')) {
-
-        setAuthTimeout(int.parse(responseData['expires_in']));
-
-        final DateTime now = DateTime.now();
-        final DateTime expiryTime =
-            now.add(Duration(seconds: int.parse(responseData['expires_in'])));
-
-        prefs.setString('token', responseData['id_token']);
-        prefs.setString('expiryTime', expiryTime.toIso8601String());
-        prefs.setString('refreshToken', responseData['refresh_token']);
-
-        print('tryRefreshToken');
-
-        return;
-      }
-    } catch (error) {}
-
-    logout();
-  }
-
-  void setAuthTimeout(int time) {
-    _authTimer = Timer(Duration(seconds: time), tryRefreshToken);
-  }
 }
 
 
 mixin SettingsModel on CoreModel {
-  Settings _settings;
-  PublishSubject<bool> _themeSubject = PublishSubject();
-
-  Settings get settings {
-    return _settings;
-  }
-
-  PublishSubject<bool> get themeSubject {
-    return _themeSubject;
-  }
-
   void loadSettings() async {
     return;
-    final prefs = await SharedPreferences.getInstance();
-    final isDarkThemeUsed = _loadIsDarkThemeUsed(prefs);
-
-    print("is Shortcuts enabled");
-    _settings = Settings(
-      isShortcutsEnabled: _loadIsShortcutsEnabled(prefs),
-      isDarkThemeUsed: isDarkThemeUsed,
-    );
-
-    _themeSubject.add(isDarkThemeUsed);
   }
 
   bool _loadIsShortcutsEnabled(SharedPreferences prefs) {
     return false;
-    return prefs.getKeys().contains('isShortcutsEnabled') &&
-            prefs.getBool('isShortcutsEnabled')
-        ? true
-        : false;
   }
 
   bool _loadIsDarkThemeUsed(SharedPreferences prefs) {
     return false;
-    return prefs.getKeys().contains('isDarkThemeUsed') &&
-            prefs.getBool('isDarkThemeUsed')
-        ? true
-        : false;
   }
 
   Future toggleIsShortcutEnabled() async {
     return;
-    _isLoading = true;
-    notifyListeners();
-
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isShortcutsEnabled', !_loadIsShortcutsEnabled(prefs));
-
-    _settings = Settings(
-      isShortcutsEnabled: _loadIsShortcutsEnabled(prefs),
-      isDarkThemeUsed: _loadIsDarkThemeUsed(prefs),
-    );
-
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future toggleIsDarkThemeUsed() async {
     return;
-    _isLoading = true;
-    notifyListeners();
-
-    final prefs = await SharedPreferences.getInstance();
-    final isDarkThemeUsed = !_loadIsDarkThemeUsed(prefs);
-    prefs.setBool('isDarkThemeUsed', isDarkThemeUsed);
-
-    _themeSubject.add(isDarkThemeUsed);
-
-    _settings = Settings(
-      isShortcutsEnabled: _loadIsShortcutsEnabled(prefs),
-      isDarkThemeUsed: _loadIsDarkThemeUsed(prefs),
-    );
-
-    _isLoading = false;
-    notifyListeners();
   }
 }

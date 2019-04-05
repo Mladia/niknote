@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:niknote/models/Todo.dart';
-import 'package:niknote/scoped_models/connected_model.dart';
 import 'package:niknote/widgets/helpers/message_dialog.dart';
 
 import '../scoped_models/app_model.dart';
@@ -53,17 +52,20 @@ class Timers {
     print(todo.toJson());
     //show dialog
 
-    //TODO:
     DateTime now;
-    // now = DateTime.now();
-    now = DateTime(2020);
-    if(now.isAfter(todo.snoozedDate)) {
-      print("showing notification");
-      // bool value = MessageDialog.show(context , title: "Note is here!", message: todo.title);
-      model.vibrationBurst();
-      MessageDialog.showSnoozeOptions(context , unsnoozeNote: model.unsnoozeNote, todo: todo);
-    } else {
-      print("Not unsnoozing");
+    now = DateTime.now();
+    print("now is " + now.toString());
+    try {
+      if(now.isAfter(todo.snoozedDate)) {
+        print("showing notification");
+        // bool value = MessageDialog.show(context , title: "Note is here!", message: todo.title);
+        model.vibrationPattern();
+        MessageDialog.showSnoozeOptions(context , unsnoozeNote: model.unsnoozeNote, todo: todo);
+      } else {
+        print("Not unsnoozing");
+      }
+    } catch (Error){
+      print("ERROR: Not correct date...");
     }
       
   }

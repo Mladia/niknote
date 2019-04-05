@@ -31,17 +31,6 @@ static void showOptions (
           // content: Text(message),
           actions: <Widget>[
             Text("snoozing"),
-            // DateTimePickerFormField(
-            //   inputType: inputType,
-            //   format: formats[inputType],
-            //   editable: editable,
-            //   decoration: InputDecoration(
-            //       labelText: 'Date/Time', hasFloatingPlaceholder: false),
-              // onChanged: (dt) {
-              //   print(dt.toString());
-              // }
-            // ),
-
             Text('Date value: $date'),
             SizedBox(height: 16.0),
             CheckboxListTile(
@@ -49,32 +38,6 @@ static void showOptions (
               value: inputType != InputType.time,
               onChanged: (value) => _updateInputType(inputType, date: value),
             ),
-            // CheckboxListTile(
-            //   title: Text('Time picker'),
-            //   value: inputType != InputType.date,
-            //   onChanged: (value) => _updateInputType(inputType, time: value),
-            // ),
-            // CheckboxListTile(
-            //   title: Text('Editable'),
-            //   value: editable,
-            //   onChanged: (value) {
-            //     print(value.toString());
-            //   }
-            // ),
-
-
-            // FlatButton(
-            //   onPressed: () => Navigator.of(context).pop(),
-            //   child: Text('Cancel'),
-            // ),
-            // FlatButton(
-            //   onPressed: () {
-            //     //TODO:
-            //     // snoozeNote(noteId, snoozeDate, snoozeTime);
-            //     Navigator.of(context).pop();
-            //   },
-              // child: Text('Snooze')
-            // ),
           ],
         );
       },

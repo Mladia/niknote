@@ -74,8 +74,8 @@ class Todo {
       'done': isDone == null ? false : isDone,
       'image': image == null ? false : image,
       'snoozed': snoozed == null ? false : snoozed,
-      'snoozedTime' :formattedTime == null ? "" : formattedTime,
-      'snoozedDate' : formattedDate == null ? "" : formattedDate,
+      'snoozed_time' :formattedTime == null ? "" : formattedTime,
+      'snoozed_date' : formattedDate == null ? "" : formattedDate,
       'tags' : tags == null ? [] : tags
     });
   }

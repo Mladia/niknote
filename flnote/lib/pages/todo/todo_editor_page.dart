@@ -51,6 +51,14 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
         _formKey.currentState.save();
         bool todoActionSuccess = false;
 
+        if (_formData['snoozed']) {
+          print("showing options");
+          Navigator.pushNamed(context, '/snooze_actions');
+          print("Done here");
+        } else {
+          Navigator.pop(context);
+        }
+
         if (model.currentTodo != null && model.currentTodo.id != null) {
           todoActionSuccess = await model
               .updateTodo(
@@ -72,13 +80,6 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
           return;
         } 
 
-        if (_formData['snoozed']) {
-          print("showing options");
-          Navigator.pushNamed(context, '/snooze_actions');
-          print("Done here");
-        } else {
-          Navigator.pop(context);
-        }
 
       },
     );
@@ -86,7 +87,9 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
 
   Widget _buildTitleField(Todo todo) {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Title'),
+      decoration: InputDecoration(
+        labelText: 'Title',
+        fillColor: Theme.of(context).highlightColor),
       initialValue: todo != null ? todo.title : '',
       validator: (value) {
         if (value.isEmpty) {
@@ -101,7 +104,9 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
 
   Widget _buildContentField(Todo todo) {
     return TextFormField(
-      decoration: InputDecoration(labelText: 'Content'),
+      decoration: InputDecoration(
+        labelText: 'Content',
+        fillColor: Theme.of(context).primaryColor),
       initialValue: todo != null ? todo.content : '',
       maxLines: 5,
       onSaved: (value) {
@@ -161,7 +166,8 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
 
     if (todo.snoozed) {
       if (todo.snoozedDate != null) {
-        return Text("Note is snoozed for " + todo.snoozedDate.toString() ,
+        int lenght = todo.snoozedDate.toString().length;
+        return Text( "Note is snoozed for " + todo.snoozedDate.toString().substring(0, lenght-7) ,
           style: TextStyle (color: Colors.yellow[900], fontSize: 15),
           
           );
