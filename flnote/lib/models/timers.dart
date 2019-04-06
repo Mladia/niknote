@@ -42,9 +42,11 @@ class Timers {
   }
 
   void periodical(){
-      new Future.delayed(const Duration(seconds: 10), () => checkSnoozed() );
+    //TODO: DEBUG
+    return;
+    new Future.delayed(const Duration(seconds: 10), () => checkSnoozed() );
 
-      new Timer.periodic(duration, (Timer t) => checkSnoozed() );
+    new Timer.periodic(duration, (Timer t) => checkSnoozed() );
   }
 
   Future _actionSnooze(Todo todo) async {

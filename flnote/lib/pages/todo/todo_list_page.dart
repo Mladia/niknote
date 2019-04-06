@@ -160,9 +160,35 @@ class _TodoListPageState extends State<TodoListPage> {
         model.applyFilter(Filter.Current);
       },
     );
-  
-  
   }
+  Widget _buildSnoozedFlatButton(AppModel model) {
+    return FlatButton(
+      child: Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.timer,
+              color:
+                  model.filter == Filter.Snoozed? Colors.white : Colors.black,
+            ),
+            Text(
+              'Snoozed',
+              style: TextStyle(
+                color: model.filter == Filter.Snoozed
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            )
+          ],
+        ),
+      ),
+      onPressed: () {
+        model.applyFilter(Filter.Snoozed);
+      },
+    );
+  }
+
 
 
 
@@ -177,11 +203,12 @@ class _TodoListPageState extends State<TodoListPage> {
         children: <Widget>[
           // SizedBox(),
           _buildNotDoneFlatButton(model),
+          _buildSnoozedFlatButton(model),
           _buildDoneFlatButton(model),
           _buildAllFlatButton(model),
-          SizedBox(
-            width: 80.0,
-          ),
+          // SizedBox(
+          //   width: 80.0,
+          // ),
         ],
       ),
       color: Theme.of(context).primaryColor,
@@ -192,8 +219,8 @@ class _TodoListPageState extends State<TodoListPage> {
   Widget _buildPageContent(AppModel model) {
     return Scaffold(
       appBar: _buildAppBar(model),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _buildFloatingActionButton(model),
       bottomNavigationBar: _buildBottomAppBar(model),
       body: TodoListView(),

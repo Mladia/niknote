@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:niknote/models/filter.dart';
 import 'package:niknote/widgets/helpers/message_dialog.dart';
+import 'package:niknote/widgets/todo/snooze_actions.dart';
 
 import 'package:scoped_model/scoped_model.dart';
 
@@ -27,6 +28,9 @@ class TodoListView extends StatelessWidget {
         emptyText =
             'This is boring here. \r\nCreate a running todo to make it crowd.';
         break;
+      case Filter.Snoozed:
+        emptyText =
+            'This is boring here. \r\nCreate a snoozed todo to make it crowd.';
     }
 
     Widget svg = new SvgPicture.asset(
@@ -56,6 +60,11 @@ class TodoListView extends StatelessWidget {
     );
   }
 
+
+  Future<bool> dismissTodo() {
+
+  }
+
   Widget _buildListView(AppModel model) {
     print("building list view");
     return ListView.builder(
@@ -66,28 +75,68 @@ class TodoListView extends StatelessWidget {
         return Dismissible(
             key: Key(todo.id.toString()),
             onDismissed: (DismissDirection dismissDirection) {
-              if (dismissDirection == DismissDirection.startToEnd) {
-                print("Deleting this note");
-                int noteId = todo.id;
-                MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
-              } else if (dismissDirection == DismissDirection.endToStart) {
-                print("Deleting this note");
-                int noteId = todo.id;
-                MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
-              } else {
-                print("not known dismissable");
-              }
+              return;
+              print("onDissmised function");
+              if (model.filter == Filter.Current )
+                if (dismissDirection == DismissDirection.startToEnd) {
+                  print("Deleting this note");
+                  int noteId = todo.id;
+                  model.toggleDone(noteId);
+                  Scaffold.of(context)
+                      .showSnackBar(SnackBar(content: Text("Note is done")));
+                } else {
+                  print("not known dismissable");
+                } 
+                else {
+                  if (dismissDirection == DismissDirection.startToEnd) {
+                    print("Deleting this note");
+                    int noteId = todo.id;
+                    MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
+                  } else if (dismissDirection == DismissDirection.endToStart) {
+                    print("Deleting this note");
+                    int noteId = todo.id;
+                    MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
+                  } else {
+                    print("not known dismissable");
+                  } 
+                }
             }, 
-            // child: TodoCard(todo), background: Container(color: Colors.red,),);
+            // confirmDismiss: model.snoozeNote(todo.id, null),
+            confirmDismiss: (DismissDirection dismissDirection) async {
+              print("Confirm dimiss in direction " + dismissDirection.toString());
 
+              if (model.filter == Filter.Current  && model.filter == Filter.Snoozed ) {
+                if (dismissDirection == DismissDirection.startToEnd) {
+                  print("Marking note as done");
+                  int noteId = todo.id;
+                  Scaffold.of(context)
+                      .showSnackBar(SnackBar(content: Text("Note is done")));
+                  model.toggleDone(noteId);
+                } else {
+                  print("not known dismissable");
+                } 
+              } else {
+                if (dismissDirection == DismissDirection.startToEnd) {
+                  print("Deleting this note");
+                  int noteId = todo.id;
+                  return MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
+                } else if (dismissDirection == DismissDirection.endToStart) {
+                  print("Deleting this note");
+                  int noteId = todo.id;
+                  return MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
+                } else {
+                  print("not known dismissable");
+                } 
+              }
 
+            },
             child: GestureDetector (
               onTap: () =>_settingModalBottomSheet(context, todo),
               onLongPress: () {
-                // print("Long pressing");
-                // print("Let's delete this");
-                // int noteId = todo.id;
-                // MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
+                print("Long pressing");
+                print("Let's delete this");
+                int noteId = todo.id;
+                MessageDialog.showConfirmationDelete(context, model: model, noteId: noteId );
               },
               child: TodoCard(todo),
             ),

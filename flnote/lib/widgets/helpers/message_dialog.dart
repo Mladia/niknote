@@ -65,11 +65,11 @@ static Future <bool> showSnoozeOptions (
     );
   }
 
-  static void showConfirmationDelete (
+  static Future<bool> showConfirmationDelete (
     BuildContext context, {
     AppModel model,
     int noteId
-  }) {
+  }) async {
     String title = 'Deleting a note';
     String message = 'Are you are sure you want to delete this note?';
     showDialog(
@@ -85,8 +85,9 @@ static Future <bool> showSnoozeOptions (
             ),
             FlatButton(
               onPressed: () {
-                model.removeTodo(noteId);
+                print("Clicking ok");
                 Navigator.of(context).pop();
+                return model.removeTodo(noteId);
               },
               child: Text('Okay'),
             )

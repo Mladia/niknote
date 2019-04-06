@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:niknote/.env.example.dart';
+import 'package:niknote/widgets/todo/snooze_actions.dart';
 
 import 'package:scoped_model/scoped_model.dart';
 
@@ -37,50 +38,78 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   }
 
 
+  _pressedSave (AppModel model, BuildContext context) async {
+    bool rvalue = false;;
+    print("Save is pressed");
+
+    if (!_formKey.currentState.validate()) {
+        return false;
+      }
+
+    _formKey.currentState.save();
+    if (_formData['snoozed']) {
+      print("showing options");
+      // final DateTime snoozedDate = await Navigator.pushNamed(context, '/snooze_actions');
+      final DateTime snoozedDate = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SnoozeActions(model))
+      );
+
+      
+      print("User choosed snooze " + snoozedDate.toString());
+      if (model.currentTodo != null && model.currentTodo.id != null) {
+        rvalue = await model
+            .updateTodo(
+          _formData['title'],
+          _formData['content'],
+          snoozedDate
+          );
+      } else {
+        rvalue = await model
+            .createTodo(
+          _formData['title'],
+          _formData['content'],
+          _formData['isDone'],
+          snoozedDate
+        );
+      }
+
+    } else {
+      print("not snoozed");
+      if (model.currentTodo != null && model.currentTodo.id != null) {
+        rvalue = await model
+            .updateTodo(
+          _formData['title'],
+          _formData['content'],
+          null 
+          );
+      } else {
+        rvalue = await model
+            .createTodo(
+          _formData['title'],
+          _formData['content'],
+          _formData['isDone'],
+          null
+        );
+      }
+    }
+    return rvalue;
+  }
 
   Widget _buildFloatingActionButton(AppModel model, BuildContext context) {
     return FloatingActionButton(
       child: Icon(Icons.save),
       onPressed: () async {
-        print("Save is pressed");
 
-      if (!_formKey.currentState.validate()) {
-          return;
-        }
-
-        _formKey.currentState.save();
-        bool todoActionSuccess = false;
-
-        if (_formData['snoozed']) {
-          print("showing options");
-          Navigator.pushNamed(context, '/snooze_actions');
-          print("Done here");
-        } else {
-          Navigator.pop(context);
-        }
-
-        if (model.currentTodo != null && model.currentTodo.id != null) {
-          todoActionSuccess = await model
-              .updateTodo(
-            _formData['title'],
-            _formData['content']);
-        } else {
-          todoActionSuccess = await model
-              .createTodo(
-            _formData['title'],
-            _formData['content'],
-            _formData['isDone'],
-          );
-        }
-
+        bool todoActionSuccess = await _pressedSave(model, context);
         if (!todoActionSuccess) {
           //bad input
           print("bad input");
           MessageDialog.show(context);
           return;
-        } 
-
-
+        } else {
+          Navigator.pop(context);
+        }
       },
     );
   }

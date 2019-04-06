@@ -78,36 +78,18 @@ class _SnoozeActionsState extends State<SnoozeActions> {
               onPressed: () async {
                 if (date == null) {
                   //do nothing
+                  print("Date is null, doing nothing");
                 } else {
                   print(date);
-                  final bool success = await model.snoozeNote(model.currentTodo.id, date);
-                  if (success) {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  } else {
-                    MessageDialog.show(context);
-                    print("cannot snooze note");
-                  }
+                  // Scaffold.of(context)
+                  //     .showSnackBar(SnackBar(content: Text("Setting snoozed date to " + date.toString())));
+                  Navigator.pop(context, date);
+                  //TODO: do we need 2?
+                  // Navigator.pop(context);
                 }
               },
               child: Text( date == null ? "Please choose a valid time and date" : "Snooze note" ),
             ),
-            // SizedBox(height: 16.0),
-            // CheckboxListTile(
-            //   title: Text('Date picker'),
-            //   value: inputType != InputType.time,
-            //   onChanged: (value) => updateInputType(date: value),
-            // ),
-            // CheckboxListTile(
-            //   title: Text('Time picker'),
-            //   value: inputType != InputType.date,
-            //   onChanged: (value) => updateInputType(time: value),
-            // ),
-            // CheckboxListTile(
-            //   title: Text('Editable'),
-            //   value: editable,
-            //   onChanged: (value) => setState(() => editable = value),
-            // ),
           ],
         ),
       ));

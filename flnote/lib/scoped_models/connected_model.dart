@@ -31,6 +31,12 @@ mixin TodosModel on CoreModel {
           var todo2 = todo;
                     return (!todo2.isDone && !todo.snoozed);
         }));
+      case Filter.Snoozed:
+        return List.from(_todos.where((todo) {
+          var todo2 = todo;
+                    return (!todo2.isDone && todo.snoozed);
+        }));
+
     }
 
     return List.from(_todos);
@@ -189,7 +195,7 @@ Future<bool> _pushNotes() async {
 
 
   Future<bool> createTodo(
-      String title, String content, bool isDone) async {
+      String title, String content, bool isDone, DateTime snoozedDate) async {
     _isLoading = true;
     notifyListeners();
     print("Creating todo");
@@ -200,7 +206,9 @@ Future<bool> _pushNotes() async {
       id: newId,
       title: title,
       content: content,
-      isDone: isDone
+      isDone: isDone,
+      snoozed: snoozedDate == null ? false : true,
+      snoozedDate: snoozedDate,
     );
     _todos.add(todo);
 
@@ -214,20 +222,22 @@ Future<bool> _pushNotes() async {
 
   Future<bool> updateTodo(
       String newTitle, 
-      String newContent
+      String newContent,
+      DateTime snoozedDate
       ) async {
 
     print("Updating todo");
     _isLoading = true;
     notifyListeners();
 
+
     Todo todo = Todo(
       id: currentTodo.id,
       title: newTitle,
       content: newContent,
       image: currentTodo.image,
-      snoozed: currentTodo.snoozed,
-      snoozedDate: currentTodo.snoozedDate,
+      snoozed: snoozedDate == null ? false : true,
+      snoozedDate: snoozedDate,
       tags: currentTodo.tags,
       isDone: currentTodo.isDone
     );
@@ -284,11 +294,17 @@ Future<bool> toggleDone(int id) async {
 }
 
 Future<bool> snoozeNote(int id,  DateTime toSnoozeDate) async {
-  print("Snooze note");
   _isLoading = true;
   notifyListeners();
   Todo todo = _todos.firstWhere((t) => t.id == id);
 
+  if (toSnoozeDate == null) {
+    DateTime now = DateTime.now();
+    int newMinute = now.minute + 3;
+    String formattedNow = "${now.year}.${now.month}.${now.day} at ${now.hour}:$newMinute";
+    toSnoozeDate = DateTime.parse(formattedNow);
+  }
+  print("Snooze note for " + toSnoozeDate.toString());
   todo = Todo(
     id: todo.id,
     title: todo.title,
