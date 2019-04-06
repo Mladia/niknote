@@ -147,7 +147,6 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   Widget _buildOthers(Todo todo) {
     final bool isDone = todo != null && todo.isDone;
     final bool snoozed = todo !=null && todo.snoozed;
-    final bool image = todo != null && todo.image;
     if (todo == null) {
       return Row();
     }
