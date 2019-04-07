@@ -60,7 +60,7 @@ function print_notes() {
         $('#c_snooze_button').show();
         $('#c_change_button').show();
         $('#currentNoteTitle').text(current_note.title +
-            "; Snoozed untill " + 
+            ";" + "\n" +  "Snoozed untill " + 
         // $('#currentNoteBox').find('p').text( "Snoozed for " + 
             current_note.snoozed_time + " on " +
             current_note.snoozed_date );

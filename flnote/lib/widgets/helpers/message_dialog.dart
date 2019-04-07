@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:niknote/models/Todo.dart';
 import 'package:niknote/scoped_models/app_model.dart';
 
-import 'package:niknote/scoped_models/connected_model.dart';
 
 class MessageDialog {
 

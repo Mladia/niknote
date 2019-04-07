@@ -42,8 +42,6 @@ class Timers {
   }
 
   void periodical(){
-    //TODO: DEBUG
-    return;
     new Future.delayed(const Duration(seconds: 10), () => checkSnoozed() );
 
     new Timer.periodic(duration, (Timer t) => checkSnoozed() );

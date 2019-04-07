@@ -3,7 +3,8 @@ max_rows = 15;
 
 function print_notes() {
     //set current note
-
+    
+    console.log("Printing notes");
     if (notes.length == 0) {
         $('#currentNoteTitle').text("  ");
         $('#currentNoteBox').find('p').text("  No notes saved. Your new note will appear here..");
@@ -16,12 +17,14 @@ function print_notes() {
         return;
     }
 
+    console.log("Is current null?");
     if (notes[c_note_id] == null){
         console.log("Current is null");
         go_for_note();
         return;
     }
     
+    console.log("is current snoozed?");
     if (notes[c_note_id].snoozed
         || notes[c_note_id].done) {
 
@@ -33,13 +36,18 @@ function print_notes() {
     for (i in notes_html){
       notes_html[i].remove();
     }
+    $('#currentNoteImageDiv').hide()
+
    
     image_to_upload = "";
 
+    console.log("Setting stuff");
     $('#currentNoteTitle').text(notes[c_note_id].title);
     $('#currentNoteBox').find('p').text(notes[c_note_id].text);
     $('#currentNoteTags').text(notes[c_note_id].tags);
 
+
+    console.log("Setting stuff2");
     if (! notes[c_note_id].image) {
         $('#currentNoteImageDiv').hide()
     } else {
@@ -48,6 +56,7 @@ function print_notes() {
         $('#currentNoteImageDiv').show();
     }
 
+    console.log("Calculating notes_length_abs");
     let notes_length_abs = 0;
     for( let i = 0; i <notes.length; i++) {
         if (notes[i] == null || notes[i].done || notes[i].snoozed) {
@@ -56,6 +65,7 @@ function print_notes() {
 
         notes_length_abs++;
     }
+    // -1 for the current note
     let rows = ( (max_rows > notes_length_abs) ? notes_length_abs : max_rows) -1 ;
     let limit_before = 2;
     let show_id = c_note_id;
@@ -66,14 +76,18 @@ function print_notes() {
             || notes[show_id].snoozed
             || notes[show_id].done );
     }
+
+    console.log("Showing the notes, rows:" + rows);
     for (let i = 1; i <= rows; i++){
 
+
         if (show_id == c_note_id) {
-            // console.log("barrier");
-            show_id = c_note_id + 1;
+             console.log("barrier");
+            show_id = mod( (show_id + 1), notes.length );
+            //show_id = c_note_id + 1;
         }
         while (notes[show_id] == null || show_id == c_note_id) {
-            // console.log("Show id is null");
+             //console.log("Show id is null");
             show_id = mod( (show_id + 1), notes.length );
         }
 
@@ -81,11 +95,12 @@ function print_notes() {
         if (notes[show_id].snoozed
             || notes[show_id].done){
             show_id = mod( (show_id + 1), notes.length );
-            // console.log("ssnoozed or done");
+             //console.log("ssnoozed or done");
             i = i-1;
             continue;
         }
  
+        //console.log("All normal");
         let new_div = document.createElement('div');
         new_div.setAttribute('onclick','change_current(' + show_id + ')' );
         new_div.className = "noteContainer";
@@ -108,6 +123,7 @@ function print_notes() {
         
         show_id =  mod( (show_id + 1),  notes.length ) ;
     }
+    console.log("Showed all notes");
 }
 
 
@@ -131,7 +147,6 @@ function go_for_note() {
         print_notes();
         return;
     }
-
     do {
         c_note_id = mod(c_note_id+1, notes.length);
     } while (notes[c_note_id] == null 
@@ -403,12 +418,11 @@ function c_note_delete(){
 
 function show_snoozed_notes() {
 
+    console.log("Showing snoozed notes");
     if (unsnooze.length == 0) {
         $("#unsnoozeModel").css("display", "none");
         return;
     }
-    
-    console.log("Showing snoozed notes");
 
     let snoozed_tuple = unsnooze[unsnooze.length-1];
     let snoozed_id = snoozed_tuple.id;

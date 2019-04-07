@@ -125,31 +125,6 @@ Date.prototype.toDateInputValue = (function() {
     return local.toJSON().slice(0,10);
 });
 
-var ex_note = new Note('0 note');
-ex_note.text="Korem";
-// ex_note.tags="[Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?".split(",");
-notes.push(ex_note); 
-var ex_note = new Note('1 note');
-// ex_note.image = true;
-ex_note.tags = ["ho", "ma"];
-notes.push(ex_note); 
-var ex_note = new Note('2 note');
-ex_note.tags = ['baby', 'person'];
-notes.push(ex_note); 
-var ex_note = new Note('3 note');
-notes.push(ex_note); 
-var ex_note = new Note('4 note');
-ex_note.tags = ['ba'];
-// ex_note.image = true;
-notes.push(ex_note); 
-var ex_note = new Note('5 note');
-ex_note.image = true;
-ex_note.snoozed = true;
-ex_note.snoozed_date= "2019-03-28";
-ex_note.snoozed_time= "14:00";
-ex_note.text = "asdadas asdasd asd asd  ";
-
-notes.push(ex_note); 
 c_note_id = 1; 
 
 
@@ -157,8 +132,34 @@ pull_notes();
 print_notes();
 
 
+
+function add_fake_notes() {
+    var ex_note = new Note('0 note');
+    ex_note.text="Korem";
+    notes.push(ex_note); 
+    var ex_note = new Note('1 note');
+    // ex_note.image = true;
+    ex_note.tags = ["ho", "ma"];
+    notes.push(ex_note); 
+    var ex_note = new Note('2 note');
+    ex_note.tags = ['baby', 'person'];
+    notes.push(ex_note); 
+    var ex_note = new Note('3 note');
+    notes.push(ex_note); 
+    var ex_note = new Note('4 note');
+    ex_note.tags = ['ba'];
+    // ex_note.image = true;
+    notes.push(ex_note); 
+    var ex_note = new Note('5 note');
+    ex_note.image = true;
+    ex_note.snoozed = true;
+    ex_note.snoozed_date= "2019-03-28";
+    ex_note.snoozed_time= "14:00";
+    ex_note.text = "asdadas asdasd asd asd  ";
+    notes.push(ex_note); 
+}
+
 function pull_notes() {
-    //  return;
     console.log("Pulling notes request");
     $.ajax({
         url: "/server.php",
@@ -184,7 +185,7 @@ function pull_notes() {
 }
 
 function push_notes() {
-    //  return;
+    console.log("Pushing notes request")
 
     //correcting ids;
     //for (let i = 0; i < notes.length; i++) {
@@ -198,7 +199,6 @@ function push_notes() {
         cmd : "push_notes",
         notes : notes 
     });
-    console.log("Pushing notes request")
     $.ajax({
         url: "server.php",
         async: true,
@@ -424,7 +424,6 @@ function reload_current(id){
     }
 }
 
-//TODO: not working...
 function unsnooze_notes() {
     console.log("Unsnoozing notes");
     clean_up_last();
@@ -442,7 +441,7 @@ function unsnooze_notes() {
 
         let do_add = false;
 
-        console.log(notes[i]);
+        //console.log(notes[i]);
 
         if (notes[i].snoozed == false) {
             notes[i].snoozed_date = "";
@@ -450,14 +449,14 @@ function unsnooze_notes() {
         }
 
        if (notes[i].snoozed_date < currentDate) {
-        console.log("edno");
+        //console.log("edno");
            do_add = true;
        } else if (notes[i].snoozed_date = currentDate) {
             if (notes[i].snoozed_time <= currentTime) {
                 do_add = true;
-                console.log("dve");
+                //console.log("dve");
             } else {
-                console.log("dve2");
+                //console.log("dve2");
             }
        }
 

@@ -5,7 +5,6 @@ import 'package:niknote/scoped_models/app_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../../.env.example.dart';
-import '../helpers/message_dialog.dart';
 
 class SnoozeActions extends StatefulWidget {
   final AppModel model;

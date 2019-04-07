@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:niknote/models/filter.dart';
 import 'package:niknote/widgets/helpers/message_dialog.dart';
-import 'package:niknote/widgets/todo/snooze_actions.dart';
 
 import 'package:scoped_model/scoped_model.dart';
 
@@ -13,7 +12,6 @@ import 'package:niknote/widgets/todo/todo_card.dart';
 class TodoListView extends StatelessWidget {
   Widget _buildEmptyText(AppModel model) {
     String emptyText;
-    //TODO: change text and image
     switch (model.filter) {
       case Filter.All:
         emptyText = 'This is boring here. \r\nCreate a todo to make it crowd.';
@@ -60,10 +58,6 @@ class TodoListView extends StatelessWidget {
     );
   }
 
-
-  Future<bool> dismissTodo() {
-
-  }
 
   Widget _buildListView(AppModel model) {
     print("building list view");
