@@ -4,7 +4,7 @@ max_rows = 15;
 function print_notes() {
     //set current note
     
-    console.log("Printing notes");
+    // console.log("Printing notes");
     if (notes.length == 0) {
         $('#currentNoteTitle').text("  ");
         $('#currentNoteBox').find('p').text("  No notes saved. Your new note will appear here..");
@@ -17,14 +17,12 @@ function print_notes() {
         return;
     }
 
-    console.log("Is current null?");
     if (notes[c_note_id] == null){
-        console.log("Current is null");
+        // console.log("Current is null");
         go_for_note();
         return;
     }
     
-    console.log("is current snoozed?");
     if (notes[c_note_id].snoozed
         || notes[c_note_id].done) {
 
@@ -41,13 +39,11 @@ function print_notes() {
    
     image_to_upload = "";
 
-    console.log("Setting stuff");
     $('#currentNoteTitle').text(notes[c_note_id].title);
     $('#currentNoteBox').find('p').text(notes[c_note_id].text);
     $('#currentNoteTags').text(notes[c_note_id].tags);
 
 
-    console.log("Setting stuff2");
     if (! notes[c_note_id].image) {
         $('#currentNoteImageDiv').hide()
     } else {
@@ -56,7 +52,6 @@ function print_notes() {
         $('#currentNoteImageDiv').show();
     }
 
-    console.log("Calculating notes_length_abs");
     let notes_length_abs = 0;
     for( let i = 0; i <notes.length; i++) {
         if (notes[i] == null || notes[i].done || notes[i].snoozed) {
@@ -77,12 +72,12 @@ function print_notes() {
             || notes[show_id].done );
     }
 
-    console.log("Showing the notes, rows:" + rows);
+    // console.log("Showing the notes, rows:" + rows);
     for (let i = 1; i <= rows; i++){
 
 
         if (show_id == c_note_id) {
-             console.log("barrier");
+            //  console.log("barrier");
             show_id = mod( (show_id + 1), notes.length );
             //show_id = c_note_id + 1;
         }
@@ -109,7 +104,7 @@ function print_notes() {
 
         let new_div_inner = document.createElement('div');
         new_div_inner.className = "noteContainerTags";
-        new_div_inner.innerText = notes[show_id].tags;
+        //new_div_inner.innerText = notes[show_id].tags;
         
         if (i <= limit_before){
             let c_note_before = document.getElementById('notesBefore');
@@ -123,7 +118,6 @@ function print_notes() {
         
         show_id =  mod( (show_id + 1),  notes.length ) ;
     }
-    console.log("Showed all notes");
 }
 
 
@@ -354,8 +348,7 @@ function c_note_snooze() {
 function show_snooze_modal() {
     snoozeModal.style.display = 'block';
     //set current date
-    let today = new Date();
-    let currentDate = today.toDateInputValue();
+    let currentDate = myCurrentDate 
     $('#snoozeDate').val(currentDate);
 }
 
@@ -386,8 +379,8 @@ function snoozeCustom(){
 }
 
 function finishSnooze() {
-    let currentTime = getCurrentTime();
-    let currentDate = getCurrentDate();
+    let currentTime = myCurrentTime();
+    let currentDate = myCurrentDate();
     console.log("Trying to snooze " + timeControl + ", and " + dateControl);
     //is date valid
     if (dateControl < currentDate) {

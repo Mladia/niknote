@@ -47,6 +47,9 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
       }
 
     _formKey.currentState.save();
+    final String title = _formData['title'];
+    final String content = _formData['content'];
+
     if (_formData['snoozed']) {
       print("showing options");
       // final DateTime snoozedDate = await Navigator.pushNamed(context, '/snooze_actions');
@@ -56,20 +59,18 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
       );
 
       
-      print("User choosed snooze " + snoozedDate.toString());
       if (model.currentTodo != null && model.currentTodo.id != null) {
         rvalue = await model
             .updateTodo(
-          _formData['title'],
-          _formData['content'],
-          snoozedDate
+              title,
+              content,
+              snoozedDate
           );
       } else {
         rvalue = await model
             .createTodo(
-          _formData['title'],
-          _formData['content'],
-          _formData['isDone'],
+              title,
+              content,
           snoozedDate
         );
       }
@@ -79,16 +80,15 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
       if (model.currentTodo != null && model.currentTodo.id != null) {
         rvalue = await model
             .updateTodo(
-          _formData['title'],
-          _formData['content'],
+              title,
+              content,
           null 
           );
       } else {
         rvalue = await model
             .createTodo(
-          _formData['title'],
-          _formData['content'],
-          _formData['isDone'],
+              title,
+              content,
           null
         );
       }

@@ -99,7 +99,7 @@ class TodoListView extends StatelessWidget {
             confirmDismiss: (DismissDirection dismissDirection) async {
               print("Confirm dimiss in direction " + dismissDirection.toString());
 
-              if (model.filter == Filter.Current  && model.filter == Filter.Snoozed ) {
+              if (model.filter == Filter.Current  || model.filter == Filter.Snoozed ) {
                 if (dismissDirection == DismissDirection.startToEnd) {
                   print("Marking note as done");
                   int noteId = todo.id;

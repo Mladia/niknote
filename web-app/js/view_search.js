@@ -106,7 +106,7 @@ function print_notes() {
 
         let new_div_inner = document.createElement('div');
         new_div_inner.className = "noteContainerTags";
-        new_div_inner.innerText = show_note.tags;
+        //new_div_inner.innerText = show_note.tags;
         
         let big_container = document.getElementById('bigContainer');
         big_container.appendChild(new_div);
@@ -350,7 +350,7 @@ function c_note_snooze() {
 function show_snooze_modal() {
     snoozeModal.style.display = 'block';
     //set current date
-    let currentDate = getCurrentDate();
+    let currentDate = myCurrentDate();
 
     $('#snoozeDate').val(currentDate);
     let current_note = show_notes[c_note_id] != null ? show_notes[c_note_id].note : null;
@@ -387,8 +387,8 @@ function snoozeCustom(){
 }
 
 function finishSnooze() {
-    let currentTime = getCurrentTime();
-    let currentDate = getCurrentDate();
+    let currentTime = myCurrentTime();
+    let currentDate = myCurrentDate();
     console.log("Trying to snooze " + timeControl + ", and " + dateControl);
     //is date valid
     if (dateControl < currentDate) {

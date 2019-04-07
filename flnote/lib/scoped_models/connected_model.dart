@@ -150,9 +150,6 @@ Future<bool> _pushNotes() async {
     }
 
     jsonList.add(it.current.toJson());
-    if (it.current.snoozed) {
-      print("Adding " + it.current.toJson());
-    }
     currentId++;
   }
   final String notes = jsonList.toString();
@@ -195,7 +192,7 @@ Future<bool> _pushNotes() async {
 
 
   Future<bool> createTodo(
-      String title, String content, bool isDone, DateTime snoozedDate) async {
+      String title, String content, DateTime snoozedDate) async {
     _isLoading = true;
     notifyListeners();
     print("Creating todo");
@@ -206,10 +203,11 @@ Future<bool> _pushNotes() async {
       id: newId,
       title: title,
       content: content,
-      isDone: isDone,
+      isDone: false,
       snoozed: snoozedDate == null ? false : true,
       snoozedDate: snoozedDate,
     );
+    print(todo.toJson());
     _todos.add(todo);
 
     final bool success  = await _pushNotes();
@@ -278,8 +276,8 @@ Future<bool> toggleDone(int id) async {
       content: todo.content,
       isDone: !todo.isDone,
       image: todo.image,
-      snoozed: todo.snoozed,
-      snoozedDate: todo.snoozedDate,
+      snoozed: false,
+      snoozedDate: null,
       tags: todo.tags,
     );
     int todoIndex = _todos.indexWhere((t) => t.id == id);
@@ -422,10 +420,10 @@ mixin BluetoothModel on CoreModel {
     .listen((scanResult) {
       print('localName: ${scanResult.advertisementData.localName}');
         scanResults[scanResult.device.id] = scanResult;
-        notifyListeners();
     }, onDone: stopScan);
 
       isScanning = true;
+      notifyListeners();
   }
 
   void stopScan() {

@@ -107,6 +107,9 @@ button {
     border-radius: 2px
   }
 
+.currentNoteTags {
+    font-size: 0.9em;
+}
 
 .bigContainer {
     margin-left:5%;

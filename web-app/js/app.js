@@ -80,11 +80,6 @@ function mod(n, m) {
   return ((n % m) + m) % m;
 }
 function get_first_free_id(){
-    //for (let i = 0; i<notes.length; i++){
-        //if (notes[i] == null){
-            //return i;
-        //}
-    //}
     return notes.length;
 }
 
@@ -119,56 +114,43 @@ function change_current(id){
 }
 
 
-Date.prototype.toDateInputValue = (function() {
-    var local = new Date(this);
-    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
-    return local.toJSON().slice(0,10);
-});
-
-c_note_id = 1; 
-
-
-pull_notes();
-print_notes();
-
-
-
-function add_fake_notes() {
-    var ex_note = new Note('0 note');
-    ex_note.text="Korem";
-    notes.push(ex_note); 
-    var ex_note = new Note('1 note');
-    // ex_note.image = true;
-    ex_note.tags = ["ho", "ma"];
-    notes.push(ex_note); 
-    var ex_note = new Note('2 note');
-    ex_note.tags = ['baby', 'person'];
-    notes.push(ex_note); 
-    var ex_note = new Note('3 note');
-    notes.push(ex_note); 
-    var ex_note = new Note('4 note');
-    ex_note.tags = ['ba'];
-    // ex_note.image = true;
-    notes.push(ex_note); 
-    var ex_note = new Note('5 note');
-    ex_note.image = true;
-    ex_note.snoozed = true;
-    ex_note.snoozed_date= "2019-03-28";
-    ex_note.snoozed_time= "14:00";
-    ex_note.text = "asdadas asdasd asd asd  ";
-    notes.push(ex_note); 
-}
+// function add_fake_notes() {
+//     var ex_note = new Note('0 note');
+//     ex_note.text="Korem";
+//     notes.push(ex_note); 
+//     var ex_note = new Note('1 note');
+//     // ex_note.image = true;
+//     ex_note.tags = ["ho", "ma"];
+//     notes.push(ex_note); 
+//     var ex_note = new Note('2 note');
+//     ex_note.tags = ['baby', 'person'];
+//     notes.push(ex_note); 
+//     var ex_note = new Note('3 note');
+//     notes.push(ex_note); 
+//     var ex_note = new Note('4 note');
+//     ex_note.tags = ['ba'];
+//     // ex_note.image = true;
+//     notes.push(ex_note); 
+//     var ex_note = new Note('5 note');
+//     ex_note.image = true;
+//     ex_note.snoozed = true;
+//     ex_note.snoozed_date= "2019-03-28";
+//     ex_note.snoozed_time= "14:00";
+//     ex_note.text = "asdadas asdasd asd asd  ";
+//     notes.push(ex_note); 
+// }
 
 function pull_notes() {
     console.log("Pulling notes request");
     $.ajax({
         url: "/server.php",
-        async: false,
+        async: true,
         type: "POST",
         header: {'Access-Control-Allow-Origin': '*'},
         data: "cmd=get_notes",
         success: function (result) {
             console.log("Pulling notes completed!");
+            console.log(result);
             notes = result;
             unsnooze_notes();
         },
@@ -181,12 +163,11 @@ function pull_notes() {
         dataType: 'json',
         });    
 
-    // print_notes();
 }
 
 function push_notes() {
     console.log("Pushing notes request")
-
+    // return;
     //correcting ids;
     //for (let i = 0; i < notes.length; i++) {
         //if (notes[i] == null){
@@ -427,8 +408,8 @@ function reload_current(id){
 function unsnooze_notes() {
     console.log("Unsnoozing notes");
     clean_up_last();
-    let currentTime = getCurrentTime();
-    let currentDate = getCurrentDate();
+    let currentTime = myCurrentTime();
+    let currentDate = myCurrentDate();
     for (let i = 0; i < notes.length; i++) {
         if (notes[i] == null){
             continue;
@@ -441,7 +422,7 @@ function unsnooze_notes() {
 
         let do_add = false;
 
-        //console.log(notes[i]);
+        // console.log(notes[i]);
 
         if (notes[i].snoozed == false) {
             notes[i].snoozed_date = "";
@@ -451,7 +432,7 @@ function unsnooze_notes() {
        if (notes[i].snoozed_date < currentDate) {
         //console.log("edno");
            do_add = true;
-       } else if (notes[i].snoozed_date = currentDate) {
+       } else if (notes[i].snoozed_date == currentDate) {
             if (notes[i].snoozed_time <= currentTime) {
                 do_add = true;
                 //console.log("dve");
@@ -463,32 +444,45 @@ function unsnooze_notes() {
         if (do_add) {
                 console.log("Add to to be unsnoozed " + notes[i].title);
                 unsnooze.push( { note : notes[i], id: i } );
+
             }
     }
 
+    print_notes();
 
 }
 
-function getCurrentTime() {
+function  myCurrentTime() {
+    // return "";
+    // return "15:30";
+    let local = new Date();
+    local.setMinutes(local.getMinutes() - local.getTimezoneOffset());
+    return local.toJSON().slice(11,16);
 
-    let today = new Date();
-    let minutes;
-    let hours;
-    if (today.getHours() < 10) {
-        hours = "0" + today.getHours();
-    } else {
-        hours = today.getHours();
-    }
-    if (today.getMinutes() < 10) {
-        minutes = "0" + today.getMinutes();
-    } else {
-        minutes = today.getMinutes();
-    }
-    return  hours + ":" + minutes;
+
+    // let today = new Date();
+    // let minutes;
+    // let hours;
+    // if (today.getHours() < 10) {
+    //     hours = "0" + today.getHours();
+    // } else {
+    //     hours = today.getHours();
+    // }
+    // if (today.getMinutes() < 10) {
+    //     minutes = "0" + today.getMinutes();
+    // } else {
+    //     minutes = today.getMinutes();
+    // }
+    // return  hours + ":" + minutes;
 }
 
-function getCurrentDate() {
-
-    let today = new Date();
-    return today.toDateInputValue();
+function myCurrentDate() {
+    // return "";
+    // return "2019-04-07";
+    let local = new Date();
+    local.setMinutes(local.getMinutes() - local.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
 }
+
+c_note_id = 1;
+pull_notes();

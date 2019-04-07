@@ -60,7 +60,7 @@ function check_done(){
 }
 function handle_gestures(){
     check_snooze();
-    check_go_for();
+    //check_go_for();
     check_done();
 
 }

@@ -50,11 +50,15 @@ class TodoCard extends StatelessWidget {
                         icon: Icon(Icons.check),
                         onPressed: () {
                           model.toggleDone(todo.id);
+                  Scaffold.of(context)
+                      .showSnackBar(SnackBar(content: Text("Note is marked as current")));
                         },
                       )
                     : IconButton(
                         icon: Icon(Icons.check_box_outline_blank),
                         onPressed: () {
+                  Scaffold.of(context)
+                      .showSnackBar(SnackBar(content: Text("Note is done")));
                           model.toggleDone(todo.id);
                         },
                       ),
