@@ -415,17 +415,43 @@ mixin BluetoothModel on CoreModel {
 
     scanSubscription = flutterBlue
         .scan(
-      timeout: const Duration(seconds: 5),
+      timeout: const Duration(seconds: 20),
     )
     .listen((scanResult) {
-      print('localName: ${scanResult.advertisementData.localName}');
+        print('localName: ${scanResult.advertisementData.localName} and ${scanResult.device.id}');
         scanResults[scanResult.device.id] = scanResult;
+        
+      
+        if (scanResult.device.id.toString() == "F7:A4:5E:88:83:53") {
+          print("found");
+          stopScan();
+          notifyListeners();
+          return;
+        }
+
+        notifyListeners();
     }, onDone: stopScan);
 
       isScanning = true;
       notifyListeners();
   }
 
+  void startScanAll() {
+    print('start scan ALL');
+
+    scanSubscription = flutterBlue
+        .scan(
+      timeout: const Duration(seconds: 20),
+    )
+    .listen((scanResult) {
+        print('localName: ${scanResult.advertisementData.localName} and ${scanResult.device.id}');
+        scanResults[scanResult.device.id] = scanResult;
+        notifyListeners();
+    }, onDone: stopScan);
+
+      isScanning = true;
+      notifyListeners();
+  }
   void stopScan() {
     scanSubscription?.cancel();
     scanSubscription = null;
@@ -448,11 +474,11 @@ mixin BluetoothModel on CoreModel {
     _isLoading = true;
     notifyListeners();
     
-    print("connect to device");
+    print("connect to device " + dev.toString());
     device = dev;
     // Connect to device
     deviceConnection = flutterBlue
-        .connect(device, timeout: const Duration(seconds: 5))
+        .connect(device, timeout: const Duration(seconds: 20))
         .listen(
           null,
           onDone: disconnectFromDevice,

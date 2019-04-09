@@ -127,7 +127,19 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                     child: new Icon(Icons.search)
                 ),
-
+                SizedBox(
+                  height: 15,
+                  ),
+                GestureDetector(
+                  onLongPress: () =>
+                      model.startScanAll(),
+                  child: 
+                    Text(
+                      "Found devices:",
+                      style: TextStyle(fontSize: 20),
+                    )
+                ),
+                SizedBox(height: 15,),
                 new Column(
                   children: _createListFromScanResults(),
                 ),
@@ -144,6 +156,7 @@ class _SettingsPageState extends State<SettingsPage> {
   //  print(scanResults.isEmpty);
     List<Widget> ret = new List<Widget>();
     Widget w;
+    print("called");
 
     model.scanResults.forEach((d,r) {
       Widget text;
